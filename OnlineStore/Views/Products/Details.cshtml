@@ -1,0 +1,74 @@
+@model Products
+
+@{
+    ViewData["Title"] = Model.Name;
+    var averageRating = Model.Reviews != null && Model.Reviews.Any() ? Model.Reviews.Average(review => review.Rating) : 0;
+}
+
+<section class="page-section">
+    <div class="container">
+        <a asp-action="Index" class="d-inline-flex align-items-center gap-1 mb-4">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Back to products
+        </a>
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-6">
+                <img class="hero-media" src="@Model.ImageUrl" alt="@Model.Name" />
+            </div>
+            <div class="col-lg-6">
+                <span class="category-pill mb-3">@Model.Category?.Name</span>
+                <h1 class="display-title mb-3">@Model.Name</h1>
+                <div class="mb-3"><span class="rating">*****</span> <span class="muted">@averageRating.ToString("0.0") from @(Model.Reviews?.Count ?? 0) reviews</span></div>
+                <p class="lead muted">@Model.Description</p>
+                <div class="d-flex align-items-center gap-3 my-4">
+                    <span class="price">$@Model.Price.ToString("0.00")</span>
+                    <span class="muted">@Model.Stock in stock</span>
+                </div>
+                <form class="d-flex gap-2 mb-4" asp-controller="Cart" asp-action="Add" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input class="form-control" style="max-width: 100px" type="number" name="quantity" value="1" min="1" max="@Model.Stock" />
+                    <button class="btn btn-accent" type="submit">Add to Cart</button>
+                </form>
+                <div class="panel">
+                    <h2 class="h5 fw-bold">Add Review</h2>
+                    <form asp-action="AddReview" method="post" class="row g-3">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <div class="col-sm-4">
+                            <select class="form-select" name="rating">
+                                <option value="5">5 stars</option>
+                                <option value="4">4 stars</option>
+                                <option value="3">3 stars</option>
+                                <option value="2">2 stars</option>
+                                <option value="1">1 star</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8">
+                            <input class="form-control" name="comment" placeholder="Share your feedback" />
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-outline-dark" type="submit">Post Review</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h2 class="section-title mb-4">Customer Reviews</h2>
+            <div class="row g-3">
+                @foreach (var review in Model.Reviews?.OrderByDescending(review => review.CreatedAt) ?? Enumerable.Empty<Reviews>())
+                {
+                    <div class="col-md-6">
+                        <div class="panel h-100">
+                            <div class="rating mb-2">@(new string('*', review.Rating))</div>
+                            <p>@review.Comment</p>
+                            <p class="muted mb-0">@review.User?.Name - @review.CreatedAt.ToString("MMM d, yyyy")</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

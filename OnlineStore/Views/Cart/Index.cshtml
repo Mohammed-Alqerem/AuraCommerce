@@ -1,0 +1,94 @@
+@model CartViewModel
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Cart</span>
+        <h1 class="display-title mt-2 mb-0">Your Cart</h1>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        @if (!Model.Items.Any())
+        {
+            <div class="empty-state">
+                <h2 class="section-title">Your cart is empty</h2>
+                <p class="muted">Add products from the catalog to begin checkout.</p>
+                <a class="btn btn-accent" asp-controller="Products" asp-action="Index">Browse Products</a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="panel">
+                        <table class="table table-store align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    if (item.Product == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 74px; height: 62px; object-fit: cover; border-radius: 8px;" />
+                                                <div>
+                                                    <strong>@item.Product.Name</strong>
+                                                    <div class="muted">$@item.Product.Price.ToString("0.00") each</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form class="d-flex gap-2" asp-action="Update" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="itemId" value="@item.Id" />
+                                                <input class="form-control" type="number" name="quantity" value="@item.Quantity" min="0" style="width: 86px;" />
+                                                <button class="btn btn-outline-dark py-1" type="submit">Update</button>
+                                            </form>
+                                        </td>
+                                        <td><strong>$@((item.Product.Price * item.Quantity).ToString("0.00"))</strong></td>
+                                        <td>
+                                            <form asp-action="Remove" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="itemId" value="@item.Id" />
+                                                <button class="icon-button" type="submit" aria-label="Remove @item.Product.Name">
+                                                    <span class="material-symbols-outlined">delete</span>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel">
+                        <h2 class="h4 fw-bold mb-4">Order Summary</h2>
+                        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><strong>$@Model.Subtotal.ToString("0.00")</strong></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Shipping</span><strong>$@Model.Shipping.ToString("0.00")</strong></div>
+                        <div class="d-flex justify-content-between mb-3"><span>Tax</span><strong>$@Model.Tax.ToString("0.00")</strong></div>
+                        <hr />
+                        <div class="d-flex justify-content-between fs-4 mb-4"><span>Total</span><strong>$@Model.Total.ToString("0.00")</strong></div>
+                        <a class="btn btn-accent w-100" asp-controller="Checkout" asp-action="Index">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

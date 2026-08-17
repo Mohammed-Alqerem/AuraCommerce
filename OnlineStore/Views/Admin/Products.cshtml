@@ -1,0 +1,54 @@
+@model List<Products>
+
+@{
+    ViewData["Title"] = "Admin Products";
+}
+
+<section class="page-header">
+    <div class="container toolbar">
+        <div>
+            <span class="eyebrow">Admin</span>
+            <h1 class="display-title mt-2 mb-0">Products</h1>
+        </div>
+        <a class="btn btn-accent" asp-action="ProductForm">Add Product</a>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="panel">
+            <table class="table table-store align-middle">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td>@product.Category?.Name</td>
+                            <td>$@product.Price.ToString("0.00")</td>
+                            <td>@product.Stock</td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a class="btn btn-outline-dark py-1" asp-action="ProductForm" asp-route-id="@product.Id">Edit</a>
+                                    <form asp-action="DeleteProduct" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-outline-danger py-1" type="submit">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

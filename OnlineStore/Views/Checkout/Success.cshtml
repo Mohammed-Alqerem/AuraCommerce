@@ -1,0 +1,19 @@
+@model Orders
+
+@{
+    ViewData["Title"] = "Order Success";
+}
+
+<section class="page-section">
+    <div class="container">
+        <div class="panel text-center mx-auto" style="max-width: 760px;">
+            <span class="material-symbols-outlined text-success" style="font-size: 64px;">check_circle</span>
+            <h1 class="display-title mt-3 mb-3">Order Confirmed</h1>
+            <p class="lead muted">Order #@Model.Id was created on @Model.OrderDate.ToString("MMM d, yyyy").</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                <a class="btn btn-accent" asp-controller="Orders" asp-action="Details" asp-route-id="@Model.Id">View Order</a>
+                <a class="btn btn-outline-dark" asp-controller="Products" asp-action="Index">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</section>

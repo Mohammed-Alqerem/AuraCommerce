@@ -1,0 +1,55 @@
+@model Orders
+
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+    var statusClass = $"status-{Model.Status.ToLower()}";
+}
+
+<section class="page-section">
+    <div class="container">
+        <a asp-action="Index" class="d-inline-flex align-items-center gap-1 mb-4">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Back to orders
+        </a>
+        <div class="panel mb-4">
+            <div class="toolbar">
+                <div>
+                    <span class="eyebrow">Order Details</span>
+                    <h1 class="section-title mb-1">Order #@Model.Id</h1>
+                    <p class="muted mb-0">@Model.OrderDate.ToString("MMM d, yyyy") - @Model.User?.Name</p>
+                </div>
+                <span class="status-badge @statusClass">@Model.Status</span>
+            </div>
+        </div>
+        <div class="panel">
+            <table class="table table-store align-middle">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        if (item.Product == null)
+                        {
+                            continue;
+                        }
+
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>$@item.UnitPrice.ToString("0.00")</td>
+                            <td><strong>$@((item.UnitPrice * item.Quantity).ToString("0.00"))</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <hr />
+            <div class="d-flex justify-content-end fs-4"><span class="me-3">Total</span><strong>$@Model.TotalPrice.ToString("0.00")</strong></div>
+        </div>
+    </div>
+</section>

@@ -1,8 +1,90 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model StoreHomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-copy">
+                    <span class="eyebrow">Modern MVC Storefront</span>
+                    <h1 class="display-title mt-3 mb-4">Everything you need, all in one store.</h1>
+                    <p class="lead muted mb-4">Shop curated electronics, fashion, shoes, and accessories from the products already seeded in your SQL Server database.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a class="btn btn-accent" asp-controller="Products" asp-action="Index">Shop Now</a>
+                        <a class="btn btn-outline-dark" href="#categories">Explore Categories</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img class="hero-media" src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=1200&q=80" alt="Modern online store products" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="page-section" id="categories">
+    <div class="container">
+        <div class="toolbar mb-4">
+            <div>
+                <span class="eyebrow">Browse</span>
+                <h2 class="section-title mb-1">Shop by Category</h2>
+                <p class="muted mb-0">@Model.ProductCount products across @Model.Categories.Count departments.</p>
+            </div>
+            <a class="btn btn-outline-dark" asp-controller="Products" asp-action="Index">View Catalog</a>
+        </div>
+        <div class="row g-4">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="col-md-6 col-lg-3">
+                    <a class="panel d-block h-100" asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.Id">
+                        <span class="category-pill mb-3">@category.Name</span>
+                        <h3 class="product-title mb-2">@category.Description</h3>
+                        <p class="muted mb-0">@((category.Products?.Count ?? 0)) products</p>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="page-section pt-0">
+    <div class="container">
+        <div class="toolbar mb-4">
+            <div>
+                <span class="eyebrow">Featured</span>
+                <h2 class="section-title mb-1">Selected Products</h2>
+                <p class="muted mb-0">Product cards, ratings, stock, and prices are loaded from EF Core.</p>
+            </div>
+            <a class="btn btn-outline-dark" asp-controller="Products" asp-action="Index">View All</a>
+        </div>
+        <div class="product-grid">
+            @foreach (var product in Model.FeaturedProducts)
+            {
+                var averageRating = product.Reviews != null && product.Reviews.Any() ? product.Reviews.Average(review => review.Rating) : 0;
+                <article class="product-card">
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">
+                        <img src="@product.ImageUrl" alt="@product.Name" />
+                    </a>
+                    <div class="product-card-body">
+                        <span class="category-pill">@product.Category?.Name</span>
+                        <h3 class="product-title"><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">@product.Name</a></h3>
+                        <div><span class="rating">*****</span> <span class="muted small">@averageRating.ToString("0.0")</span></div>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <span class="price">$@product.Price.ToString("0.00")</span>
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <button class="icon-button" type="submit" aria-label="Add @product.Name to cart">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>

@@ -120,116 +120,116 @@ namespace OnlineStore.Data
 
             modelBuilder.Entity<Products>().HasData(
 
-                new Products
-                {
-                    Id = 1,
-                    Name = "Wireless Mouse",
-                    Description = "Comfortable wireless mouse for everyday use",
-                    Price = 25.00m,
-                    Stock = 50,
-                    ImageUrl = "mouse.jpg",
-                    CategoryId = 1
-                },
+        new Products
+        {
+            Id = 1,
+            Name = "Wireless Mouse",
+            Description = "Comfortable wireless mouse for everyday use",
+            Price = 25.00m,
+            Stock = 50,
+            ImageUrl = "https://images.unsplash.com/photo-1527814050087-3793815479db",
+            CategoryId = 1
+        },
 
-                new Products
-                {
-                    Id = 2,
-                    Name = "Mechanical Keyboard",
-                    Description = "RGB mechanical keyboard for gaming and work",
-                    Price = 70.00m,
-                    Stock = 30,
-                    ImageUrl = "keyboard.jpg",
-                    CategoryId = 1
-                },
+        new Products
+        {
+            Id = 2,
+            Name = "Mechanical Keyboard",
+            Description = "RGB mechanical keyboard for gaming and work",
+            Price = 70.00m,
+            Stock = 30,
+            ImageUrl = "https://images.unsplash.com/photo-1587829741301-dc798b83add3",
+            CategoryId = 1
+        },
 
-                new Products
-                {
-                    Id = 3,
-                    Name = "USB-C Charger",
-                    Description = "Fast charging USB-C wall charger",
-                    Price = 35.00m,
-                    Stock = 40,
-                    ImageUrl = "charger.jpg",
-                    CategoryId = 1
-                },
+        new Products
+        {
+            Id = 3,
+            Name = "USB-C Charger",
+            Description = "Fast charging USB-C wall charger",
+            Price = 35.00m,
+            Stock = 40,
+            ImageUrl = "https://images.unsplash.com/photo-1583863788434-e58a36330cf0",
+            CategoryId = 1
+        },
 
-                new Products
-                {
-                    Id = 4,
-                    Name = "Classic T-Shirt",
-                    Description = "Comfortable cotton T-Shirt",
-                    Price = 20.00m,
-                    Stock = 100,
-                    ImageUrl = "tshirt.jpg",
-                    CategoryId = 2
-                },
+        new Products
+        {
+            Id = 4,
+            Name = "Classic T-Shirt",
+            Description = "Comfortable cotton T-Shirt",
+            Price = 20.00m,
+            Stock = 100,
+            ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+            CategoryId = 2
+        },
 
-                new Products
-                {
-                    Id = 5,
-                    Name = "Hoodie",
-                    Description = "Warm casual hoodie for everyday wear",
-                    Price = 45.00m,
-                    Stock = 60,
-                    ImageUrl = "hoodie.jpg",
-                    CategoryId = 2
-                },
+        new Products
+        {
+            Id = 5,
+            Name = "Hoodie",
+            Description = "Warm casual hoodie for everyday wear",
+            Price = 45.00m,
+            Stock = 60,
+            ImageUrl = "https://images.unsplash.com/photo-1556821840-3a63f95609a7",
+            CategoryId = 2
+        },
 
-                new Products
-                {
-                    Id = 6,
-                    Name = "Running Shoes",
-                    Description = "Lightweight running shoes for sports",
-                    Price = 80.00m,
-                    Stock = 25,
-                    ImageUrl = "running-shoes.jpg",
-                    CategoryId = 3
-                },
+        new Products
+        {
+            Id = 6,
+            Name = "Running Shoes",
+            Description = "Lightweight running shoes for sports",
+            Price = 80.00m,
+            Stock = 25,
+            ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+            CategoryId = 3
+        },
 
-                new Products
-                {
-                    Id = 7,
-                    Name = "Casual Sneakers",
-                    Description = "Modern casual sneakers",
-                    Price = 65.00m,
-                    Stock = 35,
-                    ImageUrl = "sneakers.jpg",
-                    CategoryId = 3
-                },
+        new Products
+        {
+            Id = 7,
+            Name = "Casual Sneakers",
+            Description = "Modern casual sneakers",
+            Price = 65.00m,
+            Stock = 35,
+            ImageUrl = "https://images.unsplash.com/photo-1549298916-b41d501d3772",
+            CategoryId = 3
+        },
 
-                new Products
-                {
-                    Id = 8,
-                    Name = "Smart Watch",
-                    Description = "Smart watch with fitness tracking",
-                    Price = 120.00m,
-                    Stock = 20,
-                    ImageUrl = "smart-watch.jpg",
-                    CategoryId = 4
-                },
+        new Products
+        {
+            Id = 8,
+            Name = "Smart Watch",
+            Description = "Smart watch with fitness tracking",
+            Price = 120.00m,
+            Stock = 20,
+            ImageUrl = "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+            CategoryId = 4
+        },
 
-                new Products
-                {
-                    Id = 9,
-                    Name = "Backpack",
-                    Description = "Water resistant backpack for daily use",
-                    Price = 40.00m,
-                    Stock = 45,
-                    ImageUrl = "backpack.jpg",
-                    CategoryId = 4
-                },
+        new Products
+        {
+            Id = 9,
+            Name = "Backpack",
+            Description = "Water resistant backpack for daily use",
+            Price = 40.00m,
+            Stock = 45,
+            ImageUrl = "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
+            CategoryId = 4
+        },
 
-                new Products
-                {
-                    Id = 10,
-                    Name = "Phone Stand",
-                    Description = "Adjustable desk phone stand",
-                    Price = 15.00m,
-                    Stock = 80,
-                    ImageUrl = "phone-stand.jpg",
-                    CategoryId = 4
-                }
-            );
+        new Products
+        {
+            Id = 10,
+            Name = "Phone Stand",
+            Description = "Adjustable desk phone stand",
+            Price = 15.00m,
+            Stock = 80,
+            ImageUrl = "https://images.unsplash.com/photo-1586953208448-b95a79798f07",
+            CategoryId = 4
+        }
+    );
 
 
             // =========================

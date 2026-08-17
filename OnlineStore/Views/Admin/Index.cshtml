@@ -1,0 +1,62 @@
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Admin</span>
+        <h1 class="display-title mt-2 mb-0">Dashboard</h1>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="stats-grid mb-4">
+            <div class="stat-card"><span>Revenue</span><strong>$@Model.Revenue.ToString("0.00")</strong></div>
+            <div class="stat-card"><span>Orders</span><strong>@Model.OrderCount</strong></div>
+            <div class="stat-card"><span>Products</span><strong>@Model.ProductCount</strong></div>
+            <div class="stat-card"><span>Users</span><strong>@Model.UserCount</strong></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="panel">
+                    <div class="toolbar mb-3">
+                        <h2 class="h4 fw-bold mb-0">Recent Orders</h2>
+                        <a asp-action="Orders">Manage</a>
+                    </div>
+                    <table class="table table-store align-middle">
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                var statusClass = $"status-{order.Status.ToLower()}";
+                                <tr>
+                                    <td>#@order.Id</td>
+                                    <td>@order.User?.Name</td>
+                                    <td><span class="status-badge @statusClass">@order.Status</span></td>
+                                    <td><strong>$@order.TotalPrice.ToString("0.00")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="panel">
+                    <div class="toolbar mb-3">
+                        <h2 class="h4 fw-bold mb-0">Inventory Watch</h2>
+                        <a asp-action="Products">Products</a>
+                    </div>
+                    @foreach (var product in Model.LowStockProducts)
+                    {
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <span>@product.Name</span>
+                            <strong>@product.Stock left</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -11,13 +11,13 @@ namespace OnlineStore.Models
         public int CartId { get; set; }
 
         [ForeignKey("CartId")]
-        public Cart Cart { get; set; }
+        public Cart? Cart { get; set; }
 
         [Required]
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
-        public Products Product { get; set; }
+        public Products? Product { get; set; }
 
         [Required]
         [Range(1, 1000)]

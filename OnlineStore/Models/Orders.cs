@@ -11,7 +11,7 @@ namespace OnlineStore.Models
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public Users User { get; set; }
+        public Users? User { get; set; }
 
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.Now;
@@ -25,6 +25,6 @@ namespace OnlineStore.Models
         [StringLength(20)]
         public string Status { get; set; } = "Pending";
 
-        public ICollection<OrderItems> OrderItems { get; set; }
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
     }
 }

@@ -9,11 +9,11 @@ namespace OnlineStore.Models
 
         [Required]
         [StringLength(100, MinimumLength = 3)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(500, MinimumLength = 10)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required]
         [Range(0.01, 100000)]
@@ -25,17 +25,17 @@ namespace OnlineStore.Models
         public int Stock { get; set; }
 
         [Url]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [Required]
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Categories Category { get; set; }
+        public Categories? Category { get; set; }
 
-        public ICollection<OrderItems> OrderItems { get; set; }
-        public ICollection<CartItems> CartItems { get; set; }
-        public ICollection<Reviews> Reviews { get; set; }
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+        public ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
+        public ICollection<Reviews> Reviews { get; set; } = new List<Reviews>();
 
     }
 }

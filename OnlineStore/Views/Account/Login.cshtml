@@ -1,0 +1,103 @@
+@model Users
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section class="auth-page">
+    <div class="auth-shell">
+        <div class="auth-media">
+            <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1200&q=80" alt="Shopping bags" />
+            <div class="auth-media-content">
+                <span class="eyebrow" data-i18n="login.mediaEyebrow">Secure Storefront</span>
+                <h2 data-i18n="login.mediaTitle">Manage carts, orders, and products from one modern MVC platform.</h2>
+                <div class="auth-feature-row">
+                    <span><span class="material-symbols-outlined">verified_user</span><span data-i18n="login.featureSecure">Secure session</span></span>
+                    <span><span class="material-symbols-outlined">language</span><span data-i18n="login.featureLanguage">Arabic / English</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="auth-card">
+            <div class="auth-card-actions">
+                <button class="icon-button js-theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+                <button class="language-button js-language-toggle" type="button" aria-label="Switch language">AR</button>
+            </div>
+
+            <span class="eyebrow" data-i18n="login.eyebrow">Account Access</span>
+            <h1 class="section-title mt-2 mb-2" data-i18n="login.title">Welcome Back</h1>
+            <p class="muted mb-4" data-i18n="login.subtitle">Sign in with a seeded user, for example mohammed@gmail.com / 123456.</p>
+
+            <div class="demo-accounts mb-4">
+                <div class="demo-accounts-header">
+                    <span class="material-symbols-outlined">key</span>
+                    <strong data-i18n="login.demoTitle">Demo accounts</strong>
+                </div>
+                <button class="demo-account demo-account-admin js-fill-login" type="button" data-email="mohammed@gmail.com" data-password="123456">
+                    <span>
+                        <strong>mohammed@gmail.com</strong>
+                        <small data-i18n="login.demoAdmin">Admin account - dashboard access</small>
+                    </span>
+                    <code>123456</code>
+                </button>
+                <button class="demo-account js-fill-login" type="button" data-email="ahmad@gmail.com" data-password="123456">
+                    <span>
+                        <strong>ahmad@gmail.com</strong>
+                        <small data-i18n="login.demoBuyer">Buyer account</small>
+                    </span>
+                    <code>123456</code>
+                </button>
+                <button class="demo-account js-fill-login" type="button" data-email="sara@gmail.com" data-password="123456">
+                    <span>
+                        <strong>sara@gmail.com</strong>
+                        <small data-i18n="login.demoCustomer">Customer account</small>
+                    </span>
+                    <code>123456</code>
+                </button>
+            </div>
+
+            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="auth-form">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label fw-bold" data-i18n="login.email">Email</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">mail</span>
+                        <input asp-for="Email" class="form-control" placeholder="name@example.com" data-i18n-placeholder="login.emailPlaceholder" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label fw-bold" data-i18n="login.password">Password</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">lock</span>
+                        <input asp-for="Password" type="password" class="form-control" data-i18n-placeholder="login.passwordPlaceholder" placeholder="Password" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <label class="form-check d-flex align-items-center gap-2 mb-0">
+                        <input class="form-check-input mt-0" type="checkbox" />
+                        <span data-i18n="login.remember">Remember me</span>
+                    </label>
+                    <a href="#" data-i18n="login.forgot">Forgot password?</a>
+                </div>
+
+                <button class="btn btn-accent w-100" type="submit" data-i18n="login.submit">Login</button>
+            </form>
+
+            <p class="text-center muted mt-4 mb-0">
+                <span data-i18n="login.noAccount">No account?</span>
+                <a asp-action="Register" data-i18n="login.register">Register</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

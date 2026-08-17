@@ -1,0 +1,55 @@
+@model List<Orders>
+
+@{
+    ViewData["Title"] = "Admin Orders";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Admin</span>
+        <h1 class="display-title mt-2 mb-0">Orders</h1>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="panel">
+            <table class="table table-store align-middle">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>#@order.Id</td>
+                            <td>@order.User?.Name</td>
+                            <td>@order.OrderDate.ToString("MMM d, yyyy")</td>
+                            <td>
+                                <form class="d-flex gap-2" asp-action="UpdateOrderStatus" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <select class="form-select" name="status">
+                                        <option selected="@(order.Status == "Pending")">Pending</option>
+                                        <option selected="@(order.Status == "Processing")">Processing</option>
+                                        <option selected="@(order.Status == "Shipped")">Shipped</option>
+                                        <option selected="@(order.Status == "Delivered")">Delivered</option>
+                                        <option selected="@(order.Status == "Cancelled")">Cancelled</option>
+                                    </select>
+                                    <button class="btn btn-outline-dark py-1" type="submit">Save</button>
+                                </form>
+                            </td>
+                            <td><strong>$@order.TotalPrice.ToString("0.00")</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

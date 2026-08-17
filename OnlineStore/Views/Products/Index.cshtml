@@ -1,36 +1,69 @@
-﻿@model List<Products>
+@model ProductCatalogViewModel
 
-<h1 class="my-4">Products</h1>
+@{
+    ViewData["Title"] = Model.Title;
+}
 
-<table class="table-bordered table-striped table">
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Catalog</span>
+        <h1 class="display-title mt-2 mb-3">@Model.Title</h1>
+        <p class="muted mb-0">Search, filter, inspect details, add items to cart, and review products from the database.</p>
+    </div>
+</section>
 
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Category</th>
-            <th>Image</th>
-        </tr>
-    </thead>
+<section class="page-section">
+    <div class="container">
+        <div class="toolbar mb-4">
+            <div class="filter-bar">
+                <a class="filter-chip @(Model.CategoryId == null ? "active" : "")" asp-action="Index">All</a>
+                @foreach (var category in Model.Categories)
+                {
+                    <a class="filter-chip @(Model.CategoryId == category.Id ? "active" : "")" asp-action="Index" asp-route-categoryId="@category.Id">@category.Name</a>
+                }
+            </div>
+            <form class="d-flex gap-2" asp-action="Index" method="get">
+                <input class="form-control" name="searchTerm" value="@Model.SearchTerm" placeholder="Search catalog" />
+                <button class="btn btn-accent" type="submit">Search</button>
+            </form>
+        </div>
 
-    <tbody>
-
-        @foreach (var product in Model)
+        @if (!Model.Products.Any())
         {
-            <tr>
-                <td>@product.Id</td>
-                <td>@product.Name</td>
-                <td>@product.Description</td>
-                <td>$@product.Price</td>
-                <td>@product.Stock</td>
-                <td>@product.Category.Name</td>
-                <td>@product.ImageUrl</td>
-            </tr>
+            <div class="empty-state">
+                <h2 class="section-title">No products found</h2>
+                <p class="muted">Try another search or category.</p>
+            </div>
         }
-
-    </tbody>
-
-</table>
+        else
+        {
+            <div class="product-grid">
+                @foreach (var product in Model.Products)
+                {
+                    var averageRating = product.Reviews != null && product.Reviews.Any() ? product.Reviews.Average(review => review.Rating) : 0;
+                    <article class="product-card">
+                        <a asp-action="Details" asp-route-id="@product.Id">
+                            <img src="@product.ImageUrl" alt="@product.Name" />
+                        </a>
+                        <div class="product-card-body">
+                            <span class="category-pill">@product.Category?.Name</span>
+                            <h3 class="product-title"><a asp-action="Details" asp-route-id="@product.Id">@product.Name</a></h3>
+                            <p class="muted mb-0">@product.Description</p>
+                            <div><span class="rating">*****</span> <span class="muted small">@averageRating.ToString("0.0") (@(product.Reviews?.Count ?? 0))</span></div>
+                            <div class="d-flex align-items-center justify-content-between mt-auto">
+                                <span class="price">$@product.Price.ToString("0.00")</span>
+                                <form asp-controller="Cart" asp-action="Add" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <button class="icon-button" type="submit" aria-label="Add @product.Name to cart">
+                                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</section>

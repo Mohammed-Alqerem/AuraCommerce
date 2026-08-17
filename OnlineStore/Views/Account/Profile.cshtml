@@ -1,0 +1,64 @@
+@model Users
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Account</span>
+        <h1 class="display-title mt-2 mb-0">My Profile</h1>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="panel">
+                    @if (ViewData["Saved"] as bool? == true)
+                    {
+                        <div class="alert alert-success">Profile saved.</div>
+                    }
+                    <form asp-action="Profile" method="post" class="row g-3">
+                        @Html.AntiForgeryToken()
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label fw-bold"></label>
+                            <input asp-for="Name" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold"></label>
+                            <input asp-for="Email" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label fw-bold"></label>
+                            <input asp-for="Phone" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-bold"></label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label fw-bold"></label>
+                            <input asp-for="Address" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-accent" type="submit">Save Profile</button>
+                        </div>
+                    </form>
+                    <form asp-action="Logout" method="post" class="mt-3">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-outline-dark" type="submit">Logout</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="stats-grid" style="grid-template-columns: 1fr;">
+                    <div class="stat-card"><span>Orders</span><strong>@(Model.Orders?.Count ?? 0)</strong></div>
+                    <div class="stat-card"><span>Reviews</span><strong>@(Model.Reviews?.Count ?? 0)</strong></div>
+                    <div class="stat-card"><span>Member Since</span><strong>@Model.CreatedAt.ToString("yyyy")</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

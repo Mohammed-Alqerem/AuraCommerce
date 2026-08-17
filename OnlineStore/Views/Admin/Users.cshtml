@@ -1,0 +1,42 @@
+@model List<Users>
+
+@{
+    ViewData["Title"] = "Admin Users";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">Admin</span>
+        <h1 class="display-title mt-2 mb-0">Users</h1>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="container">
+        <div class="panel">
+            <table class="table table-store align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Orders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>@user.Phone</td>
+                            <td>@user.Address</td>
+                            <td>@(user.Orders?.Count ?? 0)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

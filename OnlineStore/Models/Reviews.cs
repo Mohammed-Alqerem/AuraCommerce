@@ -12,20 +12,20 @@ namespace OnlineStore.Models
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public Users User { get; set; }
+        public Users? User { get; set; }
 
         [Required]
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
-        public Products Product { get; set; }
+        public Products? Product { get; set; }
 
         [Required]
         [Range(1, 5)]
         public int Rating { get; set; }
 
         [StringLength(500)]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

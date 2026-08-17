@@ -11,11 +11,11 @@ namespace OnlineStore.Models
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public Users User { get; set; }
+        public Users? User { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public ICollection<CartItems> CartItems { get; set; }
+        public ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
     }
 }
