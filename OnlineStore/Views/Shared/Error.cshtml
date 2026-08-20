@@ -3,17 +3,13 @@
     ViewData["Title"] = "Error";
 }
 
-<section class="error-page">
+<section class="page-section">
     <div class="container">
-        <div class="error-card mx-auto" role="alert">
-            <div class="error-icon"><span class="material-symbols-outlined">sentiment_dissatisfied</span></div>
-            <span class="eyebrow">Storefront notice</span>
-            <h1 class="section-title mt-3">We hit a small snag</h1>
-            <p class="muted">Your data is safe. Please return to the storefront and try again in a moment.</p>
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-                <a class="btn btn-accent" asp-controller="Home" asp-action="Index"><span class="material-symbols-outlined">home</span>Return home</a>
-                <a class="btn btn-outline-dark" asp-controller="Products" asp-action="Index">Browse products</a>
-            </div>
+        <div class="empty-state mx-auto" style="max-width: 680px;" role="alert">
+            <span class="material-symbols-outlined text-danger" style="font-size: 56px;">error</span>
+            <h1 class="section-title mt-3">Something went wrong</h1>
+            <p class="muted">We could not complete that request. Please return to the storefront and try again.</p>
+            <a class="btn btn-accent" asp-controller="Home" asp-action="Index">Return home</a>
             @if (Model.ShowRequestId)
             {
                 <p class="muted small mt-4 mb-0">Support reference: <code>@Model.RequestId</code></p>
