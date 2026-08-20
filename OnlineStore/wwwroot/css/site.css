@@ -496,15 +496,13 @@ img {
     min-height: 100%;
     overflow: hidden;
     animation: fadeUp .55s var(--ease-out) both;
-    transition: transform .22s var(--ease-out), box-shadow .22s var(--ease-out), border-color .22s var(--ease-out);
-    transform-style: preserve-3d;
-    will-change: transform;
+    transition: transform .28s var(--ease-out), box-shadow .28s var(--ease-out), border-color .28s var(--ease-out);
 }
 
 .product-card:hover {
     border-color: rgba(0, 123, 255, .24);
     box-shadow: var(--shadow-strong);
-    transform: translateY(-4px);
+    transform: translateY(-5px);
 }
 
 .product-card img {
@@ -1315,6 +1313,12 @@ hr {
 
     .admin-table {
         min-width: 720px;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1199px) {
+    .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 

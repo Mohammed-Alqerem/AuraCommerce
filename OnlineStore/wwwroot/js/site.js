@@ -460,21 +460,6 @@
         });
     }
 
-    if (!reducedMotion && window.matchMedia("(pointer: fine)").matches) {
-        document.querySelectorAll(".product-card").forEach((card) => {
-            card.addEventListener("pointermove", (event) => {
-                const rect = card.getBoundingClientRect();
-                const x = (event.clientX - rect.left) / rect.width - 0.5;
-                const y = (event.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `translateY(-4px) rotateX(${(-y * 4).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
-            });
-
-            card.addEventListener("pointerleave", () => {
-                card.style.transform = "";
-            });
-        });
-    }
-
     document.querySelectorAll('form[action*="/Cart/Add"], form[action$="Cart/Add"]').forEach((form) => {
         form.addEventListener("submit", () => {
             const button = form.querySelector("button");
