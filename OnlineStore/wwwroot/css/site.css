@@ -609,6 +609,15 @@ img {
     transform: translateY(-2px);
 }
 
+[data-theme="dark"] .filter-chip.active,
+[data-theme="dark"] .filter-chip:hover,
+[data-theme="dark"] .admin-subnav-link:hover,
+[data-theme="dark"] .admin-subnav-link.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #07111f;
+}
+
 .panel {
     background: var(--surface);
     border: 1px solid var(--line);
