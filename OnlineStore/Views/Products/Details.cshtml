@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = Model.Name;
     var averageRating = Model.Reviews != null && Model.Reviews.Any() ? Model.Reviews.Average(review => review.Rating) : 0;
+    var canReview = Context.Session.GetInt32("UserId").HasValue && Context.Session.GetInt32("UserId") != 1;
 }
 
 <section class="page-section">
@@ -24,14 +25,24 @@
                     <span class="price">$@Model.Price.ToString("0.00")</span>
                     <span class="muted">@Model.Stock in stock</span>
                 </div>
-                <form class="d-flex gap-2 mb-4" asp-controller="Cart" asp-action="Add" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <input class="form-control" style="max-width: 100px" type="number" name="quantity" value="1" min="1" max="@Model.Stock" />
-                    <button class="btn btn-accent" type="submit">Add to Cart</button>
-                </form>
+                @if (Model.Stock > 0)
+                {
+                    <form class="d-flex gap-2 mb-4 product-purchase-form" asp-controller="Cart" asp-action="Add" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <label class="visually-hidden" for="quantity">Quantity</label>
+                        <input id="quantity" class="form-control" style="max-width: 100px" type="number" name="quantity" value="1" min="1" max="@Model.Stock" />
+                        <button class="btn btn-accent" type="submit">Add to Cart</button>
+                    </form>
+                }
+                else
+                {
+                    <p class="stock-indicator critical mb-4">Out of stock</p>
+                }
                 <div class="panel">
                     <h2 class="h5 fw-bold">Add Review</h2>
+                    @if (canReview)
+                    {
                     <form asp-action="AddReview" method="post" class="row g-3">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="productId" value="@Model.Id" />
@@ -45,12 +56,18 @@
                             </select>
                         </div>
                         <div class="col-sm-8">
-                            <input class="form-control" name="comment" placeholder="Share your feedback" />
+                            <label class="visually-hidden" for="comment">Your review</label>
+                            <input id="comment" class="form-control" name="comment" maxlength="500" placeholder="Share your feedback" />
                         </div>
                         <div class="col-12">
                             <button class="btn btn-outline-dark" type="submit">Post Review</button>
                         </div>
                     </form>
+                    }
+                    else
+                    {
+                        <p class="muted mb-0">Please <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">sign in as a customer</a> to share a review.</p>
+                    }
                 </div>
             </div>
         </div>

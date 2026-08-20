@@ -1,18 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using OnlineStore.Data;
 using OnlineStore.Filters;
 using OnlineStore.Models;
+using OnlineStore.Models.ViewModels;
 
 namespace OnlineStore.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordHasher<Users> _passwordHasher;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, IPasswordHasher<Users> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpGet]
@@ -29,16 +33,37 @@ namespace OnlineStore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(Users user, string? returnUrl = null)
+        public IActionResult Login(LoginViewModel model, string? returnUrl = null)
         {
-            var existingUser = _context.Users.FirstOrDefault(u =>
-                u.Email == user.Email &&
-                u.Password == user.Password);
+            if (!ModelState.IsValid)
+            {
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(model);
+            }
+
+            var email = model.Email.Trim();
+            var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
 
             if (existingUser == null)
             {
                 ModelState.AddModelError("", "Email or Password is incorrect");
-                return View(user);
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(model);
+            }
+
+            var verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
+            var legacyPasswordMatches = existingUser.Password == model.Password;
+            if (verification == PasswordVerificationResult.Failed && !legacyPasswordMatches)
+            {
+                ModelState.AddModelError("", "Email or Password is incorrect");
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(model);
+            }
+
+            if (legacyPasswordMatches || verification == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                existingUser.Password = _passwordHasher.HashPassword(existingUser, model.Password);
+                _context.SaveChanges();
             }
 
             HttpContext.Session.SetInt32("UserId", existingUser.Id);
@@ -68,7 +93,8 @@ namespace OnlineStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(Users user)
         {
-            if (_context.Users.Any(existing => existing.Email == user.Email))
+            user.Email = user.Email.Trim();
+            if (_context.Users.Any(existing => existing.Email.ToLower() == user.Email.ToLower()))
             {
                 ModelState.AddModelError(nameof(Users.Email), "This email is already registered.");
             }
@@ -79,6 +105,7 @@ namespace OnlineStore.Controllers
             }
 
             user.CreatedAt = DateTime.Now;
+            user.Password = _passwordHasher.HashPassword(user, user.Password);
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -135,14 +162,29 @@ namespace OnlineStore.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            user.Name = model.Name;
+            ModelState.Remove(nameof(Users.Password));
+            model.Email = model.Email.Trim();
+            if (_context.Users.Any(existing => existing.Email.ToLower() == model.Email.ToLower() && existing.Id != userId))
+            {
+                ModelState.AddModelError(nameof(Users.Email), "This email is already registered.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Orders = user.Orders;
+                model.Reviews = user.Reviews;
+                model.CreatedAt = user.CreatedAt;
+                return View(model);
+            }
+
+            user.Name = model.Name.Trim();
             user.Email = model.Email;
             user.Phone = model.Phone;
             user.Address = model.Address;
 
             if (!string.IsNullOrWhiteSpace(model.Password))
             {
-                user.Password = model.Password;
+                user.Password = _passwordHasher.HashPassword(user, model.Password);
             }
 
             _context.SaveChanges();

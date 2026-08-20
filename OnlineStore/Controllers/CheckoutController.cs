@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using OnlineStore.Data;
 using OnlineStore.Filters;
 using OnlineStore.Models;
@@ -54,17 +55,30 @@ namespace OnlineStore.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            using var transaction = _context.Database.BeginTransaction(IsolationLevel.Serializable);
+            var cart = BuildCartViewModel();
+            var unavailableItems = cart.Items
+                .Where(item => item.Product == null || item.Quantity > item.Product.Stock)
+                .Select(item => item.Product?.Name ?? "A product")
+                .ToList();
+
+            if (unavailableItems.Any())
+            {
+                transaction.Rollback();
+                ModelState.AddModelError("", $"Insufficient stock for: {string.Join(", ", unavailableItems)}.");
+                return View(viewModel);
+            }
+
             var order = new Orders
             {
                 UserId = userId.Value,
                 OrderDate = DateTime.Now,
-                TotalPrice = viewModel.Cart.Total,
+                TotalPrice = cart.Total,
                 Status = "Processing"
             };
             _context.Orders.Add(order);
-            _context.SaveChanges();
 
-            foreach (var cartItem in viewModel.Cart.Items)
+            foreach (var cartItem in cart.Items)
             {
                 if (cartItem.Product == null)
                 {
@@ -84,16 +98,23 @@ namespace OnlineStore.Controllers
             }
 
             _context.SaveChanges();
+            transaction.Commit();
             return RedirectToAction(nameof(Success), new { id = order.Id });
         }
 
         public IActionResult Success(int id)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var order = _context.Orders
                 .Include(item => item.User)
                 .Include(item => item.OrderItems)
                     .ThenInclude(item => item.Product)
-                .FirstOrDefault(item => item.Id == id);
+                .FirstOrDefault(item => item.Id == id && item.UserId == userId.Value);
 
             if (order == null)
             {

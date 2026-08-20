@@ -1,4 +1,4 @@
-@model Users
+@model LoginViewModel
 
 @{
     ViewData["Title"] = "Login";
@@ -65,7 +65,7 @@
                     <label asp-for="Email" class="form-label fw-bold" data-i18n="login.email">Email</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">mail</span>
-                        <input asp-for="Email" class="form-control" placeholder="name@example.com" data-i18n-placeholder="login.emailPlaceholder" />
+                        <input asp-for="Email" class="form-control" autocomplete="email" placeholder="name@example.com" data-i18n-placeholder="login.emailPlaceholder" />
                     </div>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
@@ -74,7 +74,7 @@
                     <label asp-for="Password" class="form-label fw-bold" data-i18n="login.password">Password</label>
                     <div class="input-with-icon">
                         <span class="material-symbols-outlined">lock</span>
-                        <input asp-for="Password" type="password" class="form-control" data-i18n-placeholder="login.passwordPlaceholder" placeholder="Password" />
+                        <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" data-i18n-placeholder="login.passwordPlaceholder" placeholder="Password" />
                     </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>

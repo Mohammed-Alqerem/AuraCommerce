@@ -57,7 +57,8 @@
                                             <form class="d-flex gap-2" asp-action="Update" method="post">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="itemId" value="@item.Id" />
-                                                <input class="form-control" type="number" name="quantity" value="@item.Quantity" min="0" style="width: 86px;" />
+                                                <label class="visually-hidden" for="quantity-@item.Id">Quantity for @item.Product.Name</label>
+                                                <input id="quantity-@item.Id" class="form-control" type="number" name="quantity" value="@item.Quantity" min="0" max="@item.Product.Stock" style="width: 86px;" />
                                                 <button class="btn btn-outline-dark py-1" type="submit">Update</button>
                                             </form>
                                         </td>

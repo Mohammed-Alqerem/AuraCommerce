@@ -103,6 +103,17 @@ a {
     text-decoration: none;
 }
 
+:focus-visible {
+    outline: 3px solid #64b5f6;
+    outline-offset: 3px;
+}
+
+button:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+    outline: none;
+}
+
 [dir="rtl"] body {
     text-align: right;
 }
@@ -599,6 +610,18 @@ img {
     border-color: #64b5f6;
     box-shadow: 0 0 0 4px rgba(100, 181, 246, .22);
     transform: translateY(-1px);
+}
+
+.input-validation-error {
+    border-color: var(--danger) !important;
+}
+
+.field-validation-error,
+.validation-summary-errors {
+    color: var(--danger);
+    display: block;
+    font-size: .875rem;
+    margin-top: .35rem;
 }
 
 .status-pending {
@@ -1192,6 +1215,25 @@ img {
     }
 }
 
+@media (max-width: 767px) {
+    .panel:has(.table-store) {
+        overflow-x: auto;
+        padding: 0;
+    }
+
+    .panel:has(.table-store) .table-store {
+        min-width: 620px;
+    }
+
+    .toolbar > form {
+        width: 100%;
+    }
+
+    .toolbar > form .form-control {
+        min-width: 0;
+    }
+}
+
 @media (max-width: 576px) {
     .page-section {
         padding: 44px 0;
@@ -1229,5 +1271,14 @@ img {
 
     .admin-panel-bar {
         padding: .9rem 1rem;
+    }
+
+    .product-purchase-form {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .product-purchase-form .btn {
+        flex: 1;
     }
 }
