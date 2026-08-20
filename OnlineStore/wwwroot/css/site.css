@@ -453,6 +453,14 @@ img {
     width: 100%;
 }
 
+.motion-curtain {
+    background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 55%, var(--accent) 100%);
+    inset: 0;
+    pointer-events: none;
+    position: fixed;
+    z-index: 9999;
+}
+
 [data-theme="dark"] .commerce-scene {
     opacity: .92;
 }
