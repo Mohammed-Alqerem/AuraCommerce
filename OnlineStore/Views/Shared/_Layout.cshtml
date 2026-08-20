@@ -1,9 +1,20 @@
+@inject OnlineStore.Data.ApplicationDbContext DbContext
 @{
     var currentUserId = Context.Session.GetInt32("UserId");
     var currentUserName = Context.Session.GetString("UserName");
     var isLoggedIn = currentUserId.HasValue;
     var isAdmin = currentUserId == 1;
     var isCustomer = isLoggedIn && !isAdmin;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var cartItemCount = 0;
+
+    if (isCustomer)
+    {
+        cartItemCount = DbContext.CartItems
+            .Where(item => item.Cart!.UserId == currentUserId!.Value)
+            .Select(item => (int?)item.Quantity)
+            .Sum() ?? 0;
+    }
 }
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -20,6 +31,7 @@
 </head>
 <body>
     <div class="scroll-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header sticky-top">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
@@ -29,15 +41,15 @@
                 </button>
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav mx-auto gap-lg-2">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index" data-i18n="nav.products">Products</a></li>
+                        <li class="nav-item"><a class="nav-link @(currentController == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link @(currentController == "Products" ? "active" : "")" asp-controller="Products" asp-action="Index" data-i18n="nav.products">Products</a></li>
                         @if (isCustomer)
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index" data-i18n="nav.orders">Orders</a></li>
+                            <li class="nav-item"><a class="nav-link @(currentController == "Orders" ? "active" : "")" asp-controller="Orders" asp-action="Index" data-i18n="nav.orders">Orders</a></li>
                         }
                         @if (isAdmin)
                         {
-                            <li class="nav-item"><a class="nav-link admin-nav-link" asp-controller="Admin" asp-action="Index" data-i18n="nav.adminPortal">Admin Portal</a></li>
+                            <li class="nav-item"><a class="nav-link admin-nav-link @(currentController == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index" data-i18n="nav.adminPortal">Admin Portal</a></li>
                         }
                     </ul>
                     <form class="nav-search" asp-controller="Products" asp-action="Index" method="get">
@@ -51,8 +63,12 @@
                         <button class="language-button js-language-toggle" type="button" aria-label="Switch language">AR</button>
                         @if (isCustomer)
                         {
-                            <a class="icon-button" asp-controller="Cart" asp-action="Index" aria-label="Cart" data-i18n-aria-label="nav.cart">
+                            <a class="icon-button cart-button" asp-controller="Cart" asp-action="Index" aria-label="Cart, @cartItemCount items" data-i18n-aria-label="nav.cart">
                                 <span class="material-symbols-outlined">shopping_cart</span>
+                                @if (cartItemCount > 0)
+                                {
+                                    <span class="cart-count" aria-hidden="true">@cartItemCount</span>
+                                }
                             </a>
                             <a class="account-chip" asp-controller="Account" asp-action="Profile" aria-label="Profile" data-i18n-aria-label="nav.profile">
                                 <span class="material-symbols-outlined">account_circle</span>
@@ -85,9 +101,17 @@
         </nav>
     </header>
 
-    <main role="main">
+    <main id="main-content" role="main" tabindex="-1">
         @RenderBody()
     </main>
+
+    @if (TempData["CartMessage"] is string cartMessage)
+    {
+        <div class="store-toast" role="status" aria-live="polite">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span>@cartMessage</span>
+        </div>
+    }
 
     <footer class="site-footer">
         <div class="container footer-grid">

@@ -80,6 +80,24 @@ body::before {
     z-index: 1200;
 }
 
+.skip-link {
+    background: var(--text);
+    border-radius: 0 0 8px 8px;
+    color: white;
+    left: 1rem;
+    padding: .7rem 1rem;
+    position: fixed;
+    top: 0;
+    transform: translateY(-110%);
+    transition: transform .2s var(--ease-out);
+    z-index: 1300;
+}
+
+.skip-link:focus {
+    color: white;
+    transform: translateY(0);
+}
+
 a {
     color: var(--accent);
     text-decoration: none;
@@ -136,7 +154,8 @@ img {
     position: relative;
 }
 
-.navbar .nav-link:hover {
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
     color: var(--accent);
 }
 
@@ -154,7 +173,8 @@ img {
     width: calc(100% - 1.7rem);
 }
 
-.navbar .nav-link:hover::after {
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
     transform: scaleX(1);
 }
 
@@ -286,6 +306,28 @@ img {
     border-color: var(--accent);
     color: var(--accent);
     transform: translateY(-2px);
+}
+
+.cart-button {
+    position: relative;
+}
+
+.cart-count {
+    align-items: center;
+    background: var(--accent);
+    border: 2px solid var(--surface);
+    border-radius: 999px;
+    color: white;
+    display: flex;
+    font-size: .64rem;
+    font-weight: 800;
+    height: 19px;
+    justify-content: center;
+    min-width: 19px;
+    padding: 0 .25rem;
+    position: absolute;
+    right: -5px;
+    top: -5px;
 }
 
 .page-section {
@@ -637,6 +679,29 @@ img {
     padding: 54px 0;
 }
 
+.store-toast {
+    align-items: center;
+    background: var(--text);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 12px;
+    bottom: 1.25rem;
+    box-shadow: var(--shadow-strong);
+    color: white;
+    display: flex;
+    font-weight: 600;
+    gap: .65rem;
+    max-width: min(360px, calc(100vw - 2rem));
+    padding: .9rem 1rem;
+    position: fixed;
+    right: 1.25rem;
+    z-index: 1100;
+}
+
+[dir="rtl"] .store-toast {
+    left: 1.25rem;
+    right: auto;
+}
+
 .footer-grid {
     display: grid;
     gap: 2rem;
@@ -938,6 +1003,15 @@ img {
 }
 
 @media (max-width: 992px) {
+    .navbar-collapse {
+        padding: 1rem 0;
+    }
+
+    .nav-actions {
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
     .nav-search {
         margin: .75rem 0;
         max-width: none;
@@ -963,5 +1037,12 @@ img {
 
     .hero {
         padding-top: 48px;
+    }
+
+    .store-toast {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
     }
 }

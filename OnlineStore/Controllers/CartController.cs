@@ -35,6 +35,16 @@ namespace OnlineStore.Controllers
 
             var item = _context.CartItems.FirstOrDefault(cartItem =>
                 cartItem.CartId == cart.Id && cartItem.ProductId == productId);
+            var currentQuantity = item?.Quantity ?? 0;
+            var availableQuantity = product.Stock - currentQuantity;
+
+            if (availableQuantity <= 0)
+            {
+                TempData["CartMessage"] = $"{product.Name} is already at the available stock limit in your cart.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var quantityToAdd = Math.Min(Math.Max(1, quantity), availableQuantity);
 
             if (item == null)
             {
@@ -42,15 +52,16 @@ namespace OnlineStore.Controllers
                 {
                     CartId = cart.Id,
                     ProductId = productId,
-                    Quantity = Math.Max(1, quantity)
+                    Quantity = quantityToAdd
                 });
             }
             else
             {
-                item.Quantity += Math.Max(1, quantity);
+                item.Quantity += quantityToAdd;
             }
 
             _context.SaveChanges();
+            TempData["CartMessage"] = $"{product.Name} was added to your cart.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -58,7 +69,7 @@ namespace OnlineStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(int itemId, int quantity)
         {
-            var item = _context.CartItems.FirstOrDefault(cartItem => cartItem.Id == itemId);
+            var item = GetCurrentUsersCartItem(itemId, includeProduct: true);
             if (item == null)
             {
                 return NotFound();
@@ -70,7 +81,15 @@ namespace OnlineStore.Controllers
             }
             else
             {
-                item.Quantity = quantity;
+                var adjustedQuantity = Math.Min(quantity, item.Product?.Stock ?? quantity);
+                if (adjustedQuantity <= 0)
+                {
+                    _context.CartItems.Remove(item);
+                }
+                else
+                {
+                    item.Quantity = adjustedQuantity;
+                }
             }
 
             _context.SaveChanges();
@@ -81,7 +100,7 @@ namespace OnlineStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Remove(int itemId)
         {
-            var item = _context.CartItems.FirstOrDefault(cartItem => cartItem.Id == itemId);
+            var item = GetCurrentUsersCartItem(itemId);
             if (item != null)
             {
                 _context.CartItems.Remove(item);
@@ -131,6 +150,25 @@ namespace OnlineStore.Controllers
             _context.SaveChanges();
 
             return cart;
+        }
+
+        private CartItems? GetCurrentUsersCartItem(int itemId, bool includeProduct = false)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return null;
+            }
+
+            var query = _context.CartItems
+                .Where(cartItem => cartItem.Id == itemId && cartItem.Cart!.UserId == userId.Value);
+
+            if (includeProduct)
+            {
+                query = query.Include(cartItem => cartItem.Product);
+            }
+
+            return query.FirstOrDefault();
         }
     }
 }
