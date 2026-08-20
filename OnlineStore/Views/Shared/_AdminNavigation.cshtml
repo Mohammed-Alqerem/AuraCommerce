@@ -1,0 +1,22 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<nav class="admin-subnav" aria-label="Admin navigation">
+    <a class="admin-subnav-link @(currentAction == "Index" ? "active" : "")" asp-controller="Admin" asp-action="Index">
+        <span class="material-symbols-outlined">space_dashboard</span>
+        <span>Overview</span>
+    </a>
+    <a class="admin-subnav-link @(currentAction is "Products" or "ProductForm" ? "active" : "")" asp-controller="Admin" asp-action="Products">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>Products</span>
+    </a>
+    <a class="admin-subnav-link @(currentAction == "Orders" ? "active" : "")" asp-controller="Admin" asp-action="Orders">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span>Orders</span>
+    </a>
+    <a class="admin-subnav-link @(currentAction == "Users" ? "active" : "")" asp-controller="Admin" asp-action="Users">
+        <span class="material-symbols-outlined">group</span>
+        <span>Customers</span>
+    </a>
+</nav>

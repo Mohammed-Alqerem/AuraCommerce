@@ -628,6 +628,170 @@ img {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.admin-heading {
+    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.admin-heading .btn {
+    align-items: center;
+    display: inline-flex;
+    gap: .35rem;
+}
+
+.admin-subnav {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    display: flex;
+    gap: .35rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding: .45rem;
+}
+
+.admin-subnav-link {
+    align-items: center;
+    border-radius: 9px;
+    color: var(--muted);
+    display: inline-flex;
+    flex: 1 0 auto;
+    font-size: .88rem;
+    font-weight: 700;
+    gap: .5rem;
+    justify-content: center;
+    padding: .7rem .9rem;
+    transition: background .2s var(--ease-out), color .2s var(--ease-out);
+}
+
+.admin-subnav-link:hover,
+.admin-subnav-link.active {
+    background: var(--text);
+    color: white;
+}
+
+.stat-card {
+    position: relative;
+}
+
+.stat-card-icon {
+    align-items: center;
+    background: var(--surface-soft);
+    border-radius: 10px;
+    color: var(--accent);
+    display: inline-flex;
+    height: 38px;
+    justify-content: center;
+    margin-bottom: .8rem;
+    width: 38px;
+}
+
+.stat-card small {
+    color: var(--muted);
+    display: block;
+    font-size: .8rem;
+    margin-top: .35rem;
+}
+
+.stat-card-accent {
+    background: linear-gradient(135deg, #0a192f, #174c81);
+    border-color: transparent;
+}
+
+.stat-card-accent span,
+.stat-card-accent strong,
+.stat-card-accent small {
+    color: white;
+}
+
+.stat-card-accent .stat-card-icon {
+    background: rgba(255, 255, 255, .14);
+    color: #b7dcff;
+}
+
+.admin-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.admin-panel-bar {
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.35rem;
+}
+
+.admin-table th {
+    background: var(--surface-soft);
+    border-bottom-width: 1px;
+    padding: .9rem 1rem;
+}
+
+.admin-table td {
+    border-color: var(--line);
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    transition: background .18s var(--ease-out);
+}
+
+.admin-table tbody tr:hover {
+    background: var(--surface-soft);
+}
+
+.inventory-row {
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: .9rem 0;
+}
+
+.inventory-row:last-child { border-bottom: 0; }
+.inventory-row div { display: grid; gap: .16rem; }
+.inventory-row div span { color: var(--muted); font-size: .8rem; }
+
+.stock-indicator,
+.customer-order-count,
+.admin-summary-pill {
+    background: var(--success-bg);
+    border-radius: 999px;
+    color: var(--success);
+    display: inline-flex;
+    font-size: .78rem;
+    font-weight: 800;
+    padding: .35rem .65rem;
+    white-space: nowrap;
+}
+
+.stock-indicator.critical {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.admin-summary-pill { background: var(--surface-soft); color: var(--text); }
+
+.admin-empty {
+    align-items: center;
+    display: flex;
+    gap: .85rem;
+    padding: .85rem 0;
+}
+
+.admin-empty > .material-symbols-outlined { color: var(--success); font-size: 2rem; }
+
+.order-status-select { min-width: 130px; padding-block: .45rem; }
+
+.admin-form-page { padding-top: 42px; }
+.admin-form-heading { align-items: start; display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 1.75rem; }
+
 .stat-card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -1022,6 +1186,10 @@ img {
     .footer-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .admin-table {
+        min-width: 720px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1044,5 +1212,22 @@ img {
         left: 1rem;
         right: 1rem;
         max-width: none;
+    }
+
+    .admin-heading {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .admin-subnav-link {
+        flex: 0 0 auto;
+    }
+
+    .admin-subnav-link span:last-child {
+        display: none;
+    }
+
+    .admin-panel-bar {
+        padding: .9rem 1rem;
     }
 }

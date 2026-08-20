@@ -5,19 +5,24 @@
 }
 
 <section class="page-header">
-    <div class="container">
-        <span class="eyebrow">Admin</span>
-        <h1 class="display-title mt-2 mb-0">Dashboard</h1>
+    <div class="container admin-heading">
+        <div>
+            <span class="eyebrow">Operations workspace</span>
+            <h1 class="display-title mt-2 mb-2">Store overview</h1>
+            <p class="muted mb-0">Monitor sales, fulfilment, and inventory from one focused workspace.</p>
+        </div>
+        <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
+        <partial name="_AdminNavigation" />
         <div class="stats-grid mb-4">
-            <div class="stat-card"><span>Revenue</span><strong>$@Model.Revenue.ToString("0.00")</strong></div>
-            <div class="stat-card"><span>Orders</span><strong>@Model.OrderCount</strong></div>
-            <div class="stat-card"><span>Products</span><strong>@Model.ProductCount</strong></div>
-            <div class="stat-card"><span>Users</span><strong>@Model.UserCount</strong></div>
+            <div class="stat-card stat-card-accent"><div class="stat-card-icon"><span class="material-symbols-outlined">payments</span></div><span>Revenue</span><strong>$@Model.Revenue.ToString("0.00")</strong><small>All confirmed orders</small></div>
+            <div class="stat-card"><div class="stat-card-icon"><span class="material-symbols-outlined">receipt_long</span></div><span>Orders</span><strong>@Model.OrderCount</strong><small>@Model.PendingOrderCount need attention</small></div>
+            <div class="stat-card"><div class="stat-card-icon"><span class="material-symbols-outlined">inventory_2</span></div><span>Products</span><strong>@Model.ProductCount</strong><small>@Model.LowStockCount low-stock items</small></div>
+            <div class="stat-card"><div class="stat-card-icon"><span class="material-symbols-outlined">group</span></div><span>Customers</span><strong>@Model.UserCount</strong><small>Registered store users</small></div>
         </div>
         <div class="row g-4">
             <div class="col-lg-7">
@@ -26,16 +31,21 @@
                         <h2 class="h4 fw-bold mb-0">Recent Orders</h2>
                         <a asp-action="Orders">Manage</a>
                     </div>
-                    <table class="table table-store align-middle">
+                    <table class="table table-store align-middle admin-table">
+                        <thead><tr><th>Order</th><th>Customer</th><th>Status</th><th class="text-end">Total</th></tr></thead>
                         <tbody>
+                            @if (!Model.RecentOrders.Any())
+                            {
+                                <tr><td colspan="4" class="text-center muted py-4">Orders will appear here as customers checkout.</td></tr>
+                            }
                             @foreach (var order in Model.RecentOrders)
                             {
                                 var statusClass = $"status-{order.Status.ToLower()}";
                                 <tr>
-                                    <td>#@order.Id</td>
+                                    <td><strong>#@order.Id</strong><div class="muted small">@order.OrderDate.ToString("MMM d")</div></td>
                                     <td>@order.User?.Name</td>
                                     <td><span class="status-badge @statusClass">@order.Status</span></td>
-                                    <td><strong>$@order.TotalPrice.ToString("0.00")</strong></td>
+                                    <td class="text-end"><strong>$@order.TotalPrice.ToString("0.00")</strong></td>
                                 </tr>
                             }
                         </tbody>
@@ -48,11 +58,15 @@
                         <h2 class="h4 fw-bold mb-0">Inventory Watch</h2>
                         <a asp-action="Products">Products</a>
                     </div>
+                    @if (!Model.LowStockProducts.Any())
+                    {
+                        <div class="admin-empty"><span class="material-symbols-outlined">verified</span><div><strong>Inventory is healthy</strong><p class="muted mb-0">No products are at or below 10 units.</p></div></div>
+                    }
                     @foreach (var product in Model.LowStockProducts)
                     {
-                        <div class="d-flex justify-content-between border-bottom py-2">
-                            <span>@product.Name</span>
-                            <strong>@product.Stock left</strong>
+                        <div class="inventory-row">
+                            <div><strong>@product.Name</strong><span>@product.Category?.Name</span></div>
+                            <span class="stock-indicator @(product.Stock == 0 ? "critical" : "")">@product.Stock left</span>
                         </div>
                     }
                 </div>

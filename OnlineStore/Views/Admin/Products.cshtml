@@ -5,19 +5,22 @@
 }
 
 <section class="page-header">
-    <div class="container toolbar">
+    <div class="container admin-heading">
         <div>
-            <span class="eyebrow">Admin</span>
-            <h1 class="display-title mt-2 mb-0">Products</h1>
+            <span class="eyebrow">Catalog management</span>
+            <h1 class="display-title mt-2 mb-2">Products</h1>
+            <p class="muted mb-0">Manage product information, pricing, and availability.</p>
         </div>
-        <a class="btn btn-accent" asp-action="ProductForm">Add Product</a>
+        <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
-        <div class="panel">
-            <table class="table table-store align-middle">
+        <partial name="_AdminNavigation" />
+        <div class="panel admin-panel">
+            <div class="admin-panel-bar"><span class="muted">@Model.Count products in catalog</span><a asp-action="ProductForm">Create product</a></div>
+            <div class="table-responsive"><table class="table table-store align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -31,10 +34,10 @@
                     @foreach (var product in Model)
                     {
                         <tr>
-                            <td>@product.Name</td>
+                            <td><strong>@product.Name</strong><div class="muted small text-truncate" style="max-width: 260px;">@product.Description</div></td>
                             <td>@product.Category?.Name</td>
-                            <td>$@product.Price.ToString("0.00")</td>
-                            <td>@product.Stock</td>
+                            <td><strong>$@product.Price.ToString("0.00")</strong></td>
+                            <td><span class="stock-indicator @(product.Stock <= 10 ? "critical" : "")">@product.Stock in stock</span></td>
                             <td>
                                 <div class="d-flex gap-2 justify-content-end">
                                     <a class="btn btn-outline-dark py-1" asp-action="ProductForm" asp-route-id="@product.Id">Edit</a>
@@ -48,7 +51,7 @@
                         </tr>
                     }
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </section>

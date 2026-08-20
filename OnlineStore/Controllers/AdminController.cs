@@ -25,6 +25,8 @@ namespace OnlineStore.Controllers
                 ProductCount = _context.Products.Count(),
                 UserCount = _context.Users.Count(),
                 OrderCount = _context.Orders.Count(),
+                PendingOrderCount = _context.Orders.Count(order => order.Status == "Pending" || order.Status == "Processing"),
+                LowStockCount = _context.Products.Count(product => product.Stock <= 10),
                 Revenue = _context.Orders.Sum(order => order.TotalPrice),
                 RecentOrders = _context.Orders
                     .Include(order => order.User)
@@ -33,6 +35,7 @@ namespace OnlineStore.Controllers
                     .ToList(),
                 LowStockProducts = _context.Products
                     .Include(product => product.Category)
+                    .Where(product => product.Stock <= 10)
                     .OrderBy(product => product.Stock)
                     .Take(6)
                     .ToList()
@@ -114,11 +117,18 @@ namespace OnlineStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateOrderStatus(int id, string status)
         {
+            var validStatuses = new[] { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
+            if (!validStatuses.Contains(status))
+            {
+                return BadRequest();
+            }
+
             var order = _context.Orders.FirstOrDefault(item => item.Id == id);
             if (order != null)
             {
                 order.Status = status;
                 _context.SaveChanges();
+                TempData["AdminMessage"] = $"Order #{order.Id} is now {status.ToLowerInvariant()}.";
             }
 
             return RedirectToAction(nameof(Orders));

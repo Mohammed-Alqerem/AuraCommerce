@@ -5,16 +5,16 @@
 }
 
 <section class="page-header">
-    <div class="container">
-        <span class="eyebrow">Admin</span>
-        <h1 class="display-title mt-2 mb-0">Users</h1>
+    <div class="container admin-heading">
+        <div><span class="eyebrow">Customer directory</span><h1 class="display-title mt-2 mb-2">Customers</h1><p class="muted mb-0">Review account information and purchase activity.</p></div>
+        <span class="admin-summary-pill">@Model.Count customers</span>
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
-        <div class="panel">
-            <table class="table table-store align-middle">
+        <partial name="_AdminNavigation" />
+        <div class="panel admin-panel"><div class="table-responsive"><table class="table table-store align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -28,15 +28,15 @@
                     @foreach (var user in Model)
                     {
                         <tr>
-                            <td>@user.Name</td>
-                            <td>@user.Email</td>
+                            <td><strong>@user.Name</strong></td>
+                            <td><a href="mailto:@user.Email">@user.Email</a></td>
                             <td>@user.Phone</td>
                             <td>@user.Address</td>
-                            <td>@(user.Orders?.Count ?? 0)</td>
+                            <td><span class="customer-order-count">@(user.Orders?.Count ?? 0)</span></td>
                         </tr>
                     }
                 </tbody>
-            </table>
+            </table></div></div>
         </div>
     </div>
 </section>
