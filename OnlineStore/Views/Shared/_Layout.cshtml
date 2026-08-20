@@ -66,7 +66,7 @@
                         <button class="language-button js-language-toggle" type="button" aria-label="Switch language">AR</button>
                         @if (isCustomer)
                         {
-                            <a class="icon-button cart-button" asp-controller="Cart" asp-action="Index" aria-label="Cart, @cartItemCount items" data-i18n-aria-label="nav.cart">
+                            <a class="icon-button cart-button" asp-controller="Cart" asp-action="Index" aria-label="Cart, @cartItemCount items" data-cart-count="@cartItemCount">
                                 <span class="material-symbols-outlined">shopping_cart</span>
                                 @if (cartItemCount > 0)
                                 {

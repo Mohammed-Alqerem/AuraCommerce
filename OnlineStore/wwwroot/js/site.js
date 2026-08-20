@@ -272,6 +272,29 @@
         "Shipped": "تم الشحن",
         "Delivered": "تم التسليم",
         "Cancelled": "ملغي"
+        ,"Store overview": "نظرة عامة على المتجر"
+        ,"Operations workspace": "مساحة العمليات"
+        ,"Monitor sales, fulfilment, and inventory from one focused workspace.": "راقب المبيعات والتنفيذ والمخزون من مساحة عمل واحدة."
+        ,"Overview": "نظرة عامة"
+        ,"Customers": "العملاء"
+        ,"Catalog management": "إدارة الكتالوج"
+        ,"Manage product information, pricing, and availability.": "أدر معلومات المنتجات والأسعار والتوفر بسهولة."
+        ,"Fulfilment queue": "قائمة التنفيذ"
+        ,"Update each order as it moves through fulfilment.": "حدّث كل طلب أثناء انتقاله خلال مراحل التنفيذ."
+        ,"Customer directory": "دليل العملاء"
+        ,"Review account information and purchase activity.": "راجع معلومات الحساب ونشاط المشتريات."
+        ,"Inventory is healthy": "المخزون بحالة جيدة"
+        ,"No products are at or below 10 units.": "لا توجد منتجات بمخزون أقل من أو يساوي 10 وحدات."
+        ,"Out of stock": "غير متوفر حالياً"
+        ,"Please": "يرجى"
+        ,"sign in as a customer": "تسجيل الدخول كعميل"
+        ,"to share a review.": "لمشاركة تقييمك."
+        ,"Something went wrong": "حدث خطأ ما"
+        ,"We could not complete that request. Please return to the storefront and try again.": "تعذر إكمال الطلب. يرجى العودة إلى المتجر والمحاولة مرة أخرى."
+        ,"Return home": "العودة للرئيسية"
+        ,"Your privacy matters": "خصوصيتك مهمة"
+        ,"Information we store": "المعلومات التي نخزنها"
+        ,"How we use it": "كيف نستخدمها"
     };
     const originalTextNodes = new Map();
 
@@ -280,6 +303,11 @@
         localStorage.setItem("store-theme", theme);
         document.querySelectorAll(".js-theme-toggle .material-symbols-outlined").forEach((icon) => {
             icon.textContent = theme === "dark" ? "light_mode" : "dark_mode";
+        });
+        document.querySelectorAll(".js-theme-toggle").forEach((button) => {
+            const label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+            button.setAttribute("aria-label", label);
+            button.setAttribute("title", label);
         });
     }
 
@@ -303,15 +331,15 @@
             }
         });
 
-        document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
-            const key = element.dataset.i18nAriaLabel;
-            if (key && dictionary[key]) {
-                element.setAttribute("aria-label", dictionary[key]);
-            }
+        document.querySelectorAll("[data-cart-count]").forEach((element) => {
+            const count = element.dataset.cartCount || "0";
+            const label = language === "ar" ? `السلة، ${count} منتجات` : `Cart, ${count} items`;
+            element.setAttribute("aria-label", label);
         });
 
         document.querySelectorAll(".js-language-toggle").forEach((button) => {
             button.textContent = language === "ar" ? "EN" : "AR";
+            button.setAttribute("aria-label", language === "ar" ? "Switch to English" : "التبديل إلى العربية");
         });
 
         translateStaticText(language);
