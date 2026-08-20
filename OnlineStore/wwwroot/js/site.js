@@ -460,6 +460,35 @@
         });
     }
 
+    if (!reducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        document.querySelectorAll(".product-card").forEach((card) => {
+            let frameId = 0;
+            let pointerX = 50;
+            let pointerY = 0;
+
+            card.addEventListener("pointermove", (event) => {
+                const rect = card.getBoundingClientRect();
+                pointerX = ((event.clientX - rect.left) / rect.width) * 100;
+                pointerY = ((event.clientY - rect.top) / rect.height) * 100;
+
+                if (frameId) {
+                    return;
+                }
+
+                frameId = window.requestAnimationFrame(() => {
+                    card.style.setProperty("--pointer-x", `${pointerX}%`);
+                    card.style.setProperty("--pointer-y", `${pointerY}%`);
+                    frameId = 0;
+                });
+            });
+
+            card.addEventListener("pointerleave", () => {
+                card.style.removeProperty("--pointer-x");
+                card.style.removeProperty("--pointer-y");
+            });
+        });
+    }
+
     document.querySelectorAll('form[action*="/Cart/Add"], form[action$="Cart/Add"]').forEach((form) => {
         form.addEventListener("submit", () => {
             const button = form.querySelector("button");
