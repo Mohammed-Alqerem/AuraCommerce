@@ -1,9 +1,11 @@
-import { gsap } from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/+esm";
-import { ScrollTrigger } from "https://cdn.jsdelivr.net/npm/gsap@3.13.0/ScrollTrigger/+esm";
+(() => {
+    const { gsap, ScrollTrigger } = window;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!gsap || !ScrollTrigger || reduceMotion.matches) {
+        return;
+    }
 
-if (!reduceMotion.matches) {
     gsap.registerPlugin(ScrollTrigger);
 
     const animate = (targets, vars) => {
@@ -76,4 +78,4 @@ if (!reduceMotion.matches) {
     });
 
     window.addEventListener("beforeunload", () => context.revert(), { once: true });
-}
+})();
