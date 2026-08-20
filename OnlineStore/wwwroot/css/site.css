@@ -1109,6 +1109,16 @@ hr {
     z-index: 1100;
 }
 
+[data-theme="dark"] .store-toast {
+    background: #18314d;
+    border-color: #3b6387;
+    color: #f7f9fc;
+}
+
+[data-theme="dark"] .store-toast .material-symbols-outlined {
+    color: #8fc8ff;
+}
+
 [dir="rtl"] .store-toast {
     left: 1.25rem;
     right: auto;
