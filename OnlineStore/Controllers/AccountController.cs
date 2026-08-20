@@ -51,8 +51,22 @@ namespace OnlineStore.Controllers
                 return View(model);
             }
 
-            var verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
             var legacyPasswordMatches = existingUser.Password == model.Password;
+            var verification = PasswordVerificationResult.Failed;
+
+            if (!legacyPasswordMatches)
+            {
+                try
+                {
+                    verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
+                }
+                catch (FormatException)
+                {
+                    // Legacy persisted passwords are not Identity hashes. Fail safely.
+                    verification = PasswordVerificationResult.Failed;
+                }
+            }
+
             if (verification == PasswordVerificationResult.Failed && !legacyPasswordMatches)
             {
                 ModelState.AddModelError("", "Email or Password is incorrect");
@@ -142,13 +156,13 @@ namespace OnlineStore.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            return View(user);
+            return View(CreateProfileViewModel(user));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RequireLogin]
-        public IActionResult Profile(Users model)
+        public IActionResult Profile(ProfileViewModel model)
         {
             if (HttpContext.Session.GetInt32("UserId") == 1)
             {
@@ -162,7 +176,6 @@ namespace OnlineStore.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            ModelState.Remove(nameof(Users.Password));
             model.Email = model.Email.Trim();
             if (_context.Users.Any(existing => existing.Email.ToLower() == model.Email.ToLower() && existing.Id != userId))
             {
@@ -171,9 +184,7 @@ namespace OnlineStore.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Orders = user.Orders;
-                model.Reviews = user.Reviews;
-                model.CreatedAt = user.CreatedAt;
+                PopulateProfileDetails(model, user);
                 return View(model);
             }
 
@@ -182,16 +193,16 @@ namespace OnlineStore.Controllers
             user.Phone = model.Phone;
             user.Address = model.Address;
 
-            if (!string.IsNullOrWhiteSpace(model.Password))
+            if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                user.Password = _passwordHasher.HashPassword(user, model.Password);
+                user.Password = _passwordHasher.HashPassword(user, model.NewPassword);
             }
 
             _context.SaveChanges();
             HttpContext.Session.SetString("UserName", user.Name);
-            ViewData["Saved"] = true;
+            TempData["ProfileSaved"] = "Your profile has been updated.";
 
-            return View(user);
+            return RedirectToAction(nameof(Profile));
         }
 
         [HttpPost]
@@ -206,6 +217,33 @@ namespace OnlineStore.Controllers
         private int? GetCurrentUserId()
         {
             return HttpContext.Session.GetInt32("UserId");
+        }
+
+        private ProfileViewModel CreateProfileViewModel(Users user)
+        {
+            var model = new ProfileViewModel
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address
+            };
+
+            PopulateProfileDetails(model, user);
+            return model;
+        }
+
+        private void PopulateProfileDetails(ProfileViewModel model, Users user)
+        {
+            model.MemberSince = user.CreatedAt;
+            model.OrderCount = _context.Orders.Count(order => order.UserId == user.Id);
+            model.ReviewCount = _context.Reviews.Count(review => review.UserId == user.Id);
+            model.RecentOrders = _context.Orders
+                .Where(order => order.UserId == user.Id)
+                .Include(order => order.OrderItems)
+                .OrderByDescending(order => order.OrderDate)
+                .Take(3)
+                .ToList();
         }
     }
 }
