@@ -1,13 +1,13 @@
-# 🛒 OnlineStore MVC Platform
+# Aura Commerce
 
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-512BD4?style=for-the-badge&logo=dotnet)
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)
 ![Entity Framework](https://img.shields.io/badge/Entity%20Framework-Core-68217A?style=for-the-badge)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-CC2927?style=for-the-badge&logo=microsoftsqlserver)
 
-OnlineStore is a modern ASP.NET Core MVC e-commerce platform built with Entity Framework Core and SQL Server. It provides a full shopping experience for customers and a dedicated admin portal for managing store operations.
+Aura Commerce is a responsive ASP.NET Core MVC storefront built with Entity Framework Core and SQL Server. It provides a complete customer journey—from discovery through checkout and order tracking—alongside an operational workspace for catalog, fulfillment, and customer management.
 
-The UI is based on the `stitch_modern_mvc_onlinestore_platform` design direction and includes responsive layouts, animation, theme switching, Arabic/English language support, and role-aware navigation.
+The interface includes a production-style account workspace, responsive layouts, accessible interaction states, theme switching, Arabic/English language support, RTL layout, and role-aware navigation.
 
 ---
 
@@ -89,6 +89,11 @@ git clone https://github.com/Mohammed-Alqerem/OnlineStore.git
 cd OnlineStore
 ```
 
+### Prerequisites
+
+- .NET SDK 9.0
+- SQL Server LocalDB, SQL Server Express, or a reachable SQL Server instance
+
 ### 2. Restore and build
 
 ```powershell
@@ -119,6 +124,8 @@ dotnet run --project OnlineStore
 ```
 
 The app applies EF Core migrations automatically during startup.
+
+The default development URL is `http://localhost:5206`; the HTTPS profile also exposes `https://localhost:7219`.
 
 ---
 
@@ -158,10 +165,22 @@ OnlineStore/
 
 ---
 
-## 📝 Notes
+## 🔐 Security and operations
 
-- Admin access is intentionally separated from the customer shopping flow.
-- Customer-only routes are protected with session checks.
-- The project currently uses seeded users and plain passwords for academic/demo purposes.
-- For production, replace plain password storage with ASP.NET Core Identity or a secure password hashing flow.
+- Admin access is intentionally separated from the customer shopping flow, and customer-only routes use server-side session checks.
+- Unsafe requests use anti-forgery tokens; cart ownership, stock availability, and order access are validated on the server.
+- New and updated passwords use ASP.NET Core's `PasswordHasher<TUser>`. Legacy demo passwords are migrated after a successful sign-in.
+- Session cookies are HTTP-only, secure, and use `SameSite=Lax`.
+- Demo accounts and the LocalDB connection string are for development only. Use environment-specific configuration and remove demo credentials before deployment.
 
+## ✅ Quality checks
+
+```powershell
+dotnet build OnlineStore.slnx --no-restore
+```
+
+Before opening a pull request, verify the affected flow at desktop and mobile widths, in light and dark themes, and in Arabic/RTL mode.
+
+## License
+
+This project is provided for learning and portfolio use. Add an explicit license before distributing it as an open-source product.
