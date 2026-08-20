@@ -4,10 +4,11 @@
     ViewData["Title"] = "Order Success";
 }
 
-<section class="page-section">
+<section class="page-section success-page">
     <div class="container">
-        <div class="panel text-center mx-auto" style="max-width: 760px;">
-            <span class="material-symbols-outlined text-success" style="font-size: 64px;">check_circle</span>
+        <div class="panel success-card text-center mx-auto" style="max-width: 760px;">
+            <div class="success-icon"><span class="material-symbols-outlined">check_circle</span></div>
+            <span class="eyebrow">Order complete</span>
             <h1 class="display-title mt-3 mb-3">Order Confirmed</h1>
             <p class="lead muted">Order #@Model.Id was created on @Model.OrderDate.ToString("MMM d, yyyy").</p>
             <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">

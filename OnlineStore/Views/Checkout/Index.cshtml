@@ -16,8 +16,8 @@
         <form asp-action="Index" method="post" class="row g-4">
             @Html.AntiForgeryToken()
             <div class="col-lg-7">
-                <div class="panel">
-                    <h2 class="h4 fw-bold mb-4">Shipping Details</h2>
+                <div class="panel checkout-panel">
+                    <span class="eyebrow">Step 1 of 1</span><h2 class="h4 fw-bold mb-4 mt-2">Shipping Details</h2>
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -44,8 +44,8 @@
                 </div>
             </div>
             <div class="col-lg-5">
-                <div class="panel">
-                    <h2 class="h4 fw-bold mb-4">Review Order</h2>
+                <div class="panel order-summary-panel checkout-summary">
+                    <span class="eyebrow">Order review</span><h2 class="h4 fw-bold mb-4 mt-2">Review Order</h2>
                     @foreach (var item in Model.Cart.Items)
                     {
                         if (item.Product == null)

@@ -25,7 +25,7 @@
         {
             <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="panel">
+                    <div class="panel cart-panel">
                         <table class="table table-store align-middle">
                             <thead>
                                 <tr>
@@ -79,8 +79,8 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="panel">
-                        <h2 class="h4 fw-bold mb-4">Order Summary</h2>
+                    <div class="panel order-summary-panel">
+                        <span class="eyebrow">Ready when you are</span><h2 class="h4 fw-bold mb-4 mt-2">Order Summary</h2>
                         <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><strong>$@Model.Subtotal.ToString("0.00")</strong></div>
                         <div class="d-flex justify-content-between mb-2"><span>Shipping</span><strong>$@Model.Shipping.ToString("0.00")</strong></div>
                         <div class="d-flex justify-content-between mb-3"><span>Tax</span><strong>$@Model.Tax.ToString("0.00")</strong></div>

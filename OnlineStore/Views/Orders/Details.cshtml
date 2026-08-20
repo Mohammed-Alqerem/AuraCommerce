@@ -7,11 +7,11 @@
 
 <section class="page-section">
     <div class="container">
-        <a asp-action="Index" class="d-inline-flex align-items-center gap-1 mb-4">
+        <a asp-action="Index" class="back-link d-inline-flex align-items-center gap-1 mb-4">
             <span class="material-symbols-outlined">arrow_back</span>
             Back to orders
         </a>
-        <div class="panel mb-4">
+        <div class="panel order-detail-hero mb-4">
             <div class="toolbar">
                 <div>
                     <span class="eyebrow">Order Details</span>
@@ -21,7 +21,7 @@
                 <span class="status-badge @statusClass">@Model.Status</span>
             </div>
         </div>
-        <div class="panel">
+        <div class="panel order-items-panel">
             <table class="table table-store align-middle">
                 <thead>
                     <tr>
