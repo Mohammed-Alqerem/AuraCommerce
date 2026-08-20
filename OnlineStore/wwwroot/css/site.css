@@ -461,6 +461,37 @@ img {
     z-index: 9999;
 }
 
+.error-page {
+    align-items: center;
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%);
+    display: flex;
+    min-height: 70vh;
+    padding: 64px 0;
+}
+
+.error-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    box-shadow: var(--shadow-lg);
+    max-width: 640px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+}
+
+.error-icon {
+    align-items: center;
+    background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+    border-radius: 18px;
+    color: var(--accent-deep);
+    display: inline-flex;
+    height: 64px;
+    justify-content: center;
+    width: 64px;
+}
+
+.error-icon .material-symbols-outlined { font-size: 2rem; }
+
 [data-theme="dark"] .commerce-scene {
     opacity: .92;
 }

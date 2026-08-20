@@ -51,8 +51,23 @@ namespace OnlineStore.Controllers
                 return View(model);
             }
 
-            var verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
             var legacyPasswordMatches = existingUser.Password == model.Password;
+            var verification = PasswordVerificationResult.Failed;
+
+            if (!legacyPasswordMatches)
+            {
+                try
+                {
+                    verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
+                }
+                catch (FormatException)
+                {
+                    // A legacy or malformed persisted value is not an Identity hash.
+                    // Treat it as a failed sign-in without exposing an internal error.
+                    verification = PasswordVerificationResult.Failed;
+                }
+            }
+
             if (verification == PasswordVerificationResult.Failed && !legacyPasswordMatches)
             {
                 ModelState.AddModelError("", "Email or Password is incorrect");
