@@ -18,22 +18,28 @@ namespace OnlineStore.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
+            var featuredProducts = await _context.Products
+                .AsNoTracking()
+                .Where(product => product.IsActive)
+                .Include(product => product.Category)
+                .Include(product => product.Reviews)
+                .OrderBy(product => product.Id)
+                .Take(8)
+                .ToListAsync(cancellationToken);
+            var categories = await _context.Categories
+                .AsNoTracking()
+                .Include(category => category.Products.Where(product => product.IsActive))
+                .OrderBy(category => category.Name)
+                .ToListAsync(cancellationToken);
+
             var viewModel = new StoreHomeViewModel
             {
-                FeaturedProducts = _context.Products
-                    .Include(product => product.Category)
-                    .Include(product => product.Reviews)
-                    .OrderBy(product => product.Id)
-                    .Take(8)
-                    .ToList(),
-                Categories = _context.Categories
-                    .Include(category => category.Products)
-                    .OrderBy(category => category.Name)
-                    .ToList(),
-                ProductCount = _context.Products.Count(),
-                OrderCount = _context.Orders.Count()
+                FeaturedProducts = featuredProducts,
+                Categories = categories,
+                ProductCount = await _context.Products.CountAsync(product => product.IsActive, cancellationToken),
+                OrderCount = await _context.Orders.CountAsync(cancellationToken)
             };
 
             return View(viewModel);

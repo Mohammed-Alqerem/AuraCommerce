@@ -18,6 +18,10 @@
 <section class="page-section">
     <div class="container">
         <partial name="_AdminNavigation" />
+        @if (TempData["AdminMessage"] is string message)
+        {
+            <div class="alert alert-success" role="status">@message</div>
+        }
         <div class="panel admin-panel">
             <div class="admin-panel-bar"><span class="muted">@Model.Count products in catalog</span><a asp-action="ProductForm">Create product</a></div>
             <div class="table-responsive"><table class="table table-store align-middle admin-table">
@@ -26,7 +30,7 @@
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
-                        <th>Stock</th>
+                        <th>Stock / status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -37,14 +41,17 @@
                             <td><strong>@product.Name</strong><div class="muted small text-truncate" style="max-width: 260px;">@product.Description</div></td>
                             <td>@product.Category?.Name</td>
                             <td><strong>$@product.Price.ToString("0.00")</strong></td>
-                            <td><span class="stock-indicator @(product.Stock <= 10 ? "critical" : "")">@product.Stock in stock</span></td>
+                            <td>
+                                <span class="stock-indicator @(product.Stock <= StoreSettings.LowStockThreshold ? "critical" : "")">@product.Stock in stock</span>
+                                <span class="badge @(product.IsActive ? "text-bg-success" : "text-bg-secondary")">@(product.IsActive ? "Active" : "Archived")</span>
+                            </td>
                             <td>
                                 <div class="d-flex gap-2 justify-content-end">
                                     <a class="btn btn-outline-dark py-1" asp-action="ProductForm" asp-route-id="@product.Id">Edit</a>
                                     <form asp-action="DeleteProduct" method="post">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@product.Id" />
-                                        <button class="btn btn-outline-danger py-1" type="submit">Delete</button>
+                                        <button class="btn @(product.IsActive ? "btn-outline-danger" : "btn-outline-success") py-1" type="submit">@(product.IsActive ? "Archive" : "Restore")</button>
                                     </form>
                                 </div>
                             </td>

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using OnlineStore.Constants;
+
 namespace OnlineStore.Models
 {
     public class Users
@@ -12,19 +14,29 @@ namespace OnlineStore.Models
 
         [Required]
         [EmailAddress]
+        [StringLength(256)]
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, MinimumLength = 6)]
+        [StringLength(256)]
+        public string NormalizedEmail { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(256)]
         public string Password { get; set; } = string.Empty;
 
+        [Required]
+        [StringLength(20)]
+        public string Role { get; set; } = UserRoles.Customer;
+
         [Phone]
+        [StringLength(30)]
         public string Phone { get; set; } = string.Empty;
 
         [StringLength(200)]
         public string Address { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Orders> Orders { get; set; } = new List<Orders>();
         public Cart? Cart { get; set; }

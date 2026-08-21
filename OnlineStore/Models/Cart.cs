@@ -14,7 +14,7 @@ namespace OnlineStore.Models
         public Users? User { get; set; }
 
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
     }

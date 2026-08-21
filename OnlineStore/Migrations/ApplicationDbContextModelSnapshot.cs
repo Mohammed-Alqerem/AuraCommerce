@@ -47,25 +47,25 @@ namespace OnlineStore.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 3
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserId = 4
                         });
                 });
@@ -89,11 +89,15 @@ namespace OnlineStore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.HasIndex("CartId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("CartItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_CartItems_Quantity", "[Quantity] > 0");
+                        });
 
                     b.HasData(
                         new
@@ -196,10 +200,16 @@ namespace OnlineStore.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -208,7 +218,12 @@ namespace OnlineStore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderItems_Quantity", "[Quantity] > 0");
+
+                            t.HasCheckConstraint("CK_OrderItems_UnitPrice", "[UnitPrice] > 0");
+                        });
 
                     b.HasData(
                         new
@@ -216,48 +231,54 @@ namespace OnlineStore.Migrations
                             Id = 1,
                             OrderId = 1,
                             ProductId = 1,
+                            ProductName = "Wireless Mouse",
                             Quantity = 1,
-                            UnitPrice = 25.00m
+                            UnitPrice = 25m
                         },
                         new
                         {
                             Id = 2,
                             OrderId = 1,
                             ProductId = 2,
+                            ProductName = "Mechanical Keyboard",
                             Quantity = 1,
-                            UnitPrice = 70.00m
+                            UnitPrice = 70m
                         },
                         new
                         {
                             Id = 3,
                             OrderId = 2,
                             ProductId = 8,
+                            ProductName = "Smart Watch",
                             Quantity = 1,
-                            UnitPrice = 120.00m
+                            UnitPrice = 120m
                         },
                         new
                         {
                             Id = 4,
                             OrderId = 3,
                             ProductId = 7,
+                            ProductName = "Casual Sneakers",
                             Quantity = 1,
-                            UnitPrice = 65.00m
+                            UnitPrice = 65m
                         },
                         new
                         {
                             Id = 5,
                             OrderId = 4,
                             ProductId = 6,
+                            ProductName = "Running Shoes",
                             Quantity = 1,
-                            UnitPrice = 80.00m
+                            UnitPrice = 80m
                         },
                         new
                         {
                             Id = 6,
                             OrderId = 4,
                             ProductId = 8,
+                            ProductName = "Smart Watch",
                             Quantity = 1,
-                            UnitPrice = 70.00m
+                            UnitPrice = 70m
                         });
                 });
 
@@ -278,6 +299,7 @@ namespace OnlineStore.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
@@ -287,39 +309,44 @@ namespace OnlineStore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasCheckConstraint("CK_Orders_Status", "[Status] IN ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled')");
+
+                            t.HasCheckConstraint("CK_Orders_TotalPrice", "[TotalPrice] > 0");
+                        });
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            OrderDate = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderDate = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Delivered",
-                            TotalPrice = 95.00m,
+                            TotalPrice = 95m,
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            OrderDate = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderDate = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Shipped",
-                            TotalPrice = 120.00m,
+                            TotalPrice = 120m,
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
-                            OrderDate = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderDate = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Processing",
-                            TotalPrice = 65.00m,
+                            TotalPrice = 65m,
                             UserId = 3
                         },
                         new
                         {
                             Id = 4,
-                            OrderDate = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderDate = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Pending",
-                            TotalPrice = 150.00m,
+                            TotalPrice = 150m,
                             UserId = 4
                         });
                 });
@@ -342,7 +369,13 @@ namespace OnlineStore.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -350,6 +383,7 @@ namespace OnlineStore.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
@@ -359,7 +393,12 @@ namespace OnlineStore.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", t =>
+                        {
+                            t.HasCheckConstraint("CK_Products_Price", "[Price] > 0");
+
+                            t.HasCheckConstraint("CK_Products_Stock", "[Stock] >= 0");
+                        });
 
                     b.HasData(
                         new
@@ -368,8 +407,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 1,
                             Description = "Comfortable wireless mouse for everyday use",
                             ImageUrl = "https://images.unsplash.com/photo-1527814050087-3793815479db",
+                            IsActive = true,
                             Name = "Wireless Mouse",
-                            Price = 25.00m,
+                            Price = 25m,
                             Stock = 50
                         },
                         new
@@ -378,8 +418,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 1,
                             Description = "RGB mechanical keyboard for gaming and work",
                             ImageUrl = "https://images.unsplash.com/photo-1587829741301-dc798b83add3",
+                            IsActive = true,
                             Name = "Mechanical Keyboard",
-                            Price = 70.00m,
+                            Price = 70m,
                             Stock = 30
                         },
                         new
@@ -388,8 +429,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 1,
                             Description = "Fast charging USB-C wall charger",
                             ImageUrl = "https://images.unsplash.com/photo-1583863788434-e58a36330cf0",
+                            IsActive = true,
                             Name = "USB-C Charger",
-                            Price = 35.00m,
+                            Price = 35m,
                             Stock = 40
                         },
                         new
@@ -398,8 +440,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 2,
                             Description = "Comfortable cotton T-Shirt",
                             ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+                            IsActive = true,
                             Name = "Classic T-Shirt",
-                            Price = 20.00m,
+                            Price = 20m,
                             Stock = 100
                         },
                         new
@@ -408,8 +451,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 2,
                             Description = "Warm casual hoodie for everyday wear",
                             ImageUrl = "https://images.unsplash.com/photo-1556821840-3a63f95609a7",
+                            IsActive = true,
                             Name = "Hoodie",
-                            Price = 45.00m,
+                            Price = 45m,
                             Stock = 60
                         },
                         new
@@ -418,8 +462,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 3,
                             Description = "Lightweight running shoes for sports",
                             ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+                            IsActive = true,
                             Name = "Running Shoes",
-                            Price = 80.00m,
+                            Price = 80m,
                             Stock = 25
                         },
                         new
@@ -428,8 +473,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 3,
                             Description = "Modern casual sneakers",
                             ImageUrl = "https://images.unsplash.com/photo-1549298916-b41d501d3772",
+                            IsActive = true,
                             Name = "Casual Sneakers",
-                            Price = 65.00m,
+                            Price = 65m,
                             Stock = 35
                         },
                         new
@@ -438,8 +484,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 4,
                             Description = "Smart watch with fitness tracking",
                             ImageUrl = "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+                            IsActive = true,
                             Name = "Smart Watch",
-                            Price = 120.00m,
+                            Price = 120m,
                             Stock = 20
                         },
                         new
@@ -448,8 +495,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 4,
                             Description = "Water resistant backpack for daily use",
                             ImageUrl = "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
+                            IsActive = true,
                             Name = "Backpack",
-                            Price = 40.00m,
+                            Price = 40m,
                             Stock = 45
                         },
                         new
@@ -458,8 +506,9 @@ namespace OnlineStore.Migrations
                             CategoryId = 4,
                             Description = "Adjustable desk phone stand",
                             ImageUrl = "https://images.unsplash.com/photo-1586953208448-b95a79798f07",
+                            IsActive = true,
                             Name = "Phone Stand",
-                            Price = 15.00m,
+                            Price = 15m,
                             Stock = 80
                         });
                 });
@@ -493,16 +542,20 @@ namespace OnlineStore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "ProductId")
+                        .IsUnique();
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", t =>
+                        {
+                            t.HasCheckConstraint("CK_Reviews_Rating", "[Rating] BETWEEN 1 AND 5");
+                        });
 
                     b.HasData(
                         new
                         {
                             Id = 1,
                             Comment = "Very good mouse and comfortable to use",
-                            CreatedAt = new DateTime(2026, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProductId = 1,
                             Rating = 5,
                             UserId = 1
@@ -511,7 +564,7 @@ namespace OnlineStore.Migrations
                         {
                             Id = 2,
                             Comment = "Good smart watch with useful features",
-                            CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProductId = 8,
                             Rating = 4,
                             UserId = 2
@@ -520,7 +573,7 @@ namespace OnlineStore.Migrations
                         {
                             Id = 3,
                             Comment = "Very comfortable shoes",
-                            CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProductId = 7,
                             Rating = 5,
                             UserId = 3
@@ -529,7 +582,7 @@ namespace OnlineStore.Migrations
                         {
                             Id = 4,
                             Comment = "Good quality and comfortable",
-                            CreatedAt = new DateTime(2026, 3, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 16, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProductId = 4,
                             Rating = 4,
                             UserId = 4
@@ -538,7 +591,7 @@ namespace OnlineStore.Migrations
                         {
                             Id = 5,
                             Comment = "Excellent keyboard for gaming",
-                            CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProductId = 2,
                             Rating = 5,
                             UserId = 1
@@ -563,66 +616,94 @@ namespace OnlineStore.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Customer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("NormalizedEmail")
+                        .IsUnique();
+
+                    b.ToTable("Users", t =>
+                        {
+                            t.HasCheckConstraint("CK_Users_Role", "[Role] IN ('Admin', 'Customer')");
+                        });
 
                     b.HasData(
                         new
                         {
                             Id = 1,
                             Address = "Jenin",
-                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mohammed@gmail.com",
                             Name = "Mohammed Alqerem",
-                            Password = "123456",
-                            Phone = "0599000001"
+                            NormalizedEmail = "MOHAMMED@GMAIL.COM",
+                            Password = "AQAAAAIAAYagAAAAEJ2wyfnuNORBZAX4OEmJZkWIHaa1yGwVQ+NWaLrSxeM9AZhXq2N10Si1w5TV2sjqkA==",
+                            Phone = "0599000001",
+                            Role = "Admin"
                         },
                         new
                         {
                             Id = 2,
                             Address = "Nablus",
-                            CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ahmad@gmail.com",
                             Name = "Ahmad Ali",
-                            Password = "123456",
-                            Phone = "0599000002"
+                            NormalizedEmail = "AHMAD@GMAIL.COM",
+                            Password = "AQAAAAIAAYagAAAAEKhKgPLuSh6I8xZe/x+WyHyXiphNVT2/1mppogy0X2lv510pcGtFpr22bGERXnCZvA==",
+                            Phone = "0599000002",
+                            Role = "Customer"
                         },
                         new
                         {
                             Id = 3,
                             Address = "Ramallah",
-                            CreatedAt = new DateTime(2026, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "sara@gmail.com",
                             Name = "Sara Khaled",
-                            Password = "123456",
-                            Phone = "0599000003"
+                            NormalizedEmail = "SARA@GMAIL.COM",
+                            Password = "AQAAAAIAAYagAAAAEI9pAV+19TzA1Blbt0DPTjNoPHjZ9Og8CSHeZqEX4iNYSyNu3Qsb/iNN63xmyhvaUw==",
+                            Phone = "0599000003",
+                            Role = "Customer"
                         },
                         new
                         {
                             Id = 4,
                             Address = "Hebron",
-                            CreatedAt = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "omar@gmail.com",
                             Name = "Omar Hassan",
-                            Password = "123456",
-                            Phone = "0599000004"
+                            NormalizedEmail = "OMAR@GMAIL.COM",
+                            Password = "AQAAAAIAAYagAAAAENeCscWzBfbMGK0nvla29rD7/nc+az5LPNRZw9hEYdh38r5imVSV9A6Fjay4LIEFvw==",
+                            Phone = "0599000004",
+                            Role = "Customer"
                         });
                 });
 
@@ -648,7 +729,7 @@ namespace OnlineStore.Migrations
                     b.HasOne("OnlineStore.Models.Products", "Product")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cart");
@@ -667,7 +748,7 @@ namespace OnlineStore.Migrations
                     b.HasOne("OnlineStore.Models.Products", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -680,7 +761,7 @@ namespace OnlineStore.Migrations
                     b.HasOne("OnlineStore.Models.Users", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -691,7 +772,7 @@ namespace OnlineStore.Migrations
                     b.HasOne("OnlineStore.Models.Categories", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -702,7 +783,7 @@ namespace OnlineStore.Migrations
                     b.HasOne("OnlineStore.Models.Products", "Product")
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("OnlineStore.Models.Users", "User")
@@ -742,8 +823,7 @@ namespace OnlineStore.Migrations
 
             modelBuilder.Entity("OnlineStore.Models.Users", b =>
                 {
-                    b.Navigation("Cart")
-                        .IsRequired();
+                    b.Navigation("Cart");
 
                     b.Navigation("Orders");
 

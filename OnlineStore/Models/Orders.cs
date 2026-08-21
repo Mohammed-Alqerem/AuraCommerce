@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using OnlineStore.Constants;
+
 namespace OnlineStore.Models
 {
     public class Orders
@@ -14,7 +16,7 @@ namespace OnlineStore.Models
         public Users? User { get; set; }
 
         [Required]
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         [Required]
         [Range(0.01, 1000000)]
@@ -23,7 +25,7 @@ namespace OnlineStore.Models
 
         [Required]
         [StringLength(20)]
-        public string Status { get; set; } = "Pending";
+        public string Status { get; set; } = OrderStatuses.Pending;
 
         public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
     }

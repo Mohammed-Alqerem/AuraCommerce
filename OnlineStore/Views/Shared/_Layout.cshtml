@@ -1,22 +1,25 @@
 @inject OnlineStore.Data.ApplicationDbContext DbContext
 @{
-    var currentUserId = Context.Session.GetInt32("UserId");
-    var currentUserName = Context.Session.GetString("UserName");
+    var currentUserId = Context.Session.GetCurrentUserId();
+    var currentUserName = Context.Session.GetString(SessionKeys.UserName);
     var isLoggedIn = currentUserId.HasValue;
-    var isAdmin = currentUserId == 1;
-    var isCustomer = isLoggedIn && !isAdmin;
+    var isAdmin = Context.Session.IsInRole(UserRoles.Admin);
+    var isCustomer = Context.Session.IsInRole(UserRoles.Customer);
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var cartItemCount = 0;
 
     if (isCustomer)
     {
-        cartItemCount = DbContext.CartItems
+        cartItemCount = await DbContext.CartItems
+            .AsNoTracking()
             .Where(item => item.Cart!.UserId == currentUserId!.Value)
             .Select(item => (int?)item.Quantity)
-            .Sum() ?? 0;
+            .SumAsync() ?? 0;
     }
 
-    var toastMessage = TempData["CartMessage"] as string ?? TempData["AdminMessage"] as string;
+    var toastMessage = TempData["CartMessage"] as string
+        ?? TempData["AdminMessage"] as string
+        ?? TempData["ReviewMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en" dir="ltr">

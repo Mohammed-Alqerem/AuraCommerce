@@ -20,6 +20,10 @@ namespace OnlineStore.Models
         public Products? Product { get; set; }
 
         [Required]
+        [StringLength(100)]
+        public string ProductName { get; set; } = string.Empty;
+
+        [Required]
         [Range(1, 1000)]
         public int Quantity { get; set; }
 
