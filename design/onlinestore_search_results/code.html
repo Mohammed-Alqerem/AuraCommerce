@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Search Results - OnlineStore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#adc7ff",
+                      "tertiary-container": "#001a41",
+                      "on-secondary-container": "#004b75",
+                      "on-background": "#1b1c1c",
+                      "on-primary-fixed-variant": "#39475f",
+                      "on-tertiary-fixed": "#001a41",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "background": "#fbf9f8",
+                      "primary-fixed": "#d6e3ff",
+                      "inverse-surface": "#303030",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#44474d",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-primary-fixed": "#0d1c32",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#f3f0f0",
+                      "surface-dim": "#dcd9d9",
+                      "surface-variant": "#e4e2e1",
+                      "secondary-fixed": "#cde5ff",
+                      "surface-container-high": "#eae8e7",
+                      "surface-container-low": "#f6f3f2",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#004493",
+                      "on-error": "#ffffff",
+                      "outline": "#75777e",
+                      "primary": "#000000",
+                      "secondary-fixed-dim": "#94ccff",
+                      "surface-container": "#f0eded",
+                      "outline-variant": "#c5c6cd",
+                      "on-tertiary-container": "#2180ff",
+                      "tertiary-fixed": "#d8e2ff",
+                      "surface": "#fbf9f8",
+                      "on-primary-container": "#76849f",
+                      "secondary": "#006398",
+                      "inverse-primary": "#b9c7e4",
+                      "primary-container": "#0d1c32",
+                      "surface-bright": "#fbf9f8",
+                      "primary-fixed-dim": "#b9c7e4",
+                      "on-secondary-fixed-variant": "#004b74",
+                      "on-secondary-fixed": "#001d32",
+                      "on-surface": "#1b1c1c",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#515f78",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#6cbdfe",
+                      "tertiary": "#000000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "32px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "container-max": "1280px",
+                      "stack-sm": "8px",
+                      "section-padding": "80px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "price-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "price-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pt-16">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-highest font-body-md text-body-md shadow-sm border-b border-outline-variant fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-6">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-on-primary-fixed">OnlineStore</span>
+<div class="hidden md:flex gap-6">
+<a class="text-secondary border-b-2 border-secondary pb-1 active:scale-95 duration-150" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-1 rounded-sm" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-1 rounded-sm" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-1 rounded-sm" href="#">About</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-1 rounded-sm" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<input class="bg-surface-container-low border border-outline-variant text-on-surface text-body-sm font-body-sm rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all" placeholder="Search..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer">search</span>
+</div>
+<div class="flex gap-4 text-secondary dark:text-secondary-fixed">
+<span class="material-symbols-outlined hover:bg-surface-container-low transition-colors cursor-pointer p-1 rounded-full active:scale-95 duration-150">shopping_cart</span>
+<span class="material-symbols-outlined hover:bg-surface-container-low transition-colors cursor-pointer p-1 rounded-full active:scale-95 duration-150">account_circle</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-gutter py-section-padding">
+<!-- Search Header -->
+<div class="mb-stack-lg flex flex-col items-center md:items-start text-center md:text-left border-b border-outline-variant pb-stack-md">
+<div class="relative w-full md:w-1/2 lg:w-1/3 mb-stack-md mx-auto md:mx-0">
+<input class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface text-body-lg font-body-lg rounded-lg px-4 py-3 pl-12 focus:outline-none focus:border-[#64B5F6] focus:ring-4 focus:ring-[#64B5F6]/25 transition-all shadow-sm" type="text" value="wireless"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-2xl">search</span>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-primary md:text-headline-lg hidden md:block">Search results for: "wireless"</h1>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-primary md:hidden">Search results for: "wireless"</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2">12 results found</p>
+</div>
+<div class="flex flex-col md:flex-row gap-gutter">
+<!-- Filters Sidebar -->
+<aside class="w-full md:w-64 flex-shrink-0 mb-stack-lg md:mb-0">
+<div class="bg-surface-container-lowest rounded-lg p-stack-md shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 sticky top-24">
+<div class="flex justify-between items-center mb-stack-sm pb-stack-sm border-b border-outline-variant">
+<h2 class="text-body-lg font-body-lg font-semibold text-primary">Filters</h2>
+<button class="text-body-sm font-body-sm text-secondary hover:underline">Clear All</button>
+</div>
+<!-- Category Filter -->
+<div class="py-stack-sm border-b border-outline-variant">
+<h3 class="text-body-md font-body-md font-medium text-on-surface mb-2">Category</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="rounded text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Headphones (8)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="rounded text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Speakers (3)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="rounded text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" type="checkbox"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Accessories (1)</span>
+</label>
+</div>
+</div>
+<!-- Price Filter -->
+<div class="py-stack-sm border-b border-outline-variant">
+<h3 class="text-body-md font-body-md font-medium text-on-surface mb-2">Price</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" name="price" type="radio"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Under $50</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" name="price" type="radio"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">$50 - $150</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" name="price" type="radio"/>
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Over $150</span>
+</label>
+</div>
+</div>
+<!-- Rating Filter -->
+<div class="py-stack-sm">
+<h3 class="text-body-md font-body-md font-medium text-on-surface mb-2">Rating</h3>
+<div class="space-y-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="rounded text-[#007BFF] focus:ring-[#007BFF] border-outline-variant bg-surface-container-lowest cursor-pointer group-hover:border-secondary transition-colors" type="checkbox"/>
+<div class="flex text-amber-400 text-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined">star</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant ml-1">&amp; Up</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</aside>
+<!-- Product Grid -->
+<div class="flex-grow">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-outline-variant/20">
+<div class="relative aspect-square bg-surface-container-low flex items-center justify-center p-4">
+<img class="object-contain w-full h-full mix-blend-multiply" data-alt="A premium wireless over-ear headphone sitting on a minimalist white pedestal, illuminated by soft studio lighting with a stark corporate minimal aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCL_rVBEOcv3XhK05Qn1vSf2DQy1tlPYInkDcqQ83P7U-6fsOygq01qi6vuLV0jaX-eJJwbfSbOMN4vsvoFjWIs__vIZyT3lhpjIKjxM0bASyBUZV4umsZN9YyYx_Je8nfA6lcalGpYfDxmEvJ3-4LFNNx4xwOVZW9KJNEcvdFmDQKs3XIpcRgDDfa5denVed-UODCe_xzqRb704-c1cyvKULOHei6jb4mDyhkbkIY3L1onR-Vl6ma7w"/>
+<div class="absolute top-2 right-2 bg-surface-container-low text-on-surface rounded-full p-1 cursor-pointer hover:text-[#ba1a1a] transition-colors">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</div>
+</div>
+<div class="p-stack-md flex flex-col flex-grow">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Audio</span>
+<h3 class="text-body-md font-body-md font-semibold text-primary mb-1 line-clamp-2">Aura Studio Wireless Over-Ear Headphones</h3>
+<div class="flex items-center mb-stack-sm gap-1">
+<span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">4.8 (124)</span>
+</div>
+<div class="mt-auto">
+<div class="text-price-lg font-price-lg text-primary mb-stack-sm">$149.00</div>
+<button class="w-full bg-surface-container-lowest border border-[#0A192F] text-[#0A192F] hover:bg-[#0A192F] hover:text-white font-body-sm text-body-sm font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                                    Quick Add
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-outline-variant/20">
+<div class="relative aspect-square bg-surface-container-low flex items-center justify-center p-4">
+<img class="object-contain w-full h-full mix-blend-multiply" data-alt="Compact true wireless earbuds in a sleek charging case, resting on a clean light grey surface, modern product photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhhyaRQDuURj192Dp7teQIpdXUN1UFbr8dzQqz40-5PU7pLIwynYMVVw2VYefZCSM_wwCH2sx6pX1g3yYbv2W_03W4pwNcPeYxDeQP01PqXrx0IyE49Jj9rz5DTLCbJG2C0aCGg3w0ZUcMmyHvC6QIa91ITInNwiQ-WcK0Owb16WK3QBMLlroSGWGep4JdEmdr47akkeqrplbenqsYFLbKgYj_XmBJpkgWrM2rZ1US7bmlc2VpHj16yQ"/>
+<div class="absolute top-2 left-2 bg-[#f0eded] text-[#44474d] text-label-md font-label-md px-2 py-1 rounded uppercase">Best Seller</div>
+</div>
+<div class="p-stack-md flex flex-col flex-grow">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Audio</span>
+<h3 class="text-body-md font-body-md font-semibold text-primary mb-1 line-clamp-2">Nova True Wireless Earbuds Pro</h3>
+<div class="flex items-center mb-stack-sm gap-1">
+<span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">4.9 (402)</span>
+</div>
+<div class="mt-auto">
+<div class="text-price-lg font-price-lg text-primary mb-stack-sm">$89.99</div>
+<button class="w-full bg-[#007BFF] text-white hover:bg-[#0056b3] font-body-sm text-body-sm font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+                                    Add to Cart
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-outline-variant/20">
+<div class="relative aspect-square bg-surface-container-low flex items-center justify-center p-4">
+<img class="object-contain w-full h-full mix-blend-multiply" data-alt="A modern, portable cylindrical wireless speaker sitting on a bright white table, casting a soft shadow in a well-lit studio environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpazlLEbaiGjh5kR96O-JjltIsRXlpisL0XqxXtbOUMqlQO6J1zjLvleZQksrp9-1EPz6SqMQSrZ1UdZA9VVvg3wW8VFtZ4VN9Y0OCDEtj_BmkxRxNyIbuDJOkXuExM2to-MdnLFSvZ1BIi3J3umzB-vlHry-nU8bmCWnY5YlMsidPh_NlLKKPtarsubpMooQ0Jn7gVhkgKzpJlCQ2QJP00Gpu-4ryVCLafTKsECkTmzkWAPI0xDAKKA"/>
+</div>
+<div class="p-stack-md flex flex-col flex-grow">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Speakers</span>
+<h3 class="text-body-md font-body-md font-semibold text-primary mb-1 line-clamp-2">Echo Portable Wireless Speaker 360</h3>
+<div class="flex items-center mb-stack-sm gap-1">
+<span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">4.5 (89)</span>
+</div>
+<div class="mt-auto">
+<div class="text-price-lg font-price-lg text-primary mb-stack-sm">$119.00</div>
+<button class="w-full bg-surface-container-lowest border border-[#0A192F] text-[#0A192F] hover:bg-[#0A192F] hover:text-white font-body-sm text-body-sm font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                                    Quick Add
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-outline-variant/20">
+<div class="relative aspect-square bg-surface-container-low flex items-center justify-center p-4">
+<img class="object-contain w-full h-full mix-blend-multiply" data-alt="Minimalist wireless charging pad in matte black finish, placed on a pristine white desk setup, showcasing tech elegance and simplicity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-4kf2MEMIJaCKEOC0Axi5AYBPJglpFNf7GUrGDzA6paws1gXb9YZAvrDOeA29rMg7c4nTpPk2omt-dxiXD085XD6hV1Y-MfurjHpPwzIpGoYVoQeTQXeapC-f4JlYHkmNaH9uwUo14KEIn_BF5vcuMvHd1zC85tWh6eCKxKceJcd_3tONNuhnXAJZrCP4Z6n_2pHsHxFfBJzxve8EEuVNm-3-fwyGUQJizf1rAdVwhlgknWexTMRRww"/>
+</div>
+<div class="p-stack-md flex flex-col flex-grow">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Accessories</span>
+<h3 class="text-body-md font-body-md font-semibold text-primary mb-1 line-clamp-2">Zen 15W Fast Wireless Charging Pad</h3>
+<div class="flex items-center mb-stack-sm gap-1">
+<span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">4.2 (45)</span>
+</div>
+<div class="mt-auto">
+<div class="text-price-lg font-price-lg text-primary mb-stack-sm">$39.99</div>
+<button class="w-full bg-surface-container-lowest border border-[#0A192F] text-[#0A192F] hover:bg-[#0A192F] hover:text-white font-body-sm text-body-sm font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                                    Quick Add
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-highest text-on-surface dark:text-on-surface font-body-sm text-body-sm border-t border-outline-variant w-full py-section-padding px-margin-mobile md:px-gutter grid grid-cols-1 md:grid-cols-4 gap-stack-lg transition-opacity mt-auto">
+<div class="flex flex-col gap-4">
+<span class="text-headline-md font-headline-md text-primary">OnlineStore</span>
+<p class="text-on-surface-variant">Your premier destination for high-quality electronics and accessories.</p>
+<p class="text-on-surface-variant mt-auto">© 2024 OnlineStore. All rights reserved.</p>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-bold text-on-surface mb-2">Customer Service</h4>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">FAQ</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Shipping Info</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Returns</a>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-bold text-on-surface mb-2">Legal</h4>
+<a class="text-secondary underline transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-bold text-on-surface mb-2">Stay Connected</h4>
+<p class="text-on-surface-variant mb-2">Subscribe to our newsletter for updates.</p>
+<div class="flex">
+<input class="bg-surface-container-lowest border border-outline-variant text-on-surface text-body-sm font-body-sm rounded-l-lg px-3 py-2 w-full focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" placeholder="Email Address" type="email"/>
+<button class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-opacity-90 transition-opacity">Subscribe</button>
+</div>
+</div>
+</footer>
+</body></html>

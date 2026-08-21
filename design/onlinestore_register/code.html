@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register - OnlineStore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "tertiary-container": "#001a41",
+                        "on-secondary-container": "#004b75",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed-variant": "#39475f",
+                        "on-tertiary-fixed": "#001a41",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-fixed": "#0d1c32",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-dim": "#dcd9d9",
+                        "surface-variant": "#e4e2e1",
+                        "secondary-fixed": "#cde5ff",
+                        "surface-container-high": "#eae8e7",
+                        "surface-container-low": "#f6f3f2",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "on-error": "#ffffff",
+                        "outline": "#75777e",
+                        "primary": "#000000",
+                        "secondary-fixed-dim": "#94ccff",
+                        "surface-container": "#f0eded",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-container": "#2180ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#fbf9f8",
+                        "on-primary-container": "#76849f",
+                        "secondary": "#006398",
+                        "inverse-primary": "#b9c7e4",
+                        "primary-container": "#0d1c32",
+                        "surface-bright": "#fbf9f8",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "on-secondary-fixed-variant": "#004b74",
+                        "on-secondary-fixed": "#001d32",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#515f78",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#6cbdfe",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "price-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "price-lg": ["24px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+<!-- TopNavBar Suppressed: Intent is Linear/Transactional (Registration) -->
+<main class="flex-grow flex w-full min-h-screen">
+<!-- Left Side: Promotional Image -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-surface-container-high overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A highly curated, modern lifestyle shot of premium lifestyle products arranged artfully on a pristine white marble surface. Soft, natural daylight streams from the left, casting gentle, sophisticated shadows that enhance the clean, minimalist aesthetic. The color palette is dominated by pure whites and subtle greys, reflecting a high-end, trustworthy e-commerce brand identity. The mood is aspirational and serene." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuANr7Ba0n5lwGC8RwHDmUrPCffEk0PeRLQO7StkJC1onfgFnS6EyNj1tLq9NZyJfvcUZF1O5THPs1zK_ayCFUXnRgAKYxl9BSGl3pIEz5nBEHS9nJcgcSEWB3EmSRBabQHmHiHgqS9NbBWVWO5LLyQlE_hKghrcEKpqRuvjU9RJWNJF6yEGCYei8q2U43DpsbDJ9qSC8RcJdCj5iq6r0BtiPyzuAanyuK0cVmRODFjr0tPm2K3lFXLC1A')"></div>
+<!-- Optional subtle gradient overlay for text readability if needed -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+<div class="absolute bottom-section-padding left-section-padding right-section-padding text-white">
+<h1 class="font-display-lg text-display-lg mb-stack-md text-white">Join the Experience.</h1>
+<p class="font-body-lg text-body-lg text-white/90 max-w-md">Discover curated collections and premium essentials designed for a modern lifestyle.</p>
+</div>
+</div>
+<!-- Right Side: Registration Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-margin-mobile md:p-section-padding bg-surface">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-stack-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
+<div class="mb-stack-lg text-center">
+<div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container mb-stack-sm">
+<span class="material-symbols-outlined text-3xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Create Account</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-stack-sm">Join OnlineStore to start shopping</p>
+</div>
+<form class="space-y-stack-md">
+<!-- Full Name -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="fullName">Full Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm" id="fullName" name="fullName" placeholder="John Doe" required="" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="email">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">mail</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm" id="email" name="email" placeholder="john@example.com" required="" type="email"/>
+</div>
+</div>
+<!-- Grid for Password & Confirm -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Password -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="password">Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">lock</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Confirm Password -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="confirmPassword">Confirm Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">lock_reset</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+</div>
+<!-- Phone -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="phone">Phone Number</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">phone</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm" id="phone" name="phone" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+</div>
+<!-- Address -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="address">Delivery Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant">home</span>
+<textarea class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary transition-shadow outline-none font-body-sm text-body-sm resize-none" id="address" name="address" placeholder="Enter your full address" rows="3"></textarea>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-3 px-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-on-background transition-colors duration-200 mt-stack-lg flex items-center justify-center gap-2" type="submit">
+                        Create Account
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</form>
+<div class="mt-stack-lg text-center border-t border-outline-variant/30 pt-stack-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Already have an account? 
+                        <a class="text-secondary hover:underline font-label-md text-label-md ml-1 transition-colors" href="#">Login here</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Suppressed: Intent is Linear/Transactional -->
+</body></html>

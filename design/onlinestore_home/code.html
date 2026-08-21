@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OnlineStore - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "tertiary-container": "#001a41",
+                        "on-secondary-container": "#004b75",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed-variant": "#39475f",
+                        "on-tertiary-fixed": "#001a41",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-fixed": "#0d1c32",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-dim": "#dcd9d9",
+                        "surface-variant": "#e4e2e1",
+                        "secondary-fixed": "#cde5ff",
+                        "surface-container-high": "#eae8e7",
+                        "surface-container-low": "#f6f3f2",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "on-error": "#ffffff",
+                        "outline": "#75777e",
+                        "primary": "#000000",
+                        "secondary-fixed-dim": "#94ccff",
+                        "surface-container": "#f0eded",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-container": "#2180ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#fbf9f8",
+                        "on-primary-container": "#76849f",
+                        "secondary": "#006398",
+                        "inverse-primary": "#b9c7e4",
+                        "primary-container": "#0d1c32",
+                        "surface-bright": "#fbf9f8",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "on-secondary-fixed-variant": "#004b74",
+                        "on-secondary-fixed": "#001d32",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#515f78",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#6cbdfe",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "price-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "price-lg": ["24px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Subtle shadow utilities based on guidance */
+        .shadow-level-1 {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .shadow-level-2 {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased font-body-md text-body-md">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-highest border-b border-outline-variant shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-16">
+<div class="flex items-center">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-on-primary-fixed">OnlineStore</span>
+</div>
+<div class="hidden md:flex items-center space-x-6">
+<a class="text-secondary border-b-2 border-secondary pb-1 text-body-md font-body-md" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors px-2 py-1 rounded text-body-md font-body-md" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors px-2 py-1 rounded text-body-md font-body-md" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors px-2 py-1 rounded text-body-md font-body-md" href="#">About</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors px-2 py-1 rounded text-body-md font-body-md" href="#">Contact</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-secondary dark:text-secondary-fixed hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="text-secondary dark:text-secondary-fixed hover:bg-surface-container-low transition-colors active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<main class="pt-16 pb-section-padding">
+<!-- Hero Section -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter pt-16 pb-section-padding flex flex-col md:flex-row items-center gap-stack-lg">
+<div class="w-full md:w-1/2 flex flex-col items-start gap-stack-md">
+<h1 class="font-display-lg text-display-lg text-on-surface">Everything You Need, All in One Store</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Discover a curated selection of premium electronics, fashion, and lifestyle essentials designed to elevate your everyday. Shop our modern collection today.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+<button class="bg-[#007BFF] text-white font-bold py-3 px-6 rounded-lg hover-lift w-full sm:w-auto transition-all active:scale-95">Shop Now</button>
+<button class="bg-transparent border-2 border-[#0A192F] text-[#0A192F] font-bold py-3 px-6 rounded-lg hover:bg-surface-container-low transition-all active:scale-95 w-full sm:w-auto">Explore Categories</button>
+</div>
+</div>
+<div class="w-full md:w-1/2 mt-8 md:mt-0 relative">
+<div class="aspect-[4/3] rounded-xl overflow-hidden shadow-level-2 bg-surface-container-low relative">
+<img class="w-full h-full object-cover" data-alt="A sleek, modern premium laptop open on a minimalist white desk beside a small, elegant potted plant and a ceramic coffee cup. The scene is brightly lit with natural sunlight streaming from an unseen window, highlighting the metallic finish of the device. Soft shadows create a clean, contemporary aesthetic perfect for a high-end tech lifestyle store." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB43Pfl4_YAa3tSTWb0a8XwThFH14wNp1NwpUcR9tTJv2nggSGO2TGULcKJKRYblQjCSq8aI6i0M2g0CSnUFnBt8wmHdArLL0Z5-3V7_eby7AryPeFtLyPYrn_UM_5kOygv1UQjGwjERoUIG8mFZYhG98pj-z_uZuqO_bdaCudYWsi2emHgvIuPVf1aMXLifW_JkkH_i4uKu6xMkwBtr5BhmGoUmiSyhqECpcoizx5ayhIt56n8snfABQ"/>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-section-padding bg-surface-container-lowest">
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="font-headline-lg md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Featured Products</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Our most popular selections</p>
+</div>
+<a class="text-secondary font-label-md text-label-md flex items-center hover:underline group" href="#">
+                    View All <span class="material-symbols-outlined ml-1 text-[16px] group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-level-1 hover-lift flex flex-col h-full border border-outline-variant/30">
+<div class="relative aspect-square bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A minimalist pair of white wireless over-ear headphones resting on a clean, light grey surface. The lighting is soft and studio-quality, highlighting the matte finish and plush ear cushions. The overall look is premium, modern, and uncluttered, appealing to audiophiles looking for sleek design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4g7CfxMZEFWtikBhAVVISIZegij-gv4U0PEozGH03kkHPKdYIxOu_JkJCoUhl9QX365UuJMOwunSiGD3u9lPcNP5x8omRIPrgPaZHqAetODFfmmdVTi4Wzp3c-SJ_a-gkHvwoNhyABPVr0eWTe4rvCcMVBNfegfM8UAgFX0niY6XS-uwJsvzjM-48O85XAin-g9Edc6gTTNC4jhrp8gm0Gj3sEFwkbOKdyI5ENZEHjUXZq89RXL-RJw"/>
+<div class="absolute top-3 left-3 bg-[#f0f0f0] text-[#1b1c1c] px-2 py-1 rounded text-label-md font-label-md uppercase shadow-sm">Electronics</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="flex items-center mb-1">
+<div class="flex text-amber-400 text-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant" data-icon="star" data-weight="fill">star</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant ml-2">(42)</span>
+</div>
+<h3 class="font-headline-md text-[18px] leading-snug text-on-surface mt-1 mb-2">Premium Noise-Cancelling Headphones</h3>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="font-price-lg text-price-lg text-on-surface">$249.00</span>
+<button aria-label="Add to cart" class="text-[#0A192F] border border-[#0A192F] hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-level-1 hover-lift flex flex-col h-full border border-outline-variant/30">
+<div class="relative aspect-square bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A stylish, minimalist grey cotton crewneck sweater neatly folded on a stark white background. The fabric texture is clearly visible under crisp, bright lighting. The presentation is simple, clean, and focus entirely on the quality of the garment, fitting for a modern clothing boutique." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDziHvZTUG61r7u42vycGXokpHyevlFgb0dJ4z7_2p8afFo0PL9gYGEVyHKsx-Js9zfe78hvsahUEqKQ9qeWrpWiRahqS5sqts9hl6GaRKyu7YS3IdfGsxZYJHBxTBrCir22vn1toM3WPSwnBnOliupJ8nqzJB0spFLFxA9B6-8YWh_w9S0KuHFTn68XDOPWATr43_g3afyIV-k2LWR68AnMM7-gNPWbCUrnR6WQqgKTPe4ivPGfHl1Dg"/>
+<div class="absolute top-3 left-3 bg-[#f0f0f0] text-[#1b1c1c] px-2 py-1 rounded text-label-md font-label-md uppercase shadow-sm">Clothing</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="flex items-center mb-1">
+<div class="flex text-amber-400 text-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star_half" data-weight="fill">star_half</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant ml-2">(128)</span>
+</div>
+<h3 class="font-headline-md text-[18px] leading-snug text-on-surface mt-1 mb-2">Essential Cotton Crewneck</h3>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="font-price-lg text-price-lg text-on-surface">$45.00</span>
+<button aria-label="Add to cart" class="text-[#0A192F] border border-[#0A192F] hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-level-1 hover-lift flex flex-col h-full border border-outline-variant/30">
+<div class="relative aspect-square bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A sleek, modern smart watch with a matte black metal casing and a textured silicone band, displayed against a light, neutral background. The screen is off, emphasizing the physical design. The lighting is bright and evenly distributed, highlighting the premium build quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1t1tPgs4pq2Hzpu6E95VfznL8JTDli7J5Xe6mds3sqMvmNPZi4lm78bBAYp3svAe_khxeVX0Yth5bj26TEHDUQINIcDwtlh0_CrhhA7qkLT_DGbyrda_PLM-Bo343JM94vNvIumcRm21jzGI26i8An5ynruRCfEGSLK0DVwgSR3P8o9-SgpdYTmnFvDD6Qe49dv6hlNzQ_-vnyxypWnoxOYINUDXdor_9KzFSQF3H97TX84xWwCmC2w"/>
+<div class="absolute top-3 left-3 bg-[#f0f0f0] text-[#1b1c1c] px-2 py-1 rounded text-label-md font-label-md uppercase shadow-sm">Accessories</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="flex items-center mb-1">
+<div class="flex text-amber-400 text-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant ml-2">(89)</span>
+</div>
+<h3 class="font-headline-md text-[18px] leading-snug text-on-surface mt-1 mb-2">Minimalist Smart Watch V2</h3>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="font-price-lg text-price-lg text-on-surface">$199.00</span>
+<button aria-label="Add to cart" class="text-[#0A192F] border border-[#0A192F] hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-level-1 hover-lift flex flex-col h-full border border-outline-variant/30">
+<div class="relative aspect-square bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A pair of clean, minimalist white leather sneakers presented side-by-side on a light airy background. The lighting is bright, creating soft shadows that emphasize the smooth texture of the leather and the simple, classic silhouette of the shoes. The image feels fresh and contemporary." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn7efRxLqpRflplK48EROrILXNosKWFR3mxgMuhhsEHkq5MrazyR5rVBYH-LHf4i_r02hdM-YgyLYfLbj4JSiuE4WWnpKkxDRnZDiAeH9TwCHZ99WpPrSAUY80PO2Jm0HSSSBleqh9HVCk-0PDwo9SiFkyjfb41JPmUjpSd0i0l98i-5fQLCwCCE_moZldFKpFso8HCtKHTSZ_1QsfUdEk2SgthL_mUrs2nMqcX0w5ODuTftKFM2rMoA"/>
+<div class="absolute top-3 left-3 bg-[#f0f0f0] text-[#1b1c1c] px-2 py-1 rounded text-label-md font-label-md uppercase shadow-sm">Shoes</div>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="flex items-center mb-1">
+<div class="flex text-amber-400 text-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="star_half" data-weight="fill">star_half</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant" data-icon="star" data-weight="fill">star</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant ml-2">(56)</span>
+</div>
+<h3 class="font-headline-md text-[18px] leading-snug text-on-surface mt-1 mb-2">Classic White Leather Sneakers</h3>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="font-price-lg text-price-lg text-on-surface">$120.00</span>
+<button aria-label="Add to cart" class="text-[#0A192F] border border-[#0A192F] hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-padding px-margin-mobile md:px-gutter grid grid-cols-1 md:grid-cols-4 gap-stack-lg bg-surface-container-low dark:bg-surface-container-highest border-t border-outline-variant">
+<div>
+<div class="text-headline-md font-headline-md text-primary mb-4 font-bold">OnlineStore</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                Providing premium products for a modern lifestyle. Quality and design in every detail.
+            </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 OnlineStore. All rights reserved.</p>
+</div>
+<div>
+<h4 class="font-headline-md text-[16px] text-on-surface mb-4">Customer Service</h4>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Contact Us</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Shipping Info</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Returns</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline-md text-[16px] text-on-surface mb-4">Legal</h4>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a></li>
+<li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline-md text-[16px] text-on-surface mb-4">Subscribe</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Get the latest updates on new products and upcoming sales.</p>
+<div class="flex">
+<input class="bg-surface border border-outline-variant rounded-l-lg px-3 py-2 w-full font-body-sm text-body-sm focus:outline-none focus:border-[#64B5F6] focus:ring-1 focus:ring-[#64B5F6]" placeholder="Your email address" type="email"/>
+<button class="bg-[#0A192F] text-white px-4 py-2 rounded-r-lg font-label-md text-label-md hover:bg-primary-container transition-colors">SUBSCRIBE</button>
+</div>
+</div>
+</footer>
+</body></html>

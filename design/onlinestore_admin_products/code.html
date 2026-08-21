@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Products Management - Admin Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#adc7ff",
+                      "tertiary-container": "#001a41",
+                      "on-secondary-container": "#004b75",
+                      "on-background": "#1b1c1c",
+                      "on-primary-fixed-variant": "#39475f",
+                      "on-tertiary-fixed": "#001a41",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "background": "#fbf9f8",
+                      "primary-fixed": "#d6e3ff",
+                      "inverse-surface": "#303030",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#44474d",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-primary-fixed": "#0d1c32",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#f3f0f0",
+                      "surface-dim": "#dcd9d9",
+                      "surface-variant": "#e4e2e1",
+                      "secondary-fixed": "#cde5ff",
+                      "surface-container-high": "#eae8e7",
+                      "surface-container-low": "#f6f3f2",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#004493",
+                      "on-error": "#ffffff",
+                      "outline": "#75777e",
+                      "primary": "#000000",
+                      "secondary-fixed-dim": "#94ccff",
+                      "surface-container": "#f0eded",
+                      "outline-variant": "#c5c6cd",
+                      "on-tertiary-container": "#2180ff",
+                      "tertiary-fixed": "#d8e2ff",
+                      "surface": "#fbf9f8",
+                      "on-primary-container": "#76849f",
+                      "secondary": "#006398",
+                      "inverse-primary": "#b9c7e4",
+                      "primary-container": "#0d1c32",
+                      "surface-bright": "#fbf9f8",
+                      "primary-fixed-dim": "#b9c7e4",
+                      "on-secondary-fixed-variant": "#004b74",
+                      "on-secondary-fixed": "#001d32",
+                      "on-surface": "#1b1c1c",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#515f78",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#6cbdfe",
+                      "tertiary": "#000000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "32px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "container-max": "1280px",
+                      "stack-sm": "8px",
+                      "section-padding": "80px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "price-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "price-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-6 bg-primary-container dark:bg-surface-container-low docked left-0 h-full w-64 shadow-md bg-primary-container z-40 hidden md:flex">
+<div class="px-6 mb-8">
+<h1 class="text-headline-md font-headline-md text-on-primary dark:text-primary-fixed-dim">Admin Panel</h1>
+<p class="text-on-primary-container font-body-sm text-body-sm mt-1">Manage your store</p>
+</div>
+<ul class="flex-1 flex flex-col gap-2 px-2">
+<li>
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 font-label-md text-label-md transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                    Products
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+                    Categories
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+                    Orders
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Users
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="rate_review">rate_review</span>
+                    Reviews
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-2">
+<a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary-container px-4 py-3 font-label-md text-label-md hover:bg-on-primary-fixed-variant/10 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-h-screen md:ml-64 w-full">
+<!-- TopNavBar Admin -->
+<header class="ml-64 flex justify-between items-center px-gutter h-14 w-[calc(100%-16rem)] bg-surface dark:bg-surface-dim docked top-0 right-0 border-b border-outline-variant flat no shadows hidden md:flex fixed z-30">
+<div class="flex-1"></div> <!-- Spacer for alignment -->
+<div class="flex items-center gap-4">
+<button aria-label="Notifications" class="text-on-surface-variant hover:bg-surface-container-high rounded-full p-2 cursor-pointer transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden cursor-pointer flex-shrink-0 border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close up professional headshot of an individual, well lit, against a clean neutral background, suitable for a corporate profile avatar picture in a modern web application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8wenYWD2dS2fggjRF_-PzJdQDCfbUP4y0Q33BTi7KLVHH7M1Fc-2GtDD-Nhl3J7pdFakIzA2i0b6-n2xOOQbgX_5m4OXkjA4XZHA_8jKGPAXS4M24TbgNNPtX6vJilT1TG9iAFMpnnLh0iUg1mZLns941zBBayxlvIolOcdu8DAYrk0Guo2hZhqOcl654A9_Ey-guC2NEYu6IKHx_kDcC7eTXT8tQOpT-MMHBxgpI0Ryhe_CWV-xICQ"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 p-margin-mobile md:p-gutter pt-[calc(3.5rem+24px)] md:pt-[calc(3.5rem+32px)]">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg md:text-headline-lg text-on-surface m-0">Products Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your inventory, prices, and stock levels.</p>
+</div>
+<button class="bg-[#007BFF] text-[#FFFFFF] font-label-md text-label-md px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#0056b3] transition-colors shadow-sm hover:shadow-md transform hover:-translate-y-0.5 duration-200 shrink-0">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add Product
+                </button>
+</div>
+<!-- Content Canvas -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<!-- Toolbar -->
+<div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-container-lowest">
+<div class="relative w-full sm:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-[#64B5F6] focus:ring-0 focus:shadow-[0_0_0_4px_rgba(100,181,246,0.25)] transition-all outline-none" placeholder="Search products..." type="text"/>
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filter
+                        </button>
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold w-16">ID</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold w-24">Image</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Name</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Category</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Price</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">Stock</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant bg-surface-container-lowest">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4 font-body-sm text-body-sm text-on-surface-variant">#1042</td>
+<td class="p-4">
+<div class="w-12 h-12 rounded-lg border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist product shot of a sleek, modern smart watch with a black band, sitting on a pristine white surface, lit with soft, diffuse studio lighting to highlight its metallic edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2ouYPLOIRFRi_PJQJc38A--_zgVmTh2GSkvNmPiN7zeb8ulzO17t3p0uk7ZIGTPKwUK4gvCW9CIH--iWKYDQWy2e8B6bh1LQ40c32xMtD9bIDIrjEiq-GuIGr1Fm0avl6m2bhJ8HKbdObEJ-udZFzXEGgdOGOMbzujFVTG0Xz8J7L2y-DFpUR0PXxjKmZuAJ0ud8fBPoEUqkq7CLzxCE-6RRcuGeic23kV4jGcSy_Yew6cMO5MA8TXQ"/>
+</div>
+</td>
+<td class="p-4 font-body-md text-body-md font-semibold text-on-surface">Minimalist Smartwatch Series X</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container/20 text-on-secondary-container">Electronics</span>
+</td>
+<td class="p-4 font-price-lg text-[18px] text-on-surface">$299.00</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="font-body-sm text-body-sm text-on-surface">45 in stock</span>
+</div>
+</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit" class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary-container/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4 font-body-sm text-body-sm text-on-surface-variant">#1043</td>
+<td class="p-4">
+<div class="w-12 h-12 rounded-lg border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A beautifully crafted leather wallet, rich brown color, lying flat on a light grey textured background, top-down view, soft natural lighting highlighting the leather grain." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW-6ub4cOLnuoxHuzpYQHFMSm3sMjFfL2He5-cWulwBknpU_kSy_leSyNcQ63upEP7C6UCdIRAdKjHmroIuj2ZqARr_2Zdy41FRn9CXeBnzDDrDmlsiiDtUEhI5uzKtuL7Dqk5iPTlo2DqqlA4qYbJGOo2Z6bX_LroRwqtc2ZzmExdAS0m_xx0iDI3Iuk9UwJMrk4Dq1XFc4jV4njFCKWqKciXwftEqbemxcS1EsEaFKAWU0cf3pyG_g"/>
+</div>
+</td>
+<td class="p-4 font-body-md text-body-md font-semibold text-on-surface">Classic Leather Bifold Wallet</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container-highest text-on-surface-variant">Accessories</span>
+</td>
+<td class="p-4 font-price-lg text-[18px] text-on-surface">$55.00</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="font-body-sm text-body-sm text-on-surface">12 in stock</span>
+</div>
+</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit" class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary-container/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4 font-body-sm text-body-sm text-on-surface-variant">#1044</td>
+<td class="p-4">
+<div class="w-12 h-12 rounded-lg border border-outline-variant overflow-hidden bg-surface flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A pair of high-end over-ear noise-canceling headphones, matte silver finish, resting elegantly on a minimalist white stand against a very soft grey seamless paper background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARSoalpzlhy8idKaozRv8SgI0A7fvzRtsyeasPc4RSGoGa2Av6WH5LCpM4Zt_T5r_OFogCdMjz6hIRwl8hgui-ZDFGn8riVQRf4UuRZR6_Gass593OdDKxkH_eRkKCq3w9cvfy3XivSgcCKLfk52ypi2SPLNayZ7pnKAaLWY0sWWJaS4IymRyr2zxPbrnQ6DlJKzTFGxUdJk-c5T8NH5SY0vv9XxR8DjhubHut3qP7328V4zeZIVmARw"/>
+</div>
+</td>
+<td class="p-4 font-body-md text-body-md font-semibold text-on-surface">Acoustic Pro Wireless Headphones</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container/20 text-on-secondary-container">Audio</span>
+</td>
+<td class="p-4 font-price-lg text-[18px] text-on-surface">$349.00</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-rose-500"></div>
+<span class="font-body-sm text-body-sm text-on-surface">0 in stock</span>
+</div>
+</td>
+<td class="p-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button aria-label="Edit" class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary-container/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Showing <span class="font-semibold text-on-surface">1</span> to <span class="font-semibold text-on-surface">10</span> of <span class="font-semibold text-on-surface">97</span> results</span>
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50 transition-colors" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center font-body-sm text-body-sm font-semibold bg-secondary-container text-on-secondary-container">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">10</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

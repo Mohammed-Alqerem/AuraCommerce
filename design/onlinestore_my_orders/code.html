@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Orders - OnlineStore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "tertiary-container": "#001a41",
+                        "on-secondary-container": "#004b75",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed-variant": "#39475f",
+                        "on-tertiary-fixed": "#001a41",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-fixed": "#0d1c32",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-dim": "#dcd9d9",
+                        "surface-variant": "#e4e2e1",
+                        "secondary-fixed": "#cde5ff",
+                        "surface-container-high": "#eae8e7",
+                        "surface-container-low": "#f6f3f2",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "on-error": "#ffffff",
+                        "outline": "#75777e",
+                        "primary": "#000000",
+                        "secondary-fixed-dim": "#94ccff",
+                        "surface-container": "#f0eded",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-container": "#2180ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#fbf9f8",
+                        "on-primary-container": "#76849f",
+                        "secondary": "#006398",
+                        "inverse-primary": "#b9c7e4",
+                        "primary-container": "#0d1c32",
+                        "surface-bright": "#fbf9f8",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "on-secondary-fixed-variant": "#004b74",
+                        "on-secondary-fixed": "#001d32",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#515f78",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#6cbdfe",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "price-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "price-lg": ["24px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pt-16">
+<!-- TopNavBar (OnlineStore) -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-highest border-b border-outline-variant shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-on-primary-fixed">OnlineStore</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors font-body-md text-body-md px-2 py-1 rounded" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors font-body-md text-body-md px-2 py-1 rounded" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors font-body-md text-body-md px-2 py-1 rounded" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors font-body-md text-body-md px-2 py-1 rounded" href="#">About</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors font-body-md text-body-md px-2 py-1 rounded" href="#">Contact</a>
+</nav>
+</div>
+<div class="flex items-center gap-4 text-secondary dark:text-secondary-fixed">
+<button class="active:scale-95 duration-150 p-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="active:scale-95 duration-150 p-2 hover:bg-surface-container-low rounded-full transition-colors text-secondary border-b-2 border-secondary pb-1">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-gutter py-section-padding flex flex-col md:flex-row gap-stack-lg">
+<!-- User Profile Sidebar (Custom Component based on SideNavBar style guidance) -->
+<aside class="w-full md:w-64 bg-surface rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 shrink-0 h-fit">
+<div class="p-6 border-b border-outline-variant/30 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A close up portrait of a smiling person, used as a generic avatar. The lighting is soft and natural, emphasizing approachability. The background is a blurred minimal office setting. Clean, modern, bright." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQKld5qihcobVq-DB_OKChBwymoq1oTQDwE7IvLrwucJNOCC1yuT-EkalYGnprEuLxzrWLZWdom1tSuYtdGg2UPKNZCZFgIwZpModDxxpJAJO7RaJgUO6JbCGsKR6N6Yk6OCAn2-4G0osrCimADCP6Q0cen3-oT-MAeHv-8vVl9faF45eEuQA9kb8NT0dsDlllWSwTYh0ZgmgjB_xQyqczb4ITlFedauUR56o8iRlYrFM36ASPQN3wbg"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface text-lg">Jane Doe</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">jane.doe@example.com</p>
+</div>
+</div>
+<nav class="p-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg px-4 py-3 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">person</span> Profile
+                </a>
+<a class="flex items-center gap-3 bg-secondary/10 text-secondary rounded-lg px-4 py-3 font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">shopping_bag</span> My Orders
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg px-4 py-3 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">favorite</span> Wishlist
+                </a>
+<div class="my-2 border-t border-outline-variant/30"></div>
+<a class="flex items-center gap-3 text-error hover:bg-error-container/20 transition-colors rounded-lg px-4 py-3 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+                </a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-grow">
+<div class="mb-8">
+<h1 class="font-headline-lg text-headline-lg md:text-headline-lg text-on-surface mb-2">My Orders</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">View and manage your recent purchases.</p>
+</div>
+<div class="flex flex-col gap-6">
+<!-- Order Card 1 -->
+<div class="bg-surface rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+<div class="p-4 md:p-6 border-b border-outline-variant/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest">
+<div class="flex flex-wrap items-center gap-4 md:gap-8">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Order Placed</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Oct 24, 2023</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Total</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">$124.99</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Order #</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">ORD-88392-AB</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md uppercase px-3 py-1 rounded-full bg-[#dcfce7] text-[#166534]">Delivered</span>
+<button class="border border-primary text-primary hover:bg-surface-container-low px-4 py-2 rounded-lg font-body-sm text-body-sm font-semibold transition-colors">View Details</button>
+</div>
+</div>
+<div class="p-4 md:p-6 flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="w-20 h-20 bg-surface-container-low rounded-lg overflow-hidden shrink-0">
+<img alt="Product Image" class="w-full h-full object-cover" data-alt="A high quality product shot of a sleek, minimalist mechanical keyboard. White and grey keycaps, sitting on a clean light desk surface. Soft diffuse lighting. Modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP0xaIbP2t683cANjmQYJzCT-ZEdiAtAAVFE6_Qyu13tJFvSJjM6wKBgq8fusGexEAqdJYKdQrYmm-GPjB46RgkxmtQFYf52dCatq9bCyEDZQ4GatR6SmYkg3ykQQ7ijKDmnfgfKo6lWql-HIFtyfXHP7_b09hAefIMlWESTiGbo4m_eYZbq4ff1gNurickay4_P1XuEUh23veseXn9Sfd18vEVqs987bMUvd1qkzkSCMYEMCazZeCbg"/>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Minimalist Mechanical Keyboard</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Color: Frost White | Qty: 1</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Card 2 -->
+<div class="bg-surface rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+<div class="p-4 md:p-6 border-b border-outline-variant/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest">
+<div class="flex flex-wrap items-center gap-4 md:gap-8">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Order Placed</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Nov 02, 2023</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Total</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">$45.00</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mb-1">Order #</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">ORD-91023-XY</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md uppercase px-3 py-1 rounded-full bg-[#dbeafe] text-[#1e40af]">Processing</span>
+<button class="border border-primary text-primary hover:bg-surface-container-low px-4 py-2 rounded-lg font-body-sm text-body-sm font-semibold transition-colors">View Details</button>
+</div>
+</div>
+<div class="p-4 md:p-6 flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="w-20 h-20 bg-surface-container-low rounded-lg overflow-hidden shrink-0">
+<img alt="Product Image" class="w-full h-full object-cover" data-alt="A premium ceramic coffee mug with a matte navy blue finish. Resting on a white marble countertop. Morning sunlight casting soft shadows. Elegant, simple, clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFr_RJymnHyjTzOBbvL9gTn-B0AP9sTI3UlejReCLNQd-B3OvqvoI5n-u8YLzPL9K6G9UfQ82kWzYvk2YB9NcWBOqUjUbXCClqLU0Y9oAAUI9mAIUKM8XnO1v02hXV_xwvN7ztkXfrQFxZ7sc7Zq83_ZpdBG4qgAg9yKlsNRAstqTDp3UjeDXEUkTx3ZpXvLl3ragK9kUK3amPQxRMpkWRep51CWLmoeRytfJQbop5qzAT0haqLbrP-w"/>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Artisan Ceramic Mug</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Color: Deep Navy | Qty: 2</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-highest border-t border-outline-variant w-full py-section-padding px-margin-mobile md:px-gutter grid grid-cols-1 md:grid-cols-4 gap-stack-lg mt-auto">
+<div class="flex flex-col gap-4">
+<span class="text-headline-md font-headline-md text-primary">OnlineStore</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 OnlineStore. All rights reserved.</p>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface uppercase mb-2">Legal</h4>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-label-md text-label-md font-semibold text-on-surface uppercase mb-2">Support</h4>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Shipping Info</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Returns</a>
+</div>
+</footer>
+</body></html>

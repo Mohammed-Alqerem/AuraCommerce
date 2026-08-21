@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shopping Cart - OnlineStore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "tertiary-container": "#001a41",
+                        "on-secondary-container": "#004b75",
+                        "on-background": "#1b1c1c",
+                        "on-primary-fixed-variant": "#39475f",
+                        "on-tertiary-fixed": "#001a41",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf9f8",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-surface": "#303030",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#44474d",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-fixed": "#0d1c32",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-dim": "#dcd9d9",
+                        "surface-variant": "#e4e2e1",
+                        "secondary-fixed": "#cde5ff",
+                        "surface-container-high": "#eae8e7",
+                        "surface-container-low": "#f6f3f2",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "on-error": "#ffffff",
+                        "outline": "#75777e",
+                        "primary": "#000000",
+                        "secondary-fixed-dim": "#94ccff",
+                        "surface-container": "#f0eded",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-container": "#2180ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#fbf9f8",
+                        "on-primary-container": "#76849f",
+                        "secondary": "#006398",
+                        "inverse-primary": "#b9c7e4",
+                        "primary-container": "#0d1c32",
+                        "surface-bright": "#fbf9f8",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "on-secondary-fixed-variant": "#004b74",
+                        "on-secondary-fixed": "#001d32",
+                        "on-surface": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#515f78",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#6cbdfe",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "price-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "price-lg": ["24px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .btn-primary { background-color: #007BFF; color: #FFFFFF; border-radius: 8px; font-weight: 600; padding: 12px 24px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); }
+        .btn-secondary { background-color: transparent; border: 1px solid #0A192F; color: #0A192F; border-radius: 8px; font-weight: 600; padding: 12px 24px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .btn-secondary:hover { background-color: rgba(10, 25, 47, 0.05); }
+        .card-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #DEE2E6; border-radius: 4px; background: #fff; cursor: pointer; transition: all 0.2s; }
+        .qty-btn:hover { background: #f8f9fa; border-color: #c5c6cd; }
+        .qty-input { width: 48px; text-align: center; border: 1px solid #DEE2E6; border-radius: 4px; height: 32px; font-size: 14px; }
+        .qty-input:focus { outline: none; border-color: #64B5F6; box-shadow: 0 0 0 4px rgba(100, 181, 246, 0.25); }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-highest fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto h-16 border-b border-outline-variant shadow-sm docked full-width top-0">
+<div class="flex items-center gap-8">
+<a class="text-headline-md font-headline-md font-bold text-primary dark:text-on-primary-fixed" href="#">OnlineStore</a>
+<div class="hidden md:flex items-center gap-6 font-body-md text-body-md">
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 py-2 px-1 rounded-md" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 py-2 px-1 rounded-md" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 py-2 px-1 rounded-md" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 py-2 px-1 rounded-md" href="#">About</a>
+<a class="text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors active:scale-95 duration-150 py-2 px-1 rounded-md" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-4 text-secondary dark:text-secondary-fixed">
+<button aria-label="shopping_cart" class="p-2 hover:bg-surface-container-low rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button aria-label="account_circle" class="p-2 hover:bg-surface-container-low rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow pt-[104px] pb-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
+<div class="mb-stack-lg">
+<h1 class="font-display-lg text-display-lg text-primary">Your Cart</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-sm">Review your items and proceed to checkout.</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-stack-lg items-start">
+<!-- Cart Items -->
+<div class="w-full lg:w-2/3 bg-surface-container-lowest rounded-lg card-shadow p-6">
+<!-- Desktop Header -->
+<div class="hidden md:grid grid-cols-12 gap-4 border-b border-outline-variant pb-4 mb-6 font-label-md text-label-md text-on-surface-variant uppercase">
+<div class="col-span-6">Product</div>
+<div class="col-span-2 text-center">Price</div>
+<div class="col-span-2 text-center">Quantity</div>
+<div class="col-span-2 text-right">Subtotal</div>
+</div>
+<!-- Item 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-outline-variant pb-6 mb-6">
+<div class="col-span-1 md:col-span-6 flex items-center gap-4">
+<button aria-label="Remove item" class="text-outline hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<div class="w-20 h-24 bg-surface-container rounded-md overflow-hidden shrink-0 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A sleek, modern wireless headphone in matte black, placed on a clean white surface with soft, diffused high-key lighting. The aesthetic is premium corporate e-commerce, minimal and airy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACOudCVQnphZl1RhFYgcG-TgSxdxnSj99TxMSDzKzU0rt0m-Be306UoCEV2yX4piTrqliNeYpPPBaFO0cDIWmnxXSeVGncTPQhEiRRQivgUxXUTUZj4PsLHkBwNFn2fWeaA__K7LhoDJ3SvXNBB88_RNRfNQJUZYB8xDNPvZXfIwEK7jTX3ewVMfOlBXZlBeGno8A903tRd6jSQvZ5ryXqKlElb1rqxYAfQFkW_XSTDRgHPJ0nq5fBNw"/>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-primary">Premium Wireless Headphones</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Matte Black</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Price:</span>
+<span class="font-body-md text-body-md text-primary">$299.00</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Qty:</span>
+<div class="flex items-center gap-2">
+<button aria-label="Decrease quantity" class="qty-btn"><span class="material-symbols-outlined text-[18px]">remove</span></button>
+<input class="qty-input font-body-sm text-on-surface" min="1" type="number" value="1"/>
+<button aria-label="Increase quantity" class="qty-btn"><span class="material-symbols-outlined text-[18px]">add</span></button>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-end items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Subtotal:</span>
+<span class="font-price-lg text-[20px] text-primary">$299.00</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-outline-variant pb-6 mb-6">
+<div class="col-span-1 md:col-span-6 flex items-center gap-4">
+<button aria-label="Remove item" class="text-outline hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<div class="w-20 h-24 bg-surface-container rounded-md overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A minimalist mechanical keyboard with a white and pale grey color scheme, featuring bright white backlighting. Photographed from a top-down angle on a bright, minimalist desk setup, emphasizing clean lines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWMq4TyalNiYug2fpHLcC9qmci0GLikUltT10ieY_sK2aNoQxSa1-qH0uEHRByyAUkOzMffKfMZF6bK0JaEMitnB1hbZ1z80YVb00ydWmEvl5ruf4ViZtLnUvniciyE1NMXaDqFwigZxHZGTiFaiyo2yHoNbsFXI6O1TsFMtvpIkBWzKPTESL2LKh3-pDizSuJLbCqSgx28Zd1jywp4_oFpWm0tDbptQcXQCKAenqSa1h1XcqZHLP_Kw"/>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-primary">Mechanical Keyboard TKL</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">White / Brown Switches</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Price:</span>
+<span class="font-body-md text-body-md text-primary">$149.00</span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Qty:</span>
+<div class="flex items-center gap-2">
+<button aria-label="Decrease quantity" class="qty-btn"><span class="material-symbols-outlined text-[18px]">remove</span></button>
+<input class="qty-input font-body-sm text-on-surface" min="1" type="number" value="2"/>
+<button aria-label="Increase quantity" class="qty-btn"><span class="material-symbols-outlined text-[18px]">add</span></button>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-between md:justify-end items-center">
+<span class="md:hidden font-label-md text-label-md text-on-surface-variant uppercase">Subtotal:</span>
+<span class="font-price-lg text-[20px] text-primary">$298.00</span>
+</div>
+</div>
+<div class="mt-6 flex justify-between items-center">
+<a class="font-body-md text-body-md text-secondary hover:underline flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+                        Continue Shopping
+                    </a>
+<button class="text-on-surface-variant text-body-sm font-body-sm hover:text-error transition-colors">Clear Cart</button>
+</div>
+</div>
+<!-- Order Summary Sidebar -->
+<div class="w-full lg:w-1/3 bg-surface-container-lowest rounded-lg card-shadow p-6 lg:sticky lg:top-[100px]">
+<h2 class="font-headline-md text-headline-md text-primary border-b border-outline-variant pb-4 mb-4">Order Summary</h2>
+<div class="space-y-4 mb-6">
+<div class="flex justify-between font-body-md text-body-md text-on-surface">
+<span>Subtotal (3 items)</span>
+<span>$597.00</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface">
+<span>Shipping</span>
+<span class="text-[#2e7d32]">Free</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface">
+<span>Estimated Tax</span>
+<span>$47.76</span>
+</div>
+</div>
+<div class="border-t border-outline-variant pt-4 mb-8 flex justify-between items-end">
+<span class="font-headline-md text-headline-md text-primary">Total</span>
+<span class="font-price-lg text-price-lg text-primary">$644.76</span>
+</div>
+<button class="btn-primary w-full h-[56px] text-[16px]">
+                    Proceed to Checkout
+                </button>
+<div class="mt-6 flex flex-col gap-3">
+<p class="font-label-md text-label-md text-on-surface-variant text-center">We accept</p>
+<div class="flex justify-center gap-3 opacity-60">
+<!-- Simplified visual representation for demo -->
+<div class="w-10 h-6 bg-surface-variant rounded flex items-center justify-center text-[10px] font-bold">VISA</div>
+<div class="w-10 h-6 bg-surface-variant rounded flex items-center justify-center text-[10px] font-bold">MC</div>
+<div class="w-10 h-6 bg-surface-variant rounded flex items-center justify-center text-[10px] font-bold">AMEX</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-highest w-full py-section-padding px-margin-mobile md:px-gutter grid grid-cols-1 md:grid-cols-4 gap-stack-lg border-t border-outline-variant mt-auto flat">
+<div class="col-span-1 md:col-span-1 flex flex-col items-start gap-4">
+<span class="text-headline-md font-headline-md text-primary">OnlineStore</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your premier destination for high-quality electronics and lifestyle accessories.</p>
+</div>
+<div class="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold mb-2 uppercase">Legal</span>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold mb-2 uppercase">Support</span>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Shipping Info</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Returns</a>
+</div>
+</div>
+<div class="col-span-1 md:col-span-4 mt-8 pt-8 border-t border-outline-variant flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+<span>© 2024 OnlineStore. All rights reserved.</span>
+</div>
+</footer>
+</body></html>
