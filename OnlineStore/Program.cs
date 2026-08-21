@@ -50,7 +50,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-if (builder.Configuration.GetValue("Database:ApplyMigrationsOnStartup", true))
+// Automatic migrations are useful for local development, but can crash an IIS
+// worker process when a hosted SQL connection is unavailable or lacks DDL rights.
+// Production deployments should apply migrations as a deployment step and leave
+// this switch disabled unless the host explicitly supports startup migrations.
+if (builder.Configuration.GetValue("Database:ApplyMigrationsOnStartup", app.Environment.IsDevelopment()))
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

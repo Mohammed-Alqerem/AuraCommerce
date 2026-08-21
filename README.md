@@ -102,10 +102,10 @@ Important configuration keys:
 | Key | Default | Purpose |
 | --- | --- | --- |
 | `ConnectionStrings:DefaultConnection` | LocalDB | SQL Server connection supplied through environment/deployment secrets in production |
-| `Database:ApplyMigrationsOnStartup` | `true` | Preserves demo-host convenience; set `false` when migrations are run by a deployment step |
+| `Database:ApplyMigrationsOnStartup` | `false` | Set `true` only when the host explicitly supports startup migrations |
 | `Security:RequireHttps` | `false` | Set `true` on an HTTPS deployment to require secure session cookies |
 
-For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; never place its password in the repository. Keep automatic migrations enabled only if the host relies on startup migration. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
+For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; never place its password in the repository. Apply migrations with the deployment process or enable `Database__ApplyMigrationsOnStartup=true` only when the host permits startup schema changes. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
 
 ## Database migrations
 
