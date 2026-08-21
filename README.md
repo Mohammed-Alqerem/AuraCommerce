@@ -5,15 +5,15 @@
 ![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework-Core-68217A?style=flat-square)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-CC2927?style=flat-square&logo=microsoftsqlserver)
 
-Aura Commerce is a portfolio-quality ASP.NET Core MVC storefront backed by Entity Framework Core and SQL Server. It provides a complete customer journey from product discovery through transaction-safe checkout and order history, plus a role-protected admin workspace.
+Aura Commerce is a production-minded ASP.NET Core MVC storefront backed by Entity Framework Core and SQL Server. It covers the complete customer journey—from product discovery to transaction-safe checkout and order history—alongside a role-protected administration workspace.
 
 ## Live demo
 
 [http://auracomerce.runasp.net/](http://auracomerce.runasp.net/)
 
-## Features
+## Highlights
 
-Customer features:
+### Customer experience
 
 - Paginated product catalog with server-side search and category filtering
 - Product details, ratings, and one review per customer/product
@@ -22,7 +22,7 @@ Customer features:
 - Customer-only order history and order details
 - Registration, login, logout, and profile/password management
 
-Admin features:
+### Administration
 
 - Role-protected dashboard with revenue, pending-order, and low-stock metrics
 - Overposting-safe product creation and editing
@@ -30,7 +30,7 @@ Admin features:
 - Order status management using centralized valid statuses
 - Customer directory and order overview
 
-Experience:
+### User experience
 
 - Responsive Bootstrap UI
 - English/Arabic support and RTL layout
@@ -39,7 +39,7 @@ Experience:
 
 ## Screenshots
 
-<!-- Add selected repository screenshots here when they are ready to publish. -->
+Screenshots are intentionally omitted from this repository. Run the application locally or open the live demo to explore the interface.
 
 ## Tech stack
 
@@ -68,15 +68,9 @@ The application intentionally does not use ASP.NET Core Identity; it keeps its s
 
 ## Demo accounts
 
-**Demo credentials only. Do not reuse these passwords anywhere else.**
+The development seed creates one administrator and sample customer accounts. Credentials are intentionally not documented in this repository; obtain the current demo login details from the project maintainer or the deployment owner.
 
-| Role | Email | Password | Access |
-| --- | --- | --- | --- |
-| Admin | `mohammed@gmail.com` | `Aura123!` | Admin dashboard and store management |
-| Customer | `ahmad@gmail.com` | `Aura123!` | Catalog, reviews, cart, checkout, and orders |
-| Customer | `sara@gmail.com` | `Aura123!` | Catalog, reviews, cart, checkout, and orders |
-
-The database stores hashes for these public demo passwords, never the passwords themselves.
+Production deployments must replace seeded accounts, use unique strong passwords, and keep all secrets in environment variables or the host's secret store.
 
 ## Local setup
 
@@ -111,7 +105,7 @@ Important configuration keys:
 | `Database:ApplyMigrationsOnStartup` | `true` | Preserves demo-host convenience; set `false` when migrations are run by a deployment step |
 | `Security:RequireHttps` | `false` | Set `true` on an HTTPS deployment to require secure session cookies |
 
-For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; do not place its password in the repository. Keep automatic migrations enabled only if the host relies on startup migration. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
+For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; never place its password in the repository. Keep automatic migrations enabled only if the host relies on startup migration. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
 
 ## Database migrations
 

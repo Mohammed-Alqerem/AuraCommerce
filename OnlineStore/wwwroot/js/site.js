@@ -31,7 +31,7 @@
             "login.featureLanguage": "Arabic / English",
             "login.eyebrow": "Account Access",
             "login.title": "Welcome Back",
-            "login.subtitle": "Sign in with a seeded user, for example mohammed@gmail.com / Aura123!.",
+            "login.subtitle": "Sign in to continue to your account.",
             "login.email": "Email",
             "login.emailPlaceholder": "name@example.com",
             "login.password": "Password",
@@ -41,10 +41,6 @@
             "login.submit": "Login",
             "login.noAccount": "No account?",
             "login.register": "Register",
-            "login.demoTitle": "Demo accounts",
-            "login.demoCustomer": "Customer account",
-            "login.demoBuyer": "Buyer account",
-            "login.demoAdmin": "Admin account - dashboard access",
             "register.mediaEyebrow": "Create your store account",
             "register.mediaTitle": "Save your details, track orders, and checkout faster every time.",
             "register.featureOrders": "Order tracking",
@@ -87,7 +83,7 @@
             "login.featureLanguage": "العربية / الإنجليزية",
             "login.eyebrow": "الوصول للحساب",
             "login.title": "أهلاً بعودتك",
-            "login.subtitle": "سجل الدخول بمستخدم موجود مثل mohammed@gmail.com / Aura123!.",
+            "login.subtitle": "سجل الدخول للمتابعة إلى حسابك.",
             "login.email": "البريد الإلكتروني",
             "login.emailPlaceholder": "name@example.com",
             "login.password": "كلمة المرور",
@@ -97,10 +93,6 @@
             "login.submit": "تسجيل الدخول",
             "login.noAccount": "ليس لديك حساب؟",
             "login.register": "إنشاء حساب",
-            "login.demoTitle": "حسابات جاهزة",
-            "login.demoCustomer": "حساب عميل",
-            "login.demoBuyer": "حساب مشتري",
-            "login.demoAdmin": "حساب مدير - دخول لوحة التحكم",
             "register.mediaEyebrow": "أنشئ حسابك في المتجر",
             "register.mediaTitle": "احفظ بياناتك وتابع طلباتك وأنهِ الشراء بشكل أسرع في كل مرة.",
             "register.featureOrders": "تتبع الطلبات",
@@ -504,20 +496,4 @@
         });
     });
 
-    document.querySelectorAll(".js-fill-login").forEach((button) => {
-        button.addEventListener("click", () => {
-            const email = document.querySelector('input[name="Email"]');
-            const password = document.querySelector('input[name="Password"]');
-
-            if (email) {
-                email.value = button.dataset.email || "";
-                email.dispatchEvent(new Event("input", { bubbles: true }));
-            }
-
-            if (password) {
-                password.value = button.dataset.password || "";
-                password.dispatchEvent(new Event("input", { bubbles: true }));
-            }
-        });
-    });
 })();
