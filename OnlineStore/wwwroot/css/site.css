@@ -1495,6 +1495,37 @@ hr {
 @media (max-width: 992px) {
     .order-summary-panel { position: static; }
 
+    .auth-page {
+        min-height: auto;
+        padding: 32px 16px;
+    }
+
+    .auth-shell,
+    .auth-shell-register {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: auto;
+        width: min(100%, 680px);
+    }
+
+    .auth-media {
+        display: none;
+    }
+
+    .auth-card {
+        min-width: 0;
+        overflow: hidden;
+        padding: clamp(28px, 6vw, 48px);
+        width: 100%;
+    }
+
+    .auth-form,
+    .auth-form > *,
+    .input-with-icon,
+    .input-with-icon .form-control {
+        min-width: 0;
+        width: 100%;
+    }
+
     .navbar-collapse {
         padding: 1rem 0;
     }
@@ -1562,6 +1593,65 @@ hr {
 }
 
 @media (max-width: 576px) {
+    .auth-page {
+        padding: 20px 12px;
+    }
+
+    .auth-shell,
+    .auth-shell-register {
+        border-radius: 18px;
+    }
+
+    .auth-card {
+        padding: 24px 18px;
+    }
+
+    .auth-card-actions {
+        margin-bottom: 22px;
+    }
+
+    .demo-accounts {
+        padding: .7rem;
+    }
+
+    .demo-account {
+        align-items: flex-start;
+        gap: .65rem;
+        padding: .7rem;
+    }
+
+    .demo-account > span {
+        min-width: 0;
+    }
+
+    .demo-account strong,
+    .demo-account small {
+        overflow-wrap: anywhere;
+    }
+
+    .demo-account code {
+        flex: 0 0 auto;
+    }
+
+    .auth-form > .d-flex {
+        align-items: flex-start !important;
+        flex-wrap: wrap;
+        gap: .75rem 1rem;
+    }
+
+    .auth-form > .d-flex > a {
+        margin-inline-start: auto;
+        white-space: nowrap;
+    }
+
+    .auth-form.row {
+        margin-inline: 0;
+    }
+
+    .auth-form.row > * {
+        padding-inline: 0;
+    }
+
     .profile-avatar { border-radius: 16px; height: 58px; width: 58px; }
     .profile-panel-heading { align-items: flex-start; flex-direction: column; gap: .75rem; }
     .profile-required-note { padding-inline-start: 2.3rem; }

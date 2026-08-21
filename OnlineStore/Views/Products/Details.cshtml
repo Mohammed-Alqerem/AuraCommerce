@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.Name;
     var averageRating = Model.Reviews != null && Model.Reviews.Any() ? Model.Reviews.Average(review => review.Rating) : 0;
-    var canReview = Context.Session.GetInt32("UserId").HasValue && Context.Session.GetInt32("UserId") != 1;
+    var canReview = Context.Session.IsInRole(UserRoles.Customer);
 }
 
 <section class="page-section">

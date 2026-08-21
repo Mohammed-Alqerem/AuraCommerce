@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Data;
 using OnlineStore.Filters;
+using OnlineStore.Extensions;
 
 namespace OnlineStore.Controllers
 {
@@ -15,27 +16,29 @@ namespace OnlineStore.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var userId = HttpContext.Session.GetInt32("UserId")!.Value;
-            var orders = _context.Orders
+            var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+            var orders = await _context.Orders
+                .AsNoTracking()
                 .Include(order => order.OrderItems)
                     .ThenInclude(item => item.Product)
                 .Where(order => order.UserId == userId)
                 .OrderByDescending(order => order.OrderDate)
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             return View(orders);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.Session.GetInt32("UserId")!.Value;
-            var order = _context.Orders
+            var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+            var order = await _context.Orders
+                .AsNoTracking()
                 .Include(item => item.User)
                 .Include(item => item.OrderItems)
                     .ThenInclude(item => item.Product)
-                .FirstOrDefault(item => item.Id == id && item.UserId == userId);
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == userId, cancellationToken);
 
             if (order == null)
             {

@@ -1,4 +1,4 @@
-@model Users
+@model RegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -59,6 +59,15 @@
                         <input asp-for="Password" type="password" class="form-control" data-i18n-placeholder="login.passwordPlaceholder" placeholder="Password" />
                     </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ConfirmPassword" class="form-label fw-bold">Confirm password</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">lock_reset</span>
+                        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="Repeat password" />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">

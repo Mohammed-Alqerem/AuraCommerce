@@ -36,11 +36,10 @@
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@order.Id" />
                                     <select class="form-select order-status-select" name="status">
-                                        <option selected="@(order.Status == "Pending")">Pending</option>
-                                        <option selected="@(order.Status == "Processing")">Processing</option>
-                                        <option selected="@(order.Status == "Shipped")">Shipped</option>
-                                        <option selected="@(order.Status == "Delivered")">Delivered</option>
-                                        <option selected="@(order.Status == "Cancelled")">Cancelled</option>
+                                        @foreach (var status in OrderStatuses.All)
+                                        {
+                                            <option value="@status" selected="@(order.Status == status)">@status</option>
+                                        }
                                     </select>
                                     <button class="btn btn-outline-dark py-1" type="submit">Save</button>
                                 </form>

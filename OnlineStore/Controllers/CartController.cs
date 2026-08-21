@@ -1,174 +1,170 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Data;
+using OnlineStore.Extensions;
 using OnlineStore.Filters;
 using OnlineStore.Models;
 using OnlineStore.Models.ViewModels;
 
-namespace OnlineStore.Controllers
+namespace OnlineStore.Controllers;
+
+[RequireCustomer]
+public class CartController : Controller
 {
-    [RequireCustomer]
-    public class CartController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger<CartController> _logger;
+
+    public CartController(ApplicationDbContext context, ILogger<CartController> logger)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+        _logger = logger;
+    }
 
-        public CartController(ApplicationDbContext context)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
+        View(await BuildCartViewModelAsync(cancellationToken));
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Add(int productId, int quantity = 1, CancellationToken cancellationToken = default)
+    {
+        if (quantity < 1)
         {
-            _context = context;
+            return BadRequest();
         }
 
-        public IActionResult Index()
+        var cart = await GetOrCreateCartAsync(cancellationToken);
+        var product = await _context.Products
+            .FirstOrDefaultAsync(item => item.Id == productId && item.IsActive, cancellationToken);
+        if (product is null)
         {
-            return View(BuildCartViewModel());
+            return NotFound();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Add(int productId, int quantity = 1)
+        var item = await _context.CartItems.FirstOrDefaultAsync(cartItem =>
+            cartItem.CartId == cart.Id && cartItem.ProductId == productId,
+            cancellationToken);
+        var currentQuantity = item?.Quantity ?? 0;
+        var availableQuantity = product.Stock - currentQuantity;
+
+        if (availableQuantity <= 0)
         {
-            var cart = GetOrCreateCart();
-            var product = _context.Products.FirstOrDefault(item => item.Id == productId);
-            if (product == null)
+            TempData["CartMessage"] = $"{product.Name} is already at the available stock limit in your cart.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var quantityToAdd = Math.Min(quantity, availableQuantity);
+        if (item is null)
+        {
+            _context.CartItems.Add(new CartItems
             {
-                return NotFound();
-            }
+                CartId = cart.Id,
+                ProductId = productId,
+                Quantity = quantityToAdd
+            });
+        }
+        else
+        {
+            item.Quantity += quantityToAdd;
+        }
 
-            var item = _context.CartItems.FirstOrDefault(cartItem =>
-                cartItem.CartId == cart.Id && cartItem.ProductId == productId);
-            var currentQuantity = item?.Quantity ?? 0;
-            var availableQuantity = product.Stock - currentQuantity;
-
-            if (availableQuantity <= 0)
-            {
-                TempData["CartMessage"] = $"{product.Name} is already at the available stock limit in your cart.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var quantityToAdd = Math.Min(Math.Max(1, quantity), availableQuantity);
-
-            if (item == null)
-            {
-                _context.CartItems.Add(new CartItems
-                {
-                    CartId = cart.Id,
-                    ProductId = productId,
-                    Quantity = quantityToAdd
-                });
-            }
-            else
-            {
-                item.Quantity += quantityToAdd;
-            }
-
-            _context.SaveChanges();
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
             TempData["CartMessage"] = $"{product.Name} was added to your cart.";
-            return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogWarning(exception, "Cart add conflicted for cart {CartId} and product {ProductId}.", cart.Id, productId);
+            TempData["CartMessage"] = "The cart changed in another request. Please try again.";
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Update(int itemId, int quantity)
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(int itemId, int quantity, CancellationToken cancellationToken)
+    {
+        var item = await GetCurrentUsersCartItemAsync(itemId, includeProduct: true, cancellationToken);
+        if (item is null)
         {
-            var item = GetCurrentUsersCartItem(itemId, includeProduct: true);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            if (quantity <= 0)
-            {
-                _context.CartItems.Remove(item);
-            }
-            else
-            {
-                var adjustedQuantity = Math.Min(quantity, item.Product?.Stock ?? quantity);
-                if (adjustedQuantity <= 0)
-                {
-                    _context.CartItems.Remove(item);
-                }
-                else
-                {
-                    item.Quantity = adjustedQuantity;
-                }
-            }
-
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Remove(int itemId)
+        if (quantity <= 0)
         {
-            var item = GetCurrentUsersCartItem(itemId);
-            if (item != null)
-            {
-                _context.CartItems.Remove(item);
-                _context.SaveChanges();
-            }
-
-            return RedirectToAction(nameof(Index));
+            _context.CartItems.Remove(item);
+        }
+        else if (item.Product is null || !item.Product.IsActive || item.Product.Stock <= 0)
+        {
+            _context.CartItems.Remove(item);
+            TempData["CartMessage"] = "That product is no longer available and was removed from your cart.";
+        }
+        else
+        {
+            item.Quantity = Math.Min(quantity, item.Product.Stock);
         }
 
-        private CartViewModel BuildCartViewModel()
-        {
-            var cart = GetOrCreateCart();
-            var items = _context.CartItems
-                .Include(item => item.Product)
-                    .ThenInclude(product => product!.Category)
-                .Where(item => item.CartId == cart.Id)
-                .OrderBy(item => item.Id)
-                .ToList();
+        await _context.SaveChangesAsync(cancellationToken);
+        return RedirectToAction(nameof(Index));
+    }
 
-            return new CartViewModel
-            {
-                Cart = cart,
-                Items = items
-            };
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Remove(int itemId, CancellationToken cancellationToken)
+    {
+        var item = await GetCurrentUsersCartItemAsync(itemId, cancellationToken: cancellationToken);
+        if (item is null)
+        {
+            return NotFound();
         }
 
-        private Cart GetOrCreateCart()
+        _context.CartItems.Remove(item);
+        await _context.SaveChangesAsync(cancellationToken);
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<CartViewModel> BuildCartViewModelAsync(CancellationToken cancellationToken)
+    {
+        var cart = await GetOrCreateCartAsync(cancellationToken);
+        var items = await _context.CartItems
+            .AsNoTracking()
+            .Include(item => item.Product)
+                .ThenInclude(product => product!.Category)
+            .Where(item => item.CartId == cart.Id)
+            .OrderBy(item => item.Id)
+            .ToListAsync(cancellationToken);
+        return new CartViewModel { Cart = cart, Items = items };
+    }
+
+    private async Task<Cart> GetOrCreateCartAsync(CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var cart = await _context.Carts.FirstOrDefaultAsync(item => item.UserId == userId, cancellationToken);
+        if (cart is not null)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                throw new InvalidOperationException("A user session is required to use the cart.");
-            }
-
-            var cart = _context.Carts.FirstOrDefault(item => item.UserId == userId.Value);
-            if (cart != null)
-            {
-                return cart;
-            }
-
-            cart = new Cart
-            {
-                UserId = userId.Value,
-                CreatedAt = DateTime.Now
-            };
-            _context.Carts.Add(cart);
-            _context.SaveChanges();
-
             return cart;
         }
 
-        private CartItems? GetCurrentUsersCartItem(int itemId, bool includeProduct = false)
+        cart = new Cart { UserId = userId, CreatedAt = DateTime.UtcNow };
+        _context.Carts.Add(cart);
+        await _context.SaveChangesAsync(cancellationToken);
+        return cart;
+    }
+
+    private async Task<CartItems?> GetCurrentUsersCartItemAsync(
+        int itemId,
+        bool includeProduct = false,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var query = _context.CartItems
+            .Where(cartItem => cartItem.Id == itemId && cartItem.Cart!.UserId == userId);
+        if (includeProduct)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                return null;
-            }
-
-            var query = _context.CartItems
-                .Where(cartItem => cartItem.Id == itemId && cartItem.Cart!.UserId == userId.Value);
-
-            if (includeProduct)
-            {
-                query = query.Include(cartItem => cartItem.Product);
-            }
-
-            return query.FirstOrDefault();
+            query = query.Include(cartItem => cartItem.Product);
         }
+
+        return await query.FirstOrDefaultAsync(cancellationToken);
     }
 }

@@ -16,13 +16,17 @@
     <div class="container">
         <div class="toolbar mb-4">
             <div class="filter-bar">
-                <a class="filter-chip @(Model.CategoryId == null ? "active" : "")" asp-action="Index">All</a>
+                <a class="filter-chip @(Model.CategoryId == null ? "active" : "")" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm">All</a>
                 @foreach (var category in Model.Categories)
                 {
-                    <a class="filter-chip @(Model.CategoryId == category.Id ? "active" : "")" asp-action="Index" asp-route-categoryId="@category.Id">@category.Name</a>
+                    <a class="filter-chip @(Model.CategoryId == category.Id ? "active" : "")" asp-action="Index" asp-route-categoryId="@category.Id" asp-route-searchTerm="@Model.SearchTerm">@category.Name</a>
                 }
             </div>
             <form class="d-flex gap-2" asp-action="Index" method="get">
+                @if (Model.CategoryId.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                }
                 <input class="form-control" name="searchTerm" value="@Model.SearchTerm" placeholder="Search catalog" />
                 <button class="btn btn-accent" type="submit">Search</button>
             </form>
@@ -64,6 +68,25 @@
                     </article>
                 }
             </div>
+        }
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4" aria-label="Product pages">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                    </li>
+                    @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+                    {
+                        <li class="page-item @(pageNumber == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-categoryId="@Model.CategoryId" asp-route-page="@pageNumber">@pageNumber</a>
+                        </li>
+                    }
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
         }
     </div>
 </section>

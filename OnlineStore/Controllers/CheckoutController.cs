@@ -1,163 +1,89 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 using OnlineStore.Data;
+using OnlineStore.Extensions;
 using OnlineStore.Filters;
-using OnlineStore.Models;
 using OnlineStore.Models.ViewModels;
+using OnlineStore.Services;
 
-namespace OnlineStore.Controllers
+namespace OnlineStore.Controllers;
+
+[RequireCustomer]
+public class CheckoutController : Controller
 {
-    [RequireCustomer]
-    public class CheckoutController : Controller
-    {
-        private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
+    private readonly ICheckoutService _checkoutService;
 
-        public CheckoutController(ApplicationDbContext context)
+    public CheckoutController(ApplicationDbContext context, ICheckoutService checkoutService)
+    {
+        _context = context;
+        _checkoutService = checkoutService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var user = await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(item => item.Id == userId, cancellationToken);
+        if (user is null)
         {
-            _context = context;
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Account");
         }
 
-        [HttpGet]
-        public IActionResult Index()
+        var viewModel = new CheckoutViewModel
         {
-            var user = GetCurrentUser();
-            var viewModel = new CheckoutViewModel
-            {
-                FullName = user?.Name ?? string.Empty,
-                Email = user?.Email ?? string.Empty,
-                Phone = user?.Phone ?? string.Empty,
-                Address = user?.Address ?? string.Empty,
-                Cart = BuildCartViewModel()
-            };
+            FullName = user.Name,
+            Email = user.Email,
+            Phone = user.Phone,
+            Address = user.Address,
+            Cart = await _checkoutService.GetCartAsync(userId, cancellationToken)
+        };
 
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Index(CheckoutViewModel viewModel, CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        viewModel.Cart = await _checkoutService.GetCartAsync(userId, cancellationToken);
+
+        if (viewModel.Cart.Items.Count == 0)
+        {
+            ModelState.AddModelError(string.Empty, "Your cart is empty.");
+        }
+
+        if (!ModelState.IsValid)
+        {
             return View(viewModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Index(CheckoutViewModel viewModel)
+        var result = await _checkoutService.CheckoutAsync(userId, cancellationToken);
+        if (!result.Succeeded)
         {
-            viewModel.Cart = BuildCartViewModel();
-            if (!viewModel.Cart.Items.Any())
-            {
-                ModelState.AddModelError("", "Your cart is empty.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(viewModel);
-            }
-
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            using var transaction = _context.Database.BeginTransaction(IsolationLevel.Serializable);
-            var cart = BuildCartViewModel();
-            var unavailableItems = cart.Items
-                .Where(item => item.Product == null || item.Quantity > item.Product.Stock)
-                .Select(item => item.Product?.Name ?? "A product")
-                .ToList();
-
-            if (unavailableItems.Any())
-            {
-                transaction.Rollback();
-                ModelState.AddModelError("", $"Insufficient stock for: {string.Join(", ", unavailableItems)}.");
-                return View(viewModel);
-            }
-
-            var order = new Orders
-            {
-                UserId = userId.Value,
-                OrderDate = DateTime.Now,
-                TotalPrice = cart.Total,
-                Status = "Processing"
-            };
-            _context.Orders.Add(order);
-
-            foreach (var cartItem in cart.Items)
-            {
-                if (cartItem.Product == null)
-                {
-                    continue;
-                }
-
-                _context.OrderItems.Add(new OrderItems
-                {
-                    OrderId = order.Id,
-                    ProductId = cartItem.ProductId,
-                    Quantity = cartItem.Quantity,
-                    UnitPrice = cartItem.Product.Price
-                });
-
-                cartItem.Product.Stock = Math.Max(0, cartItem.Product.Stock - cartItem.Quantity);
-                _context.CartItems.Remove(cartItem);
-            }
-
-            _context.SaveChanges();
-            transaction.Commit();
-            return RedirectToAction(nameof(Success), new { id = order.Id });
+            viewModel.Cart = await _checkoutService.GetCartAsync(userId, cancellationToken);
+            ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Checkout could not be completed.");
+            return View(viewModel);
         }
 
-        public IActionResult Success(int id)
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+        return RedirectToAction(nameof(Success), new { id = result.OrderId });
+    }
 
-            var order = _context.Orders
-                .Include(item => item.User)
-                .Include(item => item.OrderItems)
-                    .ThenInclude(item => item.Product)
-                .FirstOrDefault(item => item.Id == id && item.UserId == userId.Value);
+    [HttpGet]
+    public async Task<IActionResult> Success(int id, CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var order = await _context.Orders
+            .AsNoTracking()
+            .Include(item => item.User)
+            .Include(item => item.OrderItems)
+                .ThenInclude(item => item.Product)
+            .FirstOrDefaultAsync(item => item.Id == id && item.UserId == userId, cancellationToken);
 
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
-        }
-
-        private Users? GetCurrentUser()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            return userId.HasValue
-                ? _context.Users.FirstOrDefault(user => user.Id == userId.Value)
-                : null;
-        }
-
-        private CartViewModel BuildCartViewModel()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                throw new InvalidOperationException("A user session is required to checkout.");
-            }
-
-            var cart = _context.Carts.FirstOrDefault(item => item.UserId == userId.Value);
-            if (cart == null)
-            {
-                cart = new Cart { UserId = userId.Value, CreatedAt = DateTime.Now };
-                _context.Carts.Add(cart);
-                _context.SaveChanges();
-            }
-
-            var items = _context.CartItems
-                .Include(item => item.Product)
-                .Where(item => item.CartId == cart.Id)
-                .ToList();
-
-            return new CartViewModel
-            {
-                Cart = cart,
-                Items = items
-            };
-        }
+        return order is null ? NotFound() : View(order);
     }
 }

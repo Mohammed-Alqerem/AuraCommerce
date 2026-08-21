@@ -34,13 +34,8 @@
                 <tbody>
                     @foreach (var item in Model.OrderItems)
                     {
-                        if (item.Product == null)
-                        {
-                            continue;
-                        }
-
                         <tr>
-                            <td>@item.Product.Name</td>
+                            <td>@item.ProductName</td>
                             <td>@item.Quantity</td>
                             <td>$@item.UnitPrice.ToString("0.00")</td>
                             <td><strong>$@((item.UnitPrice * item.Quantity).ToString("0.00"))</strong></td>

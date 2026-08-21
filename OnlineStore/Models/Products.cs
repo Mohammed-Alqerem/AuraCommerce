@@ -25,7 +25,10 @@ namespace OnlineStore.Models
         public int Stock { get; set; }
 
         [Url]
+        [StringLength(2048)]
         public string ImageUrl { get; set; } = string.Empty;
+
+        public bool IsActive { get; set; } = true;
 
         [Required]
         public int CategoryId { get; set; }

@@ -1,249 +1,279 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using OnlineStore.Constants;
 using OnlineStore.Data;
+using OnlineStore.Extensions;
 using OnlineStore.Filters;
 using OnlineStore.Models;
 using OnlineStore.Models.ViewModels;
 
-namespace OnlineStore.Controllers
+namespace OnlineStore.Controllers;
+
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly IPasswordHasher<Users> _passwordHasher;
+    private readonly ILogger<AccountController> _logger;
+
+    public AccountController(
+        ApplicationDbContext context,
+        IPasswordHasher<Users> passwordHasher,
+        ILogger<AccountController> logger)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IPasswordHasher<Users> _passwordHasher;
+        _context = context;
+        _passwordHasher = passwordHasher;
+        _logger = logger;
+    }
 
-        public AccountController(ApplicationDbContext context, IPasswordHasher<Users> passwordHasher)
+    [HttpGet]
+    public IActionResult Login(string? returnUrl = null)
+    {
+        if (HttpContext.Session.GetCurrentUserId().HasValue)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
+            return HttpContext.Session.IsInRole(UserRoles.Admin)
+                ? RedirectToAction("Index", "Admin")
+                : RedirectToAction("Index", "Products");
         }
 
-        [HttpGet]
-        public IActionResult Login(string? returnUrl = null)
-        {
-            if (HttpContext.Session.GetInt32("UserId").HasValue)
-            {
-                return RedirectToAction("Index", "Products");
-            }
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("authentication")]
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+    {
+        if (!ModelState.IsValid)
+        {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model, string? returnUrl = null)
+        var normalizedEmail = NormalizeEmail(model.Email);
+        var existingUser = await _context.Users
+            .FirstOrDefaultAsync(user => user.NormalizedEmail == normalizedEmail);
+
+        if (existingUser is null || !VerifyPassword(existingUser, model.Password, out var verification))
         {
-            if (!ModelState.IsValid)
-            {
-                ViewData["ReturnUrl"] = returnUrl;
-                return View(model);
-            }
-
-            var email = model.Email.Trim();
-            var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
-
-            if (existingUser == null)
-            {
-                ModelState.AddModelError("", "Email or Password is incorrect");
-                ViewData["ReturnUrl"] = returnUrl;
-                return View(model);
-            }
-
-            var legacyPasswordMatches = existingUser.Password == model.Password;
-            var verification = PasswordVerificationResult.Failed;
-
-            if (!legacyPasswordMatches)
-            {
-                try
-                {
-                    verification = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.Password, model.Password);
-                }
-                catch (FormatException)
-                {
-                    // Legacy persisted passwords are not Identity hashes. Fail safely.
-                    verification = PasswordVerificationResult.Failed;
-                }
-            }
-
-            if (verification == PasswordVerificationResult.Failed && !legacyPasswordMatches)
-            {
-                ModelState.AddModelError("", "Email or Password is incorrect");
-                ViewData["ReturnUrl"] = returnUrl;
-                return View(model);
-            }
-
-            if (legacyPasswordMatches || verification == PasswordVerificationResult.SuccessRehashNeeded)
-            {
-                existingUser.Password = _passwordHasher.HashPassword(existingUser, model.Password);
-                _context.SaveChanges();
-            }
-
-            HttpContext.Session.SetInt32("UserId", existingUser.Id);
-            HttpContext.Session.SetString("UserName", existingUser.Name);
-            HttpContext.Session.SetString("UserRole", existingUser.Id == 1 ? "Admin" : "Customer");
-
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return LocalRedirect(returnUrl);
-            }
-
-            if (existingUser.Id == 1)
-            {
-                return RedirectToAction("Index", "Admin");
-            }
-
-            return RedirectToAction("Index", "Products");
+            _logger.LogWarning("Failed login attempt.");
+            ModelState.AddModelError(string.Empty, "Email or password is incorrect.");
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Register()
+        if (!UserRoles.IsValid(existingUser.Role))
         {
-            return View(new Users());
+            _logger.LogWarning("Login blocked for user {UserId} because the stored role is invalid.", existingUser.Id);
+            ModelState.AddModelError(string.Empty, "This account is not configured correctly. Please contact support.");
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Register(Users user)
+        if (verification == PasswordVerificationResult.SuccessRehashNeeded)
         {
-            user.Email = user.Email.Trim();
-            if (_context.Users.Any(existing => existing.Email.ToLower() == user.Email.ToLower()))
-            {
-                ModelState.AddModelError(nameof(Users.Email), "This email is already registered.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(user);
-            }
-
-            user.CreatedAt = DateTime.Now;
-            user.Password = _passwordHasher.HashPassword(user, user.Password);
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            _context.Carts.Add(new Cart
-            {
-                UserId = user.Id,
-                CreatedAt = DateTime.Now
-            });
-            _context.SaveChanges();
-
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.Name);
-            HttpContext.Session.SetString("UserRole", "Customer");
-
-            return RedirectToAction("Index", "Products");
+            existingUser.Password = _passwordHasher.HashPassword(existingUser, model.Password);
+            await _context.SaveChangesAsync();
         }
 
-        [RequireLogin]
-        public IActionResult Profile()
+        HttpContext.Session.SignIn(existingUser);
+        _logger.LogInformation("User {UserId} signed in with role {Role}.", existingUser.Id, existingUser.Role);
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
-            if (HttpContext.Session.GetInt32("UserId") == 1)
-            {
-                return RedirectToAction("Index", "Admin");
-            }
-
-            var userId = GetCurrentUserId();
-            var user = _context.Users
-                .Include(u => u.Orders)
-                .Include(u => u.Reviews)
-                .FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
-
-            return View(CreateProfileViewModel(user));
+            return LocalRedirect(returnUrl);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [RequireLogin]
-        public IActionResult Profile(ProfileViewModel model)
+        return existingUser.Role == UserRoles.Admin
+            ? RedirectToAction("Index", "Admin")
+            : RedirectToAction("Index", "Products");
+    }
+
+    [HttpGet]
+    public IActionResult Register() => View(new RegisterViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("authentication")]
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        model.Name = model.Name?.Trim() ?? string.Empty;
+        model.Email = model.Email?.Trim() ?? string.Empty;
+        model.Phone = model.Phone?.Trim() ?? string.Empty;
+        model.Address = model.Address?.Trim() ?? string.Empty;
+        var normalizedEmail = NormalizeEmail(model.Email);
+
+        if (await _context.Users.AnyAsync(user => user.NormalizedEmail == normalizedEmail))
         {
-            if (HttpContext.Session.GetInt32("UserId") == 1)
-            {
-                return RedirectToAction("Index", "Admin");
-            }
-
-            var userId = GetCurrentUserId();
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
-
-            model.Email = model.Email.Trim();
-            if (_context.Users.Any(existing => existing.Email.ToLower() == model.Email.ToLower() && existing.Id != userId))
-            {
-                ModelState.AddModelError(nameof(Users.Email), "This email is already registered.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                PopulateProfileDetails(model, user);
-                return View(model);
-            }
-
-            user.Name = model.Name.Trim();
-            user.Email = model.Email;
-            user.Phone = model.Phone;
-            user.Address = model.Address;
-
-            if (!string.IsNullOrWhiteSpace(model.NewPassword))
-            {
-                user.Password = _passwordHasher.HashPassword(user, model.NewPassword);
-            }
-
-            _context.SaveChanges();
-            HttpContext.Session.SetString("UserName", user.Name);
-            TempData["ProfileSaved"] = "Your profile has been updated.";
-
-            return RedirectToAction(nameof(Profile));
+            ModelState.AddModelError(nameof(model.Email), "This email is already registered.");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [RequireLogin]
-        public IActionResult Logout()
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = new Users
+        {
+            Name = model.Name,
+            Email = model.Email,
+            NormalizedEmail = normalizedEmail,
+            Phone = model.Phone,
+            Address = model.Address,
+            Role = UserRoles.Customer,
+            CreatedAt = DateTime.UtcNow,
+            Cart = new Cart { CreatedAt = DateTime.UtcNow }
+        };
+        user.Password = _passwordHasher.HashPassword(user, model.Password);
+
+        _context.Users.Add(user);
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogWarning(exception, "Registration failed because the email could not be stored uniquely.");
+            ModelState.AddModelError(nameof(model.Email), "This email is already registered.");
+            return View(model);
+        }
+
+        HttpContext.Session.SignIn(user);
+        _logger.LogInformation("Customer account {UserId} registered.", user.Id);
+        return RedirectToAction("Index", "Products");
+    }
+
+    [HttpGet]
+    [RequireCustomer]
+    public async Task<IActionResult> Profile()
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var user = await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(item => item.Id == userId);
+
+        return user is null
+            ? RedirectToAction(nameof(Login))
+            : View(await CreateProfileViewModelAsync(user));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequireCustomer]
+    public async Task<IActionResult> Profile(ProfileViewModel model)
+    {
+        var userId = HttpContext.Session.GetCurrentUserId()!.Value;
+        var user = await _context.Users.FirstOrDefaultAsync(item => item.Id == userId);
+        if (user is null)
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(Login));
         }
 
-        private int? GetCurrentUserId()
+        model.Name = model.Name?.Trim() ?? string.Empty;
+        model.Email = model.Email?.Trim() ?? string.Empty;
+        model.Phone = model.Phone?.Trim() ?? string.Empty;
+        model.Address = model.Address?.Trim() ?? string.Empty;
+        var normalizedEmail = NormalizeEmail(model.Email);
+
+        if (await _context.Users.AnyAsync(item =>
+                item.NormalizedEmail == normalizedEmail && item.Id != userId))
         {
-            return HttpContext.Session.GetInt32("UserId");
+            ModelState.AddModelError(nameof(model.Email), "This email is already registered.");
         }
 
-        private ProfileViewModel CreateProfileViewModel(Users user)
+        if (!string.IsNullOrWhiteSpace(model.NewPassword) &&
+            (string.IsNullOrWhiteSpace(model.CurrentPassword) ||
+             !VerifyPassword(user, model.CurrentPassword, out _)))
         {
-            var model = new ProfileViewModel
-            {
-                Name = user.Name,
-                Email = user.Email,
-                Phone = user.Phone,
-                Address = user.Address
-            };
-
-            PopulateProfileDetails(model, user);
-            return model;
+            ModelState.AddModelError(nameof(model.CurrentPassword), "Enter your current password to set a new password.");
         }
 
-        private void PopulateProfileDetails(ProfileViewModel model, Users user)
+        if (!ModelState.IsValid)
         {
-            model.MemberSince = user.CreatedAt;
-            model.OrderCount = _context.Orders.Count(order => order.UserId == user.Id);
-            model.ReviewCount = _context.Reviews.Count(review => review.UserId == user.Id);
-            model.RecentOrders = _context.Orders
-                .Where(order => order.UserId == user.Id)
-                .Include(order => order.OrderItems)
-                .OrderByDescending(order => order.OrderDate)
-                .Take(3)
-                .ToList();
+            await PopulateProfileDetailsAsync(model, user.Id, user.CreatedAt);
+            return View(model);
+        }
+
+        user.Name = model.Name;
+        user.Email = model.Email;
+        user.NormalizedEmail = normalizedEmail;
+        user.Phone = model.Phone;
+        user.Address = model.Address;
+
+        if (!string.IsNullOrWhiteSpace(model.NewPassword))
+        {
+            user.Password = _passwordHasher.HashPassword(user, model.NewPassword);
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogWarning(exception, "Profile update for user {UserId} violated a database constraint.", user.Id);
+            ModelState.AddModelError(nameof(model.Email), "This email is already registered.");
+            await PopulateProfileDetailsAsync(model, user.Id, user.CreatedAt);
+            return View(model);
+        }
+
+        HttpContext.Session.SignIn(user);
+        TempData["ProfileSaved"] = "Your profile has been updated.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequireLogin]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index", "Home");
+    }
+
+    private bool VerifyPassword(Users user, string password, out PasswordVerificationResult result)
+    {
+        try
+        {
+            result = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            return result != PasswordVerificationResult.Failed;
+        }
+        catch (FormatException)
+        {
+            result = PasswordVerificationResult.Failed;
+            return false;
         }
     }
+
+    private async Task<ProfileViewModel> CreateProfileViewModelAsync(Users user)
+    {
+        var model = new ProfileViewModel
+        {
+            Name = user.Name,
+            Email = user.Email,
+            Phone = user.Phone,
+            Address = user.Address
+        };
+        await PopulateProfileDetailsAsync(model, user.Id, user.CreatedAt);
+        return model;
+    }
+
+    private async Task PopulateProfileDetailsAsync(ProfileViewModel model, int userId, DateTime createdAt)
+    {
+        model.MemberSince = createdAt;
+        model.OrderCount = await _context.Orders.CountAsync(order => order.UserId == userId);
+        model.ReviewCount = await _context.Reviews.CountAsync(review => review.UserId == userId);
+        model.RecentOrders = await _context.Orders
+            .AsNoTracking()
+            .Where(order => order.UserId == userId)
+            .Include(order => order.OrderItems)
+            .OrderByDescending(order => order.OrderDate)
+            .Take(3)
+            .ToListAsync();
+    }
+
+    private static string NormalizeEmail(string email) => email.Trim().ToUpperInvariant();
 }

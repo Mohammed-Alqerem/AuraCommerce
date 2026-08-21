@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OnlineStore.Constants;
+using OnlineStore.Extensions;
 
 namespace OnlineStore.Filters
 {
@@ -7,7 +9,8 @@ namespace OnlineStore.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var userId = context.HttpContext.Session.GetInt32("UserId");
+            var session = context.HttpContext.Session;
+            var userId = session.GetCurrentUserId();
             if (!userId.HasValue)
             {
                 var returnUrl = context.HttpContext.Request.Path + context.HttpContext.Request.QueryString;
@@ -15,9 +18,16 @@ namespace OnlineStore.Filters
                 return;
             }
 
-            if (userId.Value == 1)
+            if (session.IsInRole(UserRoles.Admin))
             {
                 context.Result = new RedirectToActionResult("Index", "Admin", null);
+                return;
+            }
+
+            if (!session.IsInRole(UserRoles.Customer))
+            {
+                session.Clear();
+                context.Result = new RedirectToActionResult("Login", "Account", null);
                 return;
             }
 
