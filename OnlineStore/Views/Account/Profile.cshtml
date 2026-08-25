@@ -8,14 +8,14 @@
 <section class="profile-hero">
     <div class="container profile-hero-content">
         <div class="profile-avatar" aria-hidden="true">@initial</div>
-        <div><span class="eyebrow">Account settings</span><h1 class="display-title mt-2 mb-1">Welcome back, @Model.Name</h1><p class="muted mb-0">Keep your delivery details and account information up to date.</p></div>
+        <div class="profile-hero-copy"><span class="eyebrow">Account settings</span><h1 class="display-title mt-2 mb-1">Welcome back, @Model.Name</h1><p class="muted mb-0">Keep your delivery details and account information up to date.</p></div>
         <a class="btn btn-outline-dark profile-orders-link" asp-controller="Orders" asp-action="Index"><span class="material-symbols-outlined">receipt_long</span>View orders</a>
     </div>
 </section>
 
 <section class="page-section">
-    <div class="container"><div class="row g-4">
-        <div class="col-lg-8"><div class="panel profile-form-panel">
+    <div class="container"><div class="row g-4 profile-layout-row">
+        <div class="col-xl-8"><div class="panel profile-form-panel">
             <div class="profile-panel-heading"><div><span class="material-symbols-outlined">manage_accounts</span><div><h2 class="h4 mb-1">Personal details</h2><p class="muted mb-0">Used for your profile, checkout, and order updates.</p></div></div><span class="profile-required-note">Required fields marked *</span></div>
             @if (TempData["ProfileSaved"] is string savedMessage) { <div class="alert alert-success d-flex align-items-center gap-2" role="status"><span class="material-symbols-outlined">check_circle</span>@savedMessage</div> }
             @if (!Model.EmailConfirmed) { <div class="alert alert-warning"><strong>Email not confirmed.</strong> Confirmation is optional for current sign-in behavior.<form asp-action="SendEmailVerification" method="post" class="mt-2"><button class="btn btn-outline-dark" type="submit">Send verification link</button></form>@if(TempData["DevelopmentVerificationLink"] is string verificationLink){<a class="d-block mt-2" href="@verificationLink">Development: open verification link</a>}</div> }
@@ -34,7 +34,7 @@
             <div class="profile-security-note"><span class="material-symbols-outlined">lock</span><span>We only use these details to manage your account and deliver your orders.</span></div>
             <form asp-action="Logout" method="post" class="profile-logout">@Html.AntiForgeryToken()<button class="btn btn-outline-dark" type="submit">Logout</button></form>
         </div></div>
-        <div class="col-lg-4"><aside class="profile-sidebar">
+        <div class="col-xl-4"><aside class="profile-sidebar">
             <div class="profile-summary-card"><span class="eyebrow">Account overview</span><dl class="profile-metrics"><div><dt><span class="material-symbols-outlined">receipt_long</span>Orders</dt><dd>@Model.OrderCount</dd></div><div><dt><span class="material-symbols-outlined">rate_review</span>Reviews</dt><dd>@Model.ReviewCount</dd></div><div><dt><span class="material-symbols-outlined">calendar_month</span>Member since</dt><dd>@Model.MemberSince.ToString("MMM yyyy")</dd></div></dl></div>
             <div class="profile-recent-card"><div class="toolbar mb-3"><h2 class="h5 fw-bold mb-0">Recent orders</h2><a asp-controller="Orders" asp-action="Index">All orders</a></div>
                 @if (Model.RecentOrders.Any()) { @foreach (var order in Model.RecentOrders) { var statusClass = $"status-{order.Status.ToLower()}"; <a class="profile-order" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"><span><strong>Order #@order.Id</strong><small>@order.OrderDate.ToString("MMM d, yyyy") · @order.OrderItems.Sum(item => item.Quantity) items</small></span><span class="status-badge @statusClass">@order.Status</span></a> } }
