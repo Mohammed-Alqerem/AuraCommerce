@@ -65,7 +65,7 @@ Inter is the Latin display/body face and Noto Kufi Arabic is the Arabic fallback
 
 ## Layout
 
-Use the existing Bootstrap grid, 1280px content container, 24px desktop gutters, 16px mobile margins, and an 8px spacing rhythm. Public product grids favor imagery. The customer header stays collapsed through extra-large widths and expands only when the full navigation, search, and account controls fit without horizontal overflow. Profile content uses the full-width form and a two-card summary band at medium widths, then adopts the established 8/4 form-and-sidebar split at extra-large widths. Admin page headers lead with the page title and actions, followed immediately by the shared admin navigation; list content starts below the header. Admin lists favor bounded responsive tables with URL-restorable filtering and pagination.
+Use the existing Bootstrap grid, 1280px content container, 24px desktop gutters, 16px mobile margins, and an 8px spacing rhythm. Public product grids favor imagery. The customer header stays collapsed through extra-large widths and expands only when the full navigation, search, and account controls fit without horizontal overflow. Profile content uses the full-width form and a two-card summary band at medium and extra-large widths, then adopts the established 8/4 form-and-sidebar split at extra-extra-large widths. The profile content begins 48px below its hero so the account workspace remains compact without crowding the heading. Admin page headers lead with the page title and actions, followed immediately by the shared admin navigation; list content starts below the header. Admin lists favor bounded responsive tables with URL-restorable filtering and pagination.
 
 ## Elevation & Depth
 
@@ -77,7 +77,7 @@ Cards use 16px corners, controls 8px, and status badges pill geometry. Rounded s
 
 ## Components
 
-The shared Razor layout, `site.css`, and `site.js` own navigation, theme, language, focus, notification, and motion behavior. Native selects and dates are intentional because platform-owned popup behavior is accepted. All application forms own validation with `novalidate` and visible inline errors.
+The shared Razor layout, `site.css`, and `site.js` own navigation, theme, language, focus, notification, and motion behavior. Native selects and dates are intentional because platform-owned popup behavior is accepted. All application forms own validation with `novalidate` and visible inline errors. External sign-in uses full-width, provider-named controls above a restrained email divider; unavailable providers stay visible but clearly disabled with a short setup-status explanation.
 
 ## Do's and Don'ts
 

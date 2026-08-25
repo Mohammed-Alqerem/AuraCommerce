@@ -16,6 +16,7 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | Admin navigation | `_AdminNavigation.cshtml` inside `.admin-page-header` | DESIGN.md + this contract | horizontally scrollable on narrow screens | Keyboard + narrow viewport |
 | Store navigation | `_Layout.cshtml` `.navbar` | DESIGN.md + this contract | guest / customer / admin | Keyboard + desktop/narrow viewport |
 | Customer profile layout | `Account/Profile.cshtml` + profile rules in `site.css` | DESIGN.md + this contract | stacked summary / form with sidebar | Narrow viewport + long content |
+| External authentication | `AccountController` + `IExternalAccountService` + `Account/Login.cshtml` | Security invariants + this contract | Google / Apple / unavailable | Service tests + browser |
 
 ## Workflow ledger
 
@@ -28,6 +29,7 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | Password reset | Generic response | Login with confirmation | Invalid/expired link offers retry |
 | Export sales report | Preserve the selected query period | Download one styled `.xlsx` workbook | Keep the filtered report visible so export can be retried |
 | Open customer support | None | Open the support form; signed-in customers can continue to My requests | Keep the global navigation available so the user can retry or leave |
+| External sign-in | Provider redirect with rate limiting and stable button state | Sign in a linked customer or create a verified customer account, then return locally | Generic inline status; email/password remains available; an existing email requires password-confirmed linking |
 
 ## Dataset state
 
@@ -37,11 +39,13 @@ Admin routes that expose the shared navigation place the page title and actions 
 
 Guests and customers reach the public support form from a labeled `Support` destination in the shared store navigation. Controller and action names are implementation details and are never required user input. Admin support remains in the separate admin navigation. The full customer header stays collapsed below the `xxl` breakpoint so account controls cannot force horizontal page overflow.
 
-The customer profile keeps every form and account-summary value within the content container. At medium and large widths the summary cards form a balanced two-card band below the form; at extra-large widths they return to the right sidebar. Long names and order metadata wrap without widening the document.
+The customer profile keeps every form and account-summary value within the content container. From medium through extra-large widths the summary cards form a balanced two-card band below the form; only at extra-extra-large widths do they return to the right sidebar. Long names and order metadata wrap without widening the document, and the content begins on the next 8px rhythm step below the hero.
 
 ## Feedback and safety
 
 Destructive or financially consequential work is pessimistic and requires an app-owned confirmation before future activation. Reversible archive/hide operations expose Restore. The application never uses browser dialogs. Sensitive tokens are not logged or stored in URLs beyond the short-lived reset-link query required for account recovery.
+
+Google and Apple subject identifiers are unique per provider. Provider access, refresh, and identity tokens are not persisted. External identities never auto-link by email: a verified email that already exists must complete the local password flow, and external authentication never links to or signs in an administrator account.
 
 ## Locale and accessibility
 

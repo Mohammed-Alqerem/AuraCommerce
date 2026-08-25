@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -20,6 +22,8 @@ public class AccountController : Controller
     private readonly IAccountTokenService _accountTokens;
     private readonly IStoreEmailSender _emailSender;
     private readonly IWebHostEnvironment _environment;
+    private readonly IExternalAccountService _externalAccounts;
+    private readonly ExternalProviderAvailability _externalProviders;
 
     public AccountController(
         ApplicationDbContext context,
@@ -27,7 +31,9 @@ public class AccountController : Controller
         ILogger<AccountController> logger,
         IAccountTokenService accountTokens,
         IStoreEmailSender emailSender,
-        IWebHostEnvironment environment)
+        IWebHostEnvironment environment,
+        IExternalAccountService externalAccounts,
+        ExternalProviderAvailability externalProviders)
     {
         _context = context;
         _passwordHasher = passwordHasher;
@@ -35,10 +41,12 @@ public class AccountController : Controller
         _accountTokens = accountTokens;
         _emailSender = emailSender;
         _environment = environment;
+        _externalAccounts = externalAccounts;
+        _externalProviders = externalProviders;
     }
 
     [HttpGet]
-    public IActionResult Login(string? returnUrl = null)
+    public IActionResult Login(string? returnUrl = null, string? externalError = null)
     {
         if (HttpContext.Session.GetCurrentUserId().HasValue)
         {
@@ -47,8 +55,14 @@ public class AccountController : Controller
                 : RedirectToAction("Index", "Products");
         }
 
-        ViewData["ReturnUrl"] = returnUrl;
-        return View();
+        SetReturnUrl(returnUrl);
+        if (!string.IsNullOrWhiteSpace(externalError))
+        {
+            TempData["ExternalLoginMessage"] = "External sign-in was cancelled or could not be completed. You can still sign in with email.";
+        }
+
+        var pendingEmail = HttpContext.Session.GetString(SessionKeys.PendingExternalEmail);
+        return View(new LoginViewModel { Email = pendingEmail ?? string.Empty });
     }
 
     [HttpPost]
@@ -58,7 +72,7 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
@@ -70,7 +84,7 @@ public class AccountController : Controller
         {
             _logger.LogWarning("Failed login attempt.");
             ModelState.AddModelError(string.Empty, "Email or password is incorrect.");
-            ViewData["ReturnUrl"] = returnUrl;
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
@@ -78,7 +92,7 @@ public class AccountController : Controller
         {
             _logger.LogWarning("Login blocked for user {UserId} because the stored role is invalid.", existingUser.Id);
             ModelState.AddModelError(string.Empty, "This account is not configured correctly. Please contact support.");
-            ViewData["ReturnUrl"] = returnUrl;
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
@@ -88,17 +102,101 @@ public class AccountController : Controller
             await _context.SaveChangesAsync();
         }
 
+        await LinkPendingExternalLoginAsync(existingUser);
+
         HttpContext.Session.SignIn(existingUser);
         _logger.LogInformation("User {UserId} signed in with role {Role}.", existingUser.Id, existingUser.Role);
 
-        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        return RedirectAfterSignIn(existingUser, returnUrl);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("authentication")]
+    public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+    {
+        if (!ExternalAuthenticationSchemes.IsSupported(provider) || !_externalProviders.IsEnabled(provider))
         {
-            return LocalRedirect(returnUrl);
+            TempData["ExternalLoginMessage"] = "That external sign-in option is not available. You can still sign in with email.";
+            return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
         }
 
-        return existingUser.Role == UserRoles.Admin
-            ? RedirectToAction("Index", "Admin")
-            : RedirectToAction("Index", "Products");
+        ClearPendingExternalLogin();
+        var callbackUrl = Url.Action(nameof(ExternalLoginCallback), new
+        {
+            provider,
+            returnUrl = LocalReturnUrl(returnUrl)
+        })!;
+        return Challenge(new AuthenticationProperties { RedirectUri = callbackUrl }, provider);
+    }
+
+    [HttpGet]
+    [EnableRateLimiting("authentication")]
+    public async Task<IActionResult> ExternalLoginCallback(
+        string? provider = null,
+        string? returnUrl = null,
+        string? remoteError = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (!string.IsNullOrWhiteSpace(remoteError) ||
+            !ExternalAuthenticationSchemes.IsSupported(provider) ||
+            !_externalProviders.IsEnabled(provider!))
+        {
+            TempData["ExternalLoginMessage"] = "External sign-in was cancelled or could not be completed. You can still sign in with email.";
+            return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
+        }
+
+        var authentication = await HttpContext.AuthenticateAsync(ExternalAuthenticationSchemes.ExternalCookie);
+        try
+        {
+            if (!authentication.Succeeded ||
+                authentication.Principal is null ||
+                !string.Equals(
+                    authentication.Principal.Identity?.AuthenticationType,
+                    provider,
+                    StringComparison.Ordinal))
+            {
+                TempData["ExternalLoginMessage"] = "External sign-in could not be verified. Please try again or use email.";
+                return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
+            }
+
+            var providerKey = authentication.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(providerKey))
+            {
+                TempData["ExternalLoginMessage"] = "External sign-in could not be verified. Please try again or use email.";
+                return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
+            }
+
+            var identity = new ExternalIdentity(
+                provider!,
+                providerKey,
+                authentication.Principal.FindFirstValue(ClaimTypes.Email),
+                HasVerifiedEmail(authentication.Principal),
+                authentication.Principal.FindFirstValue(ClaimTypes.Name));
+            var resolution = await _externalAccounts.ResolveAsync(identity, cancellationToken);
+
+            if (resolution.Kind == ExternalAccountResolutionKind.SignedIn && resolution.User is not null)
+            {
+                HttpContext.Session.SignIn(resolution.User);
+                _logger.LogInformation("User {UserId} signed in with external provider {Provider}.", resolution.User.Id, provider);
+                return RedirectAfterSignIn(resolution.User, returnUrl);
+            }
+
+            if (resolution.Kind == ExternalAccountResolutionKind.LinkRequired &&
+                !string.IsNullOrWhiteSpace(resolution.NormalizedEmail))
+            {
+                StorePendingExternalLogin(identity, resolution.NormalizedEmail, returnUrl);
+                TempData["ExternalLoginMessage"] = "This email already has an Aura Commerce account. Enter its password once to securely link the accounts.";
+                return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
+            }
+
+            TempData["ExternalLoginMessage"] = "This external account cannot be used to sign in. Try another method or contact support.";
+            return RedirectToAction(nameof(Login), new { returnUrl = LocalReturnUrl(returnUrl) });
+        }
+        finally
+        {
+            await HttpContext.SignOutAsync(ExternalAuthenticationSchemes.ExternalCookie);
+        }
     }
 
     [HttpGet]
@@ -340,6 +438,89 @@ public class AccountController : Controller
             return false;
         }
     }
+
+    private async Task LinkPendingExternalLoginAsync(Users user)
+    {
+        var provider = HttpContext.Session.GetString(SessionKeys.PendingExternalProvider);
+        var providerKey = HttpContext.Session.GetString(SessionKeys.PendingExternalProviderKey);
+        var email = HttpContext.Session.GetString(SessionKeys.PendingExternalEmail);
+        if (!ExternalAuthenticationSchemes.IsSupported(provider) ||
+            string.IsNullOrWhiteSpace(providerKey) ||
+            string.IsNullOrWhiteSpace(email))
+        {
+            ClearPendingExternalLogin();
+            return;
+        }
+
+        if (!string.Equals(user.NormalizedEmail, email, StringComparison.Ordinal))
+        {
+            ClearPendingExternalLogin();
+            return;
+        }
+
+        var linked = await _externalAccounts.LinkAsync(
+            user,
+            new ExternalIdentity(provider!, providerKey, email, true, null));
+        ClearPendingExternalIdentity();
+        if (linked)
+        {
+            TempData["StoreMessage"] = $"{provider} sign-in is now linked to your account.";
+        }
+        else
+        {
+            _logger.LogWarning("External account linking was not completed for user {UserId}.", user.Id);
+        }
+    }
+
+    private void StorePendingExternalLogin(ExternalIdentity identity, string normalizedEmail, string? returnUrl)
+    {
+        HttpContext.Session.SetString(SessionKeys.PendingExternalProvider, identity.Provider);
+        HttpContext.Session.SetString(SessionKeys.PendingExternalProviderKey, identity.ProviderKey);
+        HttpContext.Session.SetString(SessionKeys.PendingExternalEmail, normalizedEmail);
+        var localReturnUrl = LocalReturnUrl(returnUrl);
+        if (localReturnUrl is not null)
+        {
+            HttpContext.Session.SetString(SessionKeys.PendingExternalReturnUrl, localReturnUrl);
+        }
+    }
+
+    private void ClearPendingExternalLogin()
+    {
+        ClearPendingExternalIdentity();
+        HttpContext.Session.Remove(SessionKeys.PendingExternalReturnUrl);
+    }
+
+    private void ClearPendingExternalIdentity()
+    {
+        HttpContext.Session.Remove(SessionKeys.PendingExternalProvider);
+        HttpContext.Session.Remove(SessionKeys.PendingExternalProviderKey);
+        HttpContext.Session.Remove(SessionKeys.PendingExternalEmail);
+    }
+
+    private IActionResult RedirectAfterSignIn(Users user, string? returnUrl)
+    {
+        var pendingReturnUrl = HttpContext.Session.GetString(SessionKeys.PendingExternalReturnUrl);
+        var localReturnUrl = LocalReturnUrl(returnUrl) ?? LocalReturnUrl(pendingReturnUrl);
+        HttpContext.Session.Remove(SessionKeys.PendingExternalReturnUrl);
+        if (localReturnUrl is not null)
+        {
+            return LocalRedirect(localReturnUrl);
+        }
+
+        return user.Role == UserRoles.Admin
+            ? RedirectToAction("Index", "Admin")
+            : RedirectToAction("Index", "Products");
+    }
+
+    private void SetReturnUrl(string? returnUrl) => ViewData["ReturnUrl"] = LocalReturnUrl(returnUrl);
+
+    private string? LocalReturnUrl(string? returnUrl) =>
+        !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? returnUrl : null;
+
+    private static bool HasVerifiedEmail(ClaimsPrincipal principal) =>
+        principal.Claims
+            .Where(claim => string.Equals(claim.Type, "email_verified", StringComparison.OrdinalIgnoreCase))
+            .Any(claim => string.Equals(claim.Value, "true", StringComparison.OrdinalIgnoreCase) || claim.Value == "1");
 
     private async Task<ProfileViewModel> CreateProfileViewModelAsync(Users user)
     {

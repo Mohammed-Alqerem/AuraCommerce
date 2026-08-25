@@ -1,8 +1,13 @@
 using System.Threading.RateLimiting;
+using AspNet.Security.OAuth.Apple;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Data;
+using OnlineStore.Constants;
 using OnlineStore.Models;
 using OnlineStore.Services;
 
@@ -17,6 +22,66 @@ builder.Services.AddSingleton<ISalesReportWorkbookExporter, SalesReportWorkbookE
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<IAccountTokenService, AccountTokenService>();
 builder.Services.AddSingleton<IStoreEmailSender, UnconfiguredStoreEmailSender>();
+builder.Services.AddScoped<IExternalAccountService, ExternalAccountService>();
+
+var externalAuthentication = new ExternalAuthenticationOptions();
+builder.Configuration.GetSection("Authentication").Bind(externalAuthentication);
+var externalAvailability = new ExternalProviderAvailability(
+    externalAuthentication.Google.IsConfigured,
+    externalAuthentication.Apple.IsConfigured);
+builder.Services.AddSingleton(externalAvailability);
+
+var authentication = builder.Services
+    .AddAuthentication()
+    .AddCookie(ExternalAuthenticationSchemes.ExternalCookie, options =>
+    {
+        options.Cookie.Name = ".AuraCommerce.External";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+    });
+
+if (externalAvailability.Google)
+{
+    authentication.AddGoogle(ExternalAuthenticationSchemes.Google, options =>
+    {
+        options.SignInScheme = ExternalAuthenticationSchemes.ExternalCookie;
+        options.ClientId = externalAuthentication.Google.ClientId;
+        options.ClientSecret = externalAuthentication.Google.ClientSecret;
+        options.ClaimActions.MapJsonKey("email_verified", "email_verified");
+        options.Events.OnRemoteFailure = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Account/ExternalLoginCallback?remoteError=Google");
+            return Task.CompletedTask;
+        };
+    });
+}
+
+if (externalAvailability.Apple)
+{
+    authentication.AddApple(ExternalAuthenticationSchemes.Apple, options =>
+    {
+        options.SignInScheme = ExternalAuthenticationSchemes.ExternalCookie;
+        options.ClientId = externalAuthentication.Apple.ClientId;
+        options.TeamId = externalAuthentication.Apple.TeamId;
+        options.KeyId = externalAuthentication.Apple.KeyId;
+        options.GenerateClientSecret = true;
+        options.PrivateKey = (_, _) =>
+            Task.FromResult(externalAuthentication.Apple.PrivateKey.AsMemory());
+        options.Scope.Add("email");
+        options.Scope.Add("name");
+        options.ClaimActions.MapJsonKey("email_verified", "email_verified");
+        options.Events.OnRemoteFailure = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("/Account/ExternalLoginCallback?remoteError=Apple");
+            return Task.CompletedTask;
+        };
+    });
+}
 
 builder.Services.AddSession(options =>
 {
@@ -85,6 +150,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

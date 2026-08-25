@@ -29,6 +29,7 @@ Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while t
 - Customer-only order history and order details
 - Persisted delivery snapshots, itemized totals, order-status timelines, and in-app notifications
 - Registration, login, logout, and profile/password management
+- Google and Apple sign-in with verified-email onboarding and password-confirmed linking for existing customers
 - Time-limited password reset and optional email-verification flows with a provider-ready email boundary
 - Customer support requests plus FAQ, shipping, returns, terms, and about pages
 
@@ -157,9 +158,18 @@ dotnet test OnlineStore.slnx --no-build --no-restore
 
 Make sure you have:
 
-- .NET SDK 9.0 or later capable of targeting .NET 9
-- SQL Server LocalDB, SQL Server Express, or another reachable SQL Server instance
-- Git
+- Passwords are stored as ASP.NET Core `PasswordHasher<TUser>` hashes
+- Admin/customer authorization uses persisted roles and centralized session keys
+- Registration assigns the customer role server-side and uses a unique normalized-email index
+- Login and registration have per-client rate limiting
+- Unsafe MVC requests use anti-forgery validation
+- Session cookies are HTTP-only, `SameSite=Lax`, essential, and project-specific
+- Return URLs are accepted only when local, preventing open redirects
+- External provider identities are stored without access/refresh tokens; existing emails require a successful local password sign-in before linking
+- Product, cart, review, profile, checkout, and order inputs use server-side validation
+- Cart items and customer orders are always scoped to the signed-in customer
+- Checkout uses database prices, serializable transactions, stock checks, and database constraints
+- Products are archived instead of being deleted from historical orders
 
 ### 1. Clone the repository
 
@@ -210,27 +220,40 @@ Important configuration values:
 
 | Configuration Key | Default | Description |
 | --- | --- | --- |
-| `ConnectionStrings:DefaultConnection` | LocalDB | SQL Server connection string |
-| `Database:ApplyMigrationsOnStartup` | `false` | Automatically apply migrations when supported by the host |
-| `Security:RequireHttps` | `false` | Require secure session cookies on HTTPS deployments |
-
-Environment variable equivalents:
-
-```text
-ConnectionStrings__DefaultConnection
-Database__ApplyMigrationsOnStartup
-Security__RequireHttps
-```
-
-### runasp.net
+| `ConnectionStrings:DefaultConnection` | LocalDB | SQL Server connection supplied through environment/deployment secrets in production |
+| `Database:ApplyMigrationsOnStartup` | `false` | Set `true` only when the host explicitly supports startup migrations |
+| `Security:RequireHttps` | `false` | Set `true` on an HTTPS deployment to require secure session cookies |
+| `Authentication:Google:ClientId` | Empty | Google OAuth client ID; enables the Google button only when its secret is also present |
+| `Authentication:Google:ClientSecret` | Empty | Google OAuth client secret; store outside committed configuration |
+| `Authentication:Apple:ClientId` | Empty | Apple Services ID used for Sign in with Apple |
+| `Authentication:Apple:TeamId` | Empty | Apple Developer team identifier |
+| `Authentication:Apple:KeyId` | Empty | Identifier for the Apple `.p8` signing key |
+| `Authentication:Apple:PrivateKey` | Empty | Complete PKCS #8 `.p8` key contents; store only in a secret manager |
 
 For deployment on **runasp.net**:
 
-- Store the production database connection in `ConnectionStrings__DefaultConnection`
-- Never commit production credentials to GitHub
-- Apply migrations through the deployment process when possible
-- Enable `Database__ApplyMigrationsOnStartup=true` only when the host supports startup schema changes
-- Enable `Security__RequireHttps=true` only when the application is consistently served over HTTPS
+### Google and Apple sign-in setup
+
+Provider buttons are present but unavailable until all required credentials for that provider are configured. For local Google testing, keep credentials outside the repository with .NET user secrets:
+
+```powershell
+dotnet user-secrets set "Authentication:Google:ClientId" "your-client-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Google:ClientSecret" "your-client-secret" --project OnlineStore/OnlineStore.csproj
+```
+
+Register `https://localhost:<port>/signin-google` as the Google authorized redirect URI, using the HTTPS port shown by the application. For Apple, create a Services ID and register the production HTTPS return URL `https://your-domain/signin-apple`, then store the identifiers and private key:
+
+```powershell
+dotnet user-secrets set "Authentication:Apple:ClientId" "your-services-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Apple:TeamId" "your-team-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Apple:KeyId" "your-key-id" --project OnlineStore/OnlineStore.csproj
+$applePrivateKey = Get-Content "C:\secure\AuthKey_your-key-id.p8" -Raw
+dotnet user-secrets set "Authentication:Apple:PrivateKey" $applePrivateKey --project OnlineStore/OnlineStore.csproj
+```
+
+Production can use the equivalent double-underscore environment keys, such as `Authentication__Google__ClientId`. Apple requires an Apple Developer configuration and a public HTTPS callback; never commit or log the `.p8` key.
+
+## Database migrations
 
 ---
 
@@ -258,7 +281,7 @@ dotnet ef database update `
   --startup-project OnlineStore/OnlineStore.csproj
 ```
 
-`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. Review the generated SQL and back up production data before applying it.
+`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. `AddExternalAuthentication` adds provider-subject links with uniqueness constraints. Review the generated SQL and back up production data before applying it.
 
 ## Provider and policy gates
 
@@ -321,9 +344,7 @@ AuraCommerce/
 └── OnlineStore.slnx
 ```
 
----
-
-## 🔄 Continuous Integration
+The tests cover authentication hashing, roles, external-account onboarding/linking, cart stock/ownership, review validation/uniqueness, and checkout totals, stock, ownership, and cart cleanup.
 
 GitHub Actions automatically validates the project by running:
 
