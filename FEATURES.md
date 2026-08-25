@@ -25,7 +25,7 @@ This is the canonical catalog of product capabilities. Update it in the same com
 
 ## Store expansion
 
-Current branch: `feature/excel-sales-report` (stacked on `feature/store-expansion-memory`)
+Current branch: `feature/admin-header-navigation` (stacked on `feature/excel-sales-report`)
 
 | Area | Capabilities | Status |
 | --- | --- | --- |
@@ -41,6 +41,7 @@ Current branch: `feature/excel-sales-report` (stacked on `feature/store-expansio
 | Review moderation | Admin visibility toggle; hidden reviews excluded from catalog rating calculations | Ready for review |
 | Support | Customer support requests, ticket history, admin status queue, FAQ, shipping, returns, terms, and about pages | Ready for review |
 | Reports | Responsive date-filtered sales workspace with revenue KPIs, product/category breakdowns, and a styled Excel-only workbook export | Ready for review |
+| Admin navigation | Consistent title-first admin headers with the shared navigation directly beneath the page context and responsive horizontal access | Ready for review |
 | Project continuity | Durable technical memory and feature catalog updated with every feature | Ready for review |
 
 ## Policy/provider gates

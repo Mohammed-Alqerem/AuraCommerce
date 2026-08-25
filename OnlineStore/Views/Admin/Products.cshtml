@@ -5,19 +5,21 @@
 }
 
 <section class="page-header">
-    <div class="container admin-heading">
-        <div>
-            <span class="eyebrow">Catalog management</span>
-            <h1 class="display-title mt-2 mb-2">Products</h1>
-            <p class="muted mb-0">Manage product information, pricing, and availability.</p>
+    <div class="container admin-page-header">
+        <div class="admin-heading">
+            <div>
+                <span class="eyebrow">Catalog management</span>
+                <h1 class="display-title mt-2 mb-2">Products</h1>
+                <p class="muted mb-0">Manage product information, pricing, and availability.</p>
+            </div>
+            <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
         </div>
-        <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
+        <partial name="_AdminNavigation" />
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
-        <partial name="_AdminNavigation" />
         @if (TempData["AdminMessage"] is string message)
         {
             <div class="alert alert-success" role="status">@message</div>

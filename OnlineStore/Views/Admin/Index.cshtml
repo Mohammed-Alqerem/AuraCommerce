@@ -5,19 +5,21 @@
 }
 
 <section class="page-header">
-    <div class="container admin-heading">
-        <div>
-            <span class="eyebrow">Operations workspace</span>
-            <h1 class="display-title mt-2 mb-2">Store overview</h1>
-            <p class="muted mb-0">Monitor sales, fulfilment, and inventory from one focused workspace.</p>
+    <div class="container admin-page-header">
+        <div class="admin-heading">
+            <div>
+                <span class="eyebrow">Operations workspace</span>
+                <h1 class="display-title mt-2 mb-2">Store overview</h1>
+                <p class="muted mb-0">Monitor sales, fulfilment, and inventory from one focused workspace.</p>
+            </div>
+            <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
         </div>
-        <a class="btn btn-accent" asp-action="ProductForm"><span class="material-symbols-outlined">add</span>Add product</a>
+        <partial name="_AdminNavigation" />
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
-        <partial name="_AdminNavigation" />
         <div class="stats-grid mb-4">
             <div class="stat-card stat-card-accent"><div class="stat-card-icon"><span class="material-symbols-outlined">payments</span></div><span>Revenue</span><strong>$@Model.Revenue.ToString("0.00")</strong><small>All confirmed orders</small></div>
             <div class="stat-card"><div class="stat-card-icon"><span class="material-symbols-outlined">receipt_long</span></div><span>Orders</span><strong>@Model.OrderCount</strong><small>@Model.PendingOrderCount need attention</small></div>
