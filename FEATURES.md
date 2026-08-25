@@ -25,7 +25,7 @@ This is the canonical catalog of product capabilities. Update it in the same com
 
 ## Store expansion
 
-Current branch: `feature/admin-header-navigation` (stacked on `feature/excel-sales-report`)
+Current branch: `feature/customer-support-profile-layout` (stacked on `feature/admin-header-navigation`)
 
 | Area | Capabilities | Status |
 | --- | --- | --- |
@@ -40,6 +40,7 @@ Current branch: `feature/admin-header-navigation` (stacked on `feature/excel-sal
 | Inventory | Searchable stock workspace, validated adjustments, and immutable adjustment history | Ready for review |
 | Review moderation | Admin visibility toggle; hidden reviews excluded from catalog rating calculations | Ready for review |
 | Support | Customer support requests, ticket history, admin status queue, FAQ, shipping, returns, terms, and about pages | Ready for review |
+| Customer navigation | Labeled public/customer Support entry, late-expanding overflow-safe header, and an adaptive profile form/account-summary layout | Ready for review |
 | Reports | Responsive date-filtered sales workspace with revenue KPIs, product/category breakdowns, and a styled Excel-only workbook export | Ready for review |
 | Admin navigation | Consistent title-first admin headers with the shared navigation directly beneath the page context and responsive horizontal access | Ready for review |
 | Project continuity | Durable technical memory and feature catalog updated with every feature | Ready for review |

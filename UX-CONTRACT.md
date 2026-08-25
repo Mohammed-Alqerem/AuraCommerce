@@ -14,6 +14,8 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | CRUD | MVC controllers + owning list | Domain constraints + this contract | return to list / stay for inline edit | Integration tests |
 | Tables | Native semantic table | This contract | paged / bounded | Controller tests |
 | Admin navigation | `_AdminNavigation.cshtml` inside `.admin-page-header` | DESIGN.md + this contract | horizontally scrollable on narrow screens | Keyboard + narrow viewport |
+| Store navigation | `_Layout.cshtml` `.navbar` | DESIGN.md + this contract | guest / customer / admin | Keyboard + desktop/narrow viewport |
+| Customer profile layout | `Account/Profile.cshtml` + profile rules in `site.css` | DESIGN.md + this contract | stacked summary / form with sidebar | Narrow viewport + long content |
 
 ## Workflow ledger
 
@@ -25,12 +27,17 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | Checkout | Server-confirmed transaction | Order confirmation and owned details | Preserve delivery form and refreshed cart |
 | Password reset | Generic response | Login with confirmation | Invalid/expired link offers retry |
 | Export sales report | Preserve the selected query period | Download one styled `.xlsx` workbook | Keep the filtered report visible so export can be retried |
+| Open customer support | None | Open the support form; signed-in customers can continue to My requests | Keep the global navigation available so the user can retry or leave |
 
 ## Dataset state
 
 Catalog and admin filters, sort, and paging belong in query parameters. Filtering resets paging; out-of-range pages clamp. Empty and no-results states offer a clear next action. Tables use native semantics and visible horizontal overflow on narrow screens.
 
 Admin routes that expose the shared navigation place the page title and actions first, then the navigation directly beneath them in the same header. The current route remains marked with `aria-current="page"`; narrow screens preserve every destination through horizontal overflow.
+
+Guests and customers reach the public support form from a labeled `Support` destination in the shared store navigation. Controller and action names are implementation details and are never required user input. Admin support remains in the separate admin navigation. The full customer header stays collapsed below the `xxl` breakpoint so account controls cannot force horizontal page overflow.
+
+The customer profile keeps every form and account-summary value within the content container. At medium and large widths the summary cards form a balanced two-card band below the form; at extra-large widths they return to the right sidebar. Long names and order metadata wrap without widening the document.
 
 ## Feedback and safety
 

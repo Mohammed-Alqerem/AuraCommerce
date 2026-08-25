@@ -40,7 +40,7 @@
     <div class="scroll-progress" aria-hidden="true"></div>
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header sticky-top">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-xxl">
             <div class="container">
                 <a class="navbar-brand brand-mark" asp-controller="Home" asp-action="Index" data-i18n="brand">Aura Commerce</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,10 @@
                         @if (isCustomer)
                         {
                             <li class="nav-item"><a class="nav-link @(currentController == "Orders" ? "active" : "")" asp-controller="Orders" asp-action="Index" data-i18n="nav.orders">Orders</a></li>
+                        }
+                        @if (!isAdmin)
+                        {
+                            <li class="nav-item"><a class="nav-link @(currentController == "Support" ? "active" : "")" aria-current="@(currentController == "Support" ? "page" : null)" asp-controller="Support" asp-action="Index" data-i18n="nav.support">Support</a></li>
                         }
                         @if (isAdmin)
                         {

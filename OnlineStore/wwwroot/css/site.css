@@ -426,6 +426,18 @@ img {
     gap: 1.25rem;
 }
 
+.profile-hero-copy,
+.profile-layout-row > *,
+.profile-form-panel,
+.profile-sidebar {
+    min-width: 0;
+}
+
+.profile-hero-copy .display-title,
+.profile-order small {
+    overflow-wrap: anywhere;
+}
+
 .profile-avatar {
     align-items: center;
     background: var(--accent);
@@ -485,7 +497,7 @@ img {
 }
 
 .profile-metrics { margin: 1rem 0 0; }
-.profile-metrics > div { align-items: center; border-top: 1px solid var(--line); display: flex; justify-content: space-between; padding: .9rem 0; }
+.profile-metrics > div { align-items: center; border-top: 1px solid var(--line); display: flex; gap: 1rem; justify-content: space-between; padding: .9rem 0; }
 .profile-metrics > div:first-child { border-top: 0; padding-top: .2rem; }
 .profile-metrics > div:last-child { padding-bottom: 0; }
 .profile-metrics dt { align-items: center; color: var(--muted); display: flex; font-size: .88rem; font-weight: 500; gap: .45rem; }
@@ -496,6 +508,7 @@ img {
 .profile-order:first-of-type { border-top: 0; }
 .profile-order:hover strong { color: var(--accent); }
 .profile-order strong, .profile-order small { display: block; }
+.profile-order > span:first-child { min-width: 0; }
 .profile-order small { color: var(--muted); font-size: .78rem; margin-top: .2rem; }
 .profile-no-orders { align-items: flex-start; flex-direction: column; gap: .6rem; padding: .5rem 0; }
 .profile-no-orders .material-symbols-outlined { color: var(--accent); font-size: 1.5rem; }
@@ -1718,6 +1731,18 @@ hr {
         width: 100%;
     }
 
+    .product-grid,
+    .stats-grid,
+    .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-table {
+        min-width: 720px;
+    }
+}
+
+@media (max-width: 1399px) {
     .navbar-collapse {
         padding: 1rem 0;
     }
@@ -1735,15 +1760,12 @@ hr {
     [dir="rtl"] .nav-search {
         margin-left: 0;
     }
+}
 
-    .product-grid,
-    .stats-grid,
-    .footer-grid {
+@media (min-width: 768px) and (max-width: 1199px) {
+    .profile-sidebar {
+        align-items: start;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .admin-table {
-        min-width: 720px;
     }
 }
 
@@ -1765,6 +1787,8 @@ hr {
     }
 
     .profile-orders-link { margin-inline-start: 0; }
+
+    .profile-sidebar { grid-template-columns: minmax(0, 1fr); }
 
     .panel:has(.table-store) {
         overflow-x: auto;
