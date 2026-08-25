@@ -5,8 +5,8 @@
     --text: #0a192f;
     --muted: #5f6673;
     --line: #dee2e6;
-    --accent: #007bff;
-    --accent-dark: #005fc7;
+    --accent: #0062cc;
+    --accent-dark: #004f9f;
     --success-bg: #e8f7ef;
     --success: #17663a;
     --warn-bg: #eef5ff;
@@ -45,7 +45,14 @@
 
 * {
     box-sizing: border-box;
+    scrollbar-color: var(--muted) var(--surface-soft);
+    scrollbar-width: thin;
 }
+
+*::-webkit-scrollbar { width: 11px; height: 11px; }
+*::-webkit-scrollbar-track { background: var(--surface-soft); }
+*::-webkit-scrollbar-thumb { background: var(--muted); border: 3px solid var(--surface-soft); border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 body {
     margin: 0;

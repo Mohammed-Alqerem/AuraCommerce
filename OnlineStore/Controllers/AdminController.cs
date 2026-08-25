@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Constants;
 using OnlineStore.Data;
@@ -75,6 +76,7 @@ public class AdminController : Controller
         {
             var product = await _context.Products
                 .AsNoTracking()
+                .Include(item => item.Images)
                 .FirstOrDefaultAsync(item => item.Id == id.Value, cancellationToken);
             if (product is null)
             {
@@ -91,6 +93,16 @@ public class AdminController : Controller
                 ImageUrl = product.ImageUrl,
                 CategoryId = product.CategoryId,
                 IsActive = product.IsActive
+                ,
+                Sku = product.Sku
+                ,
+                Brand = product.Brand
+                ,
+                IsFeatured = product.IsFeatured
+                ,
+                LowStockThreshold = product.LowStockThreshold
+                ,
+                AdditionalImageUrls = string.Join(Environment.NewLine, product.Images.OrderBy(image => image.SortOrder).Select(image => image.Url))
             };
         }
 
@@ -102,9 +114,23 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ProductForm(ProductFormViewModel model, CancellationToken cancellationToken)
     {
-        if (!await _context.Categories.AsNoTracking().AnyAsync(item => item.Id == model.CategoryId, cancellationToken))
+        model.Sku = model.Sku?.Trim();
+        model.Brand = model.Brand?.Trim();
+        var category = await _context.Categories.AsNoTracking()
+            .Where(item => item.Id == model.CategoryId)
+            .Select(item => new { item.IsActive })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (category is null)
         {
             ModelState.AddModelError(nameof(model.CategoryId), "Select a valid category.");
+        }
+        else if (model.IsActive && !category.IsActive)
+        {
+            ModelState.AddModelError(nameof(model.CategoryId), "An active product must use an active category.");
+        }
+        if (!string.IsNullOrEmpty(model.Sku) && await ProductSkuExistsAsync(model.Sku, model.Id, cancellationToken))
+        {
+            ModelState.AddModelError(nameof(model.Sku), "This SKU is already assigned to another product.");
         }
 
         if (!ModelState.IsValid)
@@ -137,8 +163,44 @@ public class AdminController : Controller
         product.ImageUrl = model.ImageUrl?.Trim() ?? string.Empty;
         product.CategoryId = model.CategoryId;
         product.IsActive = model.IsActive;
+        product.Sku = model.Sku ?? string.Empty;
+        product.Brand = model.Brand ?? string.Empty;
+        product.IsFeatured = model.IsFeatured;
+        product.LowStockThreshold = model.LowStockThreshold;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        var imageUrls = (model.AdditionalImageUrls ?? string.Empty).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        if (imageUrls.Any(url => !Uri.TryCreate(url, UriKind.Absolute, out _)))
+        {
+            ModelState.AddModelError(nameof(model.AdditionalImageUrls), "Each image URL must be an absolute URL on its own line.");
+            await PopulateCategoriesAsync(model.CategoryId, cancellationToken);
+            return View(model);
+        }
+        if (product.Id != 0)
+        {
+            var existingImages = await _context.ProductImages.Where(image => image.ProductId == product.Id).ToListAsync(cancellationToken);
+            _context.ProductImages.RemoveRange(existingImages);
+        }
+        product.Images = imageUrls.Select((url, index) => new ProductImage
+        {
+            Url = url,
+            AltText = product.Name,
+            SortOrder = index
+        }).ToList();
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException exception) when (
+            !string.IsNullOrEmpty(model.Sku) &&
+            exception.InnerException is SqlException { Number: 2601 or 2627 })
+        {
+            _logger.LogWarning(exception, "Admin product save conflicted for SKU {Sku}.", model.Sku);
+            ModelState.AddModelError(nameof(model.Sku), "This SKU is already assigned to another product.");
+            await PopulateCategoriesAsync(model.CategoryId, cancellationToken);
+            return View(model);
+        }
         _logger.LogInformation("Admin saved product {ProductId}.", product.Id);
         TempData["AdminMessage"] = $"{product.Name} was saved.";
         return RedirectToAction(nameof(Products));
@@ -180,6 +242,16 @@ public class AdminController : Controller
         return View(orders);
     }
 
+    public async Task<IActionResult> OrderDetails(int id, CancellationToken cancellationToken)
+    {
+        var order = await _context.Orders.AsNoTracking()
+            .Include(item => item.User)
+            .Include(item => item.OrderItems)
+            .Include(item => item.StatusHistory.OrderBy(history => history.CreatedAt))
+            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        return order is null ? NotFound() : View(order);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateOrderStatus(int id, string status, CancellationToken cancellationToken)
@@ -195,7 +267,21 @@ public class AdminController : Controller
             return NotFound();
         }
 
+        if (string.Equals(order.Status, status, StringComparison.Ordinal))
+        {
+            TempData["AdminMessage"] = $"Order #{order.Id} is already {status.ToLowerInvariant()}.";
+            return RedirectToAction(nameof(Orders));
+        }
+
         order.Status = status;
+        order.StatusHistory.Add(new OrderStatusHistory { Status = status, Note = "Status updated by store administrator" });
+        _context.StoreNotifications.Add(new StoreNotification
+        {
+            UserId = order.UserId,
+            Title = $"Order #{order.Id} updated",
+            Message = $"Your order is now {status.ToLowerInvariant()}.",
+            Link = $"/Orders/Details/{order.Id}"
+        });
         await _context.SaveChangesAsync(cancellationToken);
         TempData["AdminMessage"] = $"Order #{order.Id} is now {status.ToLowerInvariant()}.";
         return RedirectToAction(nameof(Orders));
@@ -216,8 +302,14 @@ public class AdminController : Controller
     {
         var categories = await _context.Categories
             .AsNoTracking()
+            .Where(item => item.IsActive || item.Id == selectedCategoryId)
             .OrderBy(item => item.Name)
             .ToListAsync(cancellationToken);
         ViewBag.Categories = new SelectList(categories, "Id", "Name", selectedCategoryId);
     }
+
+    private Task<bool> ProductSkuExistsAsync(string sku, int productId, CancellationToken cancellationToken) =>
+        _context.Products.AsNoTracking().AnyAsync(
+            product => product.Sku == sku && product.Id != productId,
+            cancellationToken);
 }

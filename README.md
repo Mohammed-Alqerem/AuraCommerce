@@ -7,6 +7,8 @@
 
 Aura Commerce is a production-minded ASP.NET Core MVC storefront backed by Entity Framework Core and SQL Server. It covers the complete customer journey—from product discovery to transaction-safe checkout and order history—alongside a role-protected administration workspace.
 
+Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while the canonical capability list and feature status live in [FEATURES.md](FEATURES.md).
+
 ## Live demo
 
 [http://auracomerce.runasp.net/](http://auracomerce.runasp.net/)
@@ -16,11 +18,15 @@ Aura Commerce is a production-minded ASP.NET Core MVC storefront backed by Entit
 ### Customer experience
 
 - Paginated product catalog with server-side search and category filtering
+- Price/rating/stock filters, sorting, wishlist, brands, SKUs, featured products, and image galleries
 - Product details, ratings, and one review per customer/product
 - Stock-aware shopping cart with ownership protection
 - Server-priced, serializable checkout with product snapshots in order history
 - Customer-only order history and order details
+- Persisted delivery snapshots, itemized totals, order-status timelines, and in-app notifications
 - Registration, login, logout, and profile/password management
+- Time-limited password reset and optional email-verification flows with a provider-ready email boundary
+- Customer support requests plus FAQ, shipping, returns, terms, and about pages
 
 ### Administration
 
@@ -29,6 +35,7 @@ Aura Commerce is a production-minded ASP.NET Core MVC storefront backed by Entit
 - Product archiving/restoration without deleting historical order data
 - Order status management using centralized valid statuses
 - Customer directory and order overview
+- Category management, inventory adjustments with history, review moderation, support queue, and sales/CSV reports
 
 ### User experience
 
@@ -65,6 +72,8 @@ Screenshots are intentionally omitted from this repository. Run the application 
 - Products are archived instead of being deleted from historical orders
 
 The application intentionally does not use ASP.NET Core Identity; it keeps its small custom session-based authentication design while using the framework password hasher and explicit role checks.
+
+Password reset and email confirmation use ASP.NET Core Data Protection with purpose-isolated, time-limited tokens. Live delivery is intentionally disabled until an email provider is configured; development shows a local-only recovery link.
 
 ## Demo accounts
 
@@ -115,6 +124,12 @@ The `HardenAuthenticationAndDataIntegrity` migration adds roles, normalized emai
 dotnet tool restore
 dotnet ef database update --project OnlineStore/OnlineStore.csproj --startup-project OnlineStore/OnlineStore.csproj
 ```
+
+`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. Review the generated SQL and back up production data before applying it.
+
+## Provider and policy gates
+
+The repository includes a safe unconfigured email adapter. Connect an approved transactional-email provider through `IStoreEmailSender` before production account recovery. Live payments, coupons, automatic cancellations, returns, and refunds are not activated until the owner selects providers and approves pricing, eligibility, idempotency, and refund policies; the existing checkout remains the store's current manual-payment flow.
 
 Before applying to a database with user-generated legacy data, take a backup and verify that it has no duplicate normalized emails, cart products, or user/product reviews; the new unique indexes intentionally reject those invalid states.
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using OnlineStore.Constants;
 using OnlineStore.Models;
 using OnlineStore.Services;
+using OnlineStore.Models.ViewModels;
 
 namespace AuraCommerce.Tests;
 
@@ -15,7 +16,13 @@ public class CheckoutServiceTests
         var (user, product, cart) = await AddCheckoutDataAsync(database, 200, "checkout@example.com", 20m, 5, 2);
         var service = new CheckoutService(database.Context, NullLogger<CheckoutService>.Instance);
 
-        var result = await service.CheckoutAsync(user.Id);
+        var result = await service.CheckoutAsync(user.Id, new CheckoutViewModel
+        {
+            FullName = "Delivery Name",
+            Email = "delivery@example.com",
+            Phone = "12345",
+            Address = "1 Test Street"
+        });
 
         Assert.True(result.Succeeded);
         var order = await database.Context.Orders
@@ -23,6 +30,12 @@ public class CheckoutServiceTests
             .SingleAsync(item => item.Id == result.OrderId);
         Assert.Equal(user.Id, order.UserId);
         Assert.Equal(50.80m, order.TotalPrice);
+        Assert.Equal(40m, order.Subtotal);
+        Assert.Equal(8m, order.ShippingAmount);
+        Assert.Equal(2.80m, order.TaxAmount);
+        Assert.Equal("Delivery Name", order.ShippingName);
+        Assert.Equal("1 Test Street", order.ShippingAddress);
+        Assert.Single(await database.Context.OrderStatusHistory.Where(item => item.OrderId == order.Id).ToListAsync());
         Assert.Equal("Checkout Product", order.OrderItems.Single().ProductName);
         Assert.Equal(20m, order.OrderItems.Single().UnitPrice);
         Assert.Equal(3, (await database.Context.Products.FindAsync(product.Id))!.Stock);
@@ -93,6 +106,27 @@ public class CheckoutServiceTests
             item.UserId == firstUser.Id || item.UserId == secondUser.Id));
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Checkout_RejectsDeliveryFieldsLongerThanDatabaseColumns(bool overlongEmail)
+    {
+        await using var database = await TestDatabase.CreateAsync();
+        var service = new CheckoutService(database.Context, NullLogger<CheckoutService>.Instance);
+        var checkout = new CheckoutViewModel
+        {
+            FullName = "Delivery Name",
+            Email = overlongEmail ? $"{new string('a', 245)}@example.com" : "delivery@example.com",
+            Phone = overlongEmail ? "12345" : new string('1', 31),
+            Address = "1 Test Street"
+        };
+
+        var result = await service.CheckoutAsync(2, checkout);
+
+        Assert.False(result.Succeeded);
+        Assert.False(await database.Context.Orders.AnyAsync(order => order.UserId == 2 && order.Id > 4));
+    }
+
     private static async Task<(Users User, Products Product, Cart Cart)> AddCheckoutDataAsync(
         TestDatabase database,
         int id,
@@ -133,6 +167,8 @@ public class CheckoutServiceTests
         NormalizedEmail = email.ToUpperInvariant(),
         Password = "not-used-in-this-test",
         Role = UserRoles.Customer,
+        Phone = "12345",
+        Address = "1 Test Street",
         CreatedAt = DateTime.UtcNow
     };
 }

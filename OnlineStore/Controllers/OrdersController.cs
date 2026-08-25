@@ -38,6 +38,7 @@ namespace OnlineStore.Controllers
                 .Include(item => item.User)
                 .Include(item => item.OrderItems)
                     .ThenInclude(item => item.Product)
+                .Include(item => item.StatusHistory.OrderBy(history => history.CreatedAt))
                 .FirstOrDefaultAsync(item => item.Id == id && item.UserId == userId, cancellationToken);
 
             if (order == null)

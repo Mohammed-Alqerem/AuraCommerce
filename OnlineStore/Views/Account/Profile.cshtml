@@ -18,7 +18,8 @@
         <div class="col-lg-8"><div class="panel profile-form-panel">
             <div class="profile-panel-heading"><div><span class="material-symbols-outlined">manage_accounts</span><div><h2 class="h4 mb-1">Personal details</h2><p class="muted mb-0">Used for your profile, checkout, and order updates.</p></div></div><span class="profile-required-note">Required fields marked *</span></div>
             @if (TempData["ProfileSaved"] is string savedMessage) { <div class="alert alert-success d-flex align-items-center gap-2" role="status"><span class="material-symbols-outlined">check_circle</span>@savedMessage</div> }
-            <form asp-action="Profile" method="post" class="row g-3">
+            @if (!Model.EmailConfirmed) { <div class="alert alert-warning"><strong>Email not confirmed.</strong> Confirmation is optional for current sign-in behavior.<form asp-action="SendEmailVerification" method="post" class="mt-2"><button class="btn btn-outline-dark" type="submit">Send verification link</button></form>@if(TempData["DevelopmentVerificationLink"] is string verificationLink){<a class="d-block mt-2" href="@verificationLink">Development: open verification link</a>}</div> }
+            <form asp-action="Profile" method="post" class="row g-3" novalidate>
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="col-md-6"><label asp-for="Name" class="form-label fw-bold">Full name <span aria-hidden="true">*</span></label><input asp-for="Name" class="form-control" autocomplete="name" /><span asp-validation-for="Name" class="text-danger"></span></div>

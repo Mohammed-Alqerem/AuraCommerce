@@ -21,7 +21,7 @@
                 <span class="status-badge @statusClass">@Model.Status</span>
             </div>
         </div>
-        <div class="panel order-items-panel">
+        <div class="row g-4"><div class="col-lg-8"><div class="panel order-items-panel">
             <table class="table table-store align-middle">
                 <thead>
                     <tr>
@@ -45,6 +45,6 @@
             </table>
             <hr />
             <div class="d-flex justify-content-end fs-4"><span class="me-3">Total</span><strong>$@Model.TotalPrice.ToString("0.00")</strong></div>
-        </div>
+        </div></div><aside class="col-lg-4"><div class="panel mb-4"><h2 class="h5">Delivery details</h2><p class="mb-1"><strong>@Model.ShippingName</strong></p><p class="muted mb-1">@Model.ShippingEmail · @Model.ShippingPhone</p><p class="muted mb-0">@Model.ShippingAddress</p></div><div class="panel"><h2 class="h5">Tracking timeline</h2>@if(!Model.StatusHistory.Any()){<p class="muted mb-0">The first tracking update will appear here.</p>}else{foreach(var history in Model.StatusHistory){<div class="inventory-row"><div><strong>@history.Status</strong><span>@history.Note</span></div><time>@history.CreatedAt.ToLocalTime().ToString("g")</time></div>}}</div></aside></div>
     </div>
 </section>

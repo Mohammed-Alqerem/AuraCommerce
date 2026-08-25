@@ -1,4 +1,5 @@
 using System.Data;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Constants;
 using OnlineStore.Data;
@@ -11,6 +12,7 @@ public interface ICheckoutService
 {
     Task<CartViewModel> GetCartAsync(int userId, CancellationToken cancellationToken = default);
     Task<CheckoutResult> CheckoutAsync(int userId, CancellationToken cancellationToken = default);
+    Task<CheckoutResult> CheckoutAsync(int userId, CheckoutViewModel checkout, CancellationToken cancellationToken = default);
 }
 
 public sealed record CheckoutResult(bool Succeeded, int? OrderId = null, string? ErrorMessage = null)
@@ -45,6 +47,33 @@ public sealed class CheckoutService : ICheckoutService
 
     public async Task<CheckoutResult> CheckoutAsync(int userId, CancellationToken cancellationToken = default)
     {
+        var user = await _context.Users.AsNoTracking()
+            .FirstOrDefaultAsync(item => item.Id == userId, cancellationToken);
+        if (user is null)
+        {
+            return CheckoutResult.Failure("Your account could not be found.");
+        }
+
+        return await CheckoutAsync(userId, new CheckoutViewModel
+        {
+            FullName = user.Name,
+            Email = user.Email,
+            Phone = user.Phone,
+            Address = user.Address
+        }, cancellationToken);
+    }
+
+    public async Task<CheckoutResult> CheckoutAsync(
+        int userId,
+        CheckoutViewModel checkout,
+        CancellationToken cancellationToken = default)
+    {
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(checkout, new ValidationContext(checkout), validationResults, validateAllProperties: true))
+        {
+            return CheckoutResult.Failure(validationResults.FirstOrDefault()?.ErrorMessage ?? "Enter valid delivery details.");
+        }
+
         await using var transaction = await _context.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken);
@@ -79,9 +108,23 @@ public sealed class CheckoutService : ICheckoutService
             {
                 UserId = userId,
                 OrderDate = DateTime.UtcNow,
+                Subtotal = cartViewModel.Subtotal,
+                ShippingAmount = cartViewModel.Shipping,
+                TaxAmount = cartViewModel.Tax,
                 TotalPrice = cartViewModel.Total,
-                Status = OrderStatuses.Processing
+                Status = OrderStatuses.Processing,
+                ShippingName = checkout.FullName.Trim(),
+                ShippingEmail = checkout.Email.Trim(),
+                ShippingPhone = checkout.Phone.Trim(),
+                ShippingAddress = checkout.Address.Trim(),
+                DeliveryMethod = "Standard"
             };
+
+            order.StatusHistory.Add(new OrderStatusHistory
+            {
+                Status = order.Status,
+                Note = "Order placed"
+            });
 
             foreach (var cartItem in items)
             {

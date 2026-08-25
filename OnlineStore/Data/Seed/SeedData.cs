@@ -75,10 +75,40 @@ internal static class SeedData
         new() { Id = id, Name = name, Email = email, NormalizedEmail = email.ToUpperInvariant(), Password = password, Phone = phone, Address = address, Role = role, CreatedAt = UtcDate(year, month, day) };
 
     private static Products Product(int id, string name, string description, decimal price, int stock, string imageUrl, int categoryId) =>
-        new() { Id = id, Name = name, Description = description, Price = price, Stock = stock, ImageUrl = imageUrl, CategoryId = categoryId, IsActive = true };
+        new()
+        {
+            Id = id,
+            Name = name,
+            Description = description,
+            Price = price,
+            Stock = stock,
+            ImageUrl = imageUrl,
+            CategoryId = categoryId,
+            IsActive = true,
+            Sku = $"AURA-{id:000}",
+            Brand = "Aura Select",
+            IsFeatured = id <= 4,
+            LowStockThreshold = 10,
+            CreatedAt = UtcDate(2026, 1, 1)
+        };
 
     private static Orders Order(int id, int userId, int year, int month, int day, decimal total, string status) =>
-        new() { Id = id, UserId = userId, OrderDate = UtcDate(year, month, day), TotalPrice = total, Status = status };
+        new()
+        {
+            Id = id,
+            UserId = userId,
+            OrderDate = UtcDate(year, month, day),
+            Subtotal = total,
+            ShippingAmount = 0,
+            TaxAmount = 0,
+            TotalPrice = total,
+            Status = status,
+            ShippingName = "Demo customer",
+            ShippingEmail = "customer@example.invalid",
+            ShippingPhone = "",
+            ShippingAddress = "Historical demo order",
+            DeliveryMethod = "Standard"
+        };
 
     private static OrderItems OrderItem(int id, int orderId, int productId, string productName, int quantity, decimal price) =>
         new() { Id = id, OrderId = orderId, ProductId = productId, ProductName = productName, Quantity = quantity, UnitPrice = price };

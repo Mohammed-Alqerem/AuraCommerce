@@ -30,7 +30,7 @@
             <h1 class="section-title mt-2 mb-2" data-i18n="register.title">Create Account</h1>
             <p class="muted mb-4" data-i18n="register.subtitle">Register once and use the same account for cart, checkout, profile, and orders.</p>
 
-            <form asp-action="Register" method="post" class="auth-form row g-3">
+            <form asp-action="Register" method="post" class="auth-form row g-3" novalidate>
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

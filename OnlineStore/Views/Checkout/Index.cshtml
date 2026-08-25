@@ -13,7 +13,7 @@
 
 <section class="page-section">
     <div class="container">
-        <form asp-action="Index" method="post" class="row g-4">
+        <form asp-action="Index" method="post" class="row g-4" novalidate>
             @Html.AntiForgeryToken()
             <div class="col-lg-7">
                 <div class="panel checkout-panel">

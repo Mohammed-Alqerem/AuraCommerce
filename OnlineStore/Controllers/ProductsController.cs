@@ -23,6 +23,11 @@ public class ProductsController : Controller
     public async Task<IActionResult> Index(
         string? searchTerm,
         int? categoryId,
+        decimal? minPrice,
+        decimal? maxPrice,
+        bool inStockOnly = false,
+        int? minimumRating = null,
+        string sort = "name",
         int page = 1,
         CancellationToken cancellationToken = default)
     {
@@ -33,7 +38,7 @@ public class ProductsController : Controller
             .AsNoTracking()
             .Where(product => product.IsActive)
             .Include(product => product.Category)
-            .Include(product => product.Reviews)
+            .Include(product => product.Reviews.Where(review => review.IsVisible))
             .AsQueryable();
 
         if (searchTerm is not null)
@@ -41,6 +46,8 @@ public class ProductsController : Controller
             productsQuery = productsQuery.Where(product =>
                 product.Name.Contains(searchTerm) ||
                 product.Description.Contains(searchTerm) ||
+                product.Brand.Contains(searchTerm) ||
+                product.Sku.Contains(searchTerm) ||
                 (product.Category != null && product.Category.Name.Contains(searchTerm)));
         }
 
@@ -48,6 +55,35 @@ public class ProductsController : Controller
         {
             productsQuery = productsQuery.Where(product => product.CategoryId == categoryId.Value);
         }
+
+        if (minPrice.HasValue)
+        {
+            productsQuery = productsQuery.Where(product => product.Price >= minPrice.Value);
+        }
+        if (maxPrice.HasValue)
+        {
+            productsQuery = productsQuery.Where(product => product.Price <= maxPrice.Value);
+        }
+        if (inStockOnly)
+        {
+            productsQuery = productsQuery.Where(product => product.Stock > 0);
+        }
+        if (minimumRating is >= 1 and <= 5)
+        {
+            productsQuery = productsQuery.Where(product =>
+                product.Reviews.Any(review => review.IsVisible) &&
+                product.Reviews.Where(review => review.IsVisible).Average(review => review.Rating) >= minimumRating.Value);
+        }
+
+        productsQuery = sort switch
+        {
+            "price-asc" => productsQuery.OrderBy(product => product.Price).ThenBy(product => product.Name),
+            "price-desc" => productsQuery.OrderByDescending(product => product.Price).ThenBy(product => product.Name),
+            "rating" => productsQuery.OrderByDescending(product => product.Reviews.Any(review => review.IsVisible)
+                ? product.Reviews.Where(review => review.IsVisible).Average(review => review.Rating) : 0).ThenBy(product => product.Name),
+            "newest" => productsQuery.OrderByDescending(product => product.CreatedAt).ThenBy(product => product.Name),
+            _ => productsQuery.OrderBy(product => product.Name)
+        };
 
         var totalItems = await productsQuery.CountAsync(cancellationToken);
         var totalPages = (int)Math.Ceiling(totalItems / (double)StoreSettings.ProductsPerPage);
@@ -63,12 +99,12 @@ public class ProductsController : Controller
         var viewModel = new ProductCatalogViewModel
         {
             Products = await productsQuery
-                .OrderBy(product => product.Name)
                 .Skip((page - 1) * StoreSettings.ProductsPerPage)
                 .Take(StoreSettings.ProductsPerPage)
                 .ToListAsync(cancellationToken),
             Categories = await _context.Categories
                 .AsNoTracking()
+                .Where(category => category.IsActive)
                 .OrderBy(category => category.Name)
                 .ToListAsync(cancellationToken),
             SearchTerm = searchTerm,
@@ -77,7 +113,26 @@ public class ProductsController : Controller
             CurrentPage = page,
             TotalPages = totalPages,
             TotalItems = totalItems
+            ,
+            MinPrice = minPrice
+            ,
+            MaxPrice = maxPrice
+            ,
+            InStockOnly = inStockOnly
+            ,
+            MinimumRating = minimumRating
+            ,
+            Sort = sort
         };
+
+        var userId = HttpContext.Session.GetCurrentUserId();
+        if (userId.HasValue && HttpContext.Session.IsInRole(UserRoles.Customer))
+        {
+            viewModel.SavedProductIds = (await _context.WishlistItems.AsNoTracking()
+                .Where(item => item.UserId == userId.Value)
+                .Select(item => item.ProductId)
+                .ToListAsync(cancellationToken)).ToHashSet();
+        }
 
         return View(viewModel);
     }
@@ -90,8 +145,9 @@ public class ProductsController : Controller
             .AsNoTracking()
             .Where(item => item.IsActive)
             .Include(item => item.Category)
-            .Include(item => item.Reviews)
+            .Include(item => item.Reviews.Where(review => review.IsVisible))
                 .ThenInclude(review => review.User)
+            .Include(item => item.Images.OrderBy(image => image.SortOrder))
             .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
 
         return product is null ? NotFound() : View(product);

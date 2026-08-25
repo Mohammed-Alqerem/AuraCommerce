@@ -29,7 +29,7 @@
             <h1 class="section-title mt-2 mb-2" data-i18n="login.title">Welcome Back</h1>
             <p class="muted mb-4" data-i18n="login.subtitle">Sign in to continue to your account.</p>
 
-            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="auth-form">
+            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="auth-form" novalidate>
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -51,13 +51,7 @@
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <label class="form-check d-flex align-items-center gap-2 mb-0">
-                        <input class="form-check-input mt-0" type="checkbox" />
-                        <span data-i18n="login.remember">Remember me</span>
-                    </label>
-                    <a href="#" data-i18n="login.forgot">Forgot password?</a>
-                </div>
+                <div class="text-end mb-4"><a asp-action="ForgotPassword" data-i18n="login.forgot">Forgot password?</a></div>
 
                 <button class="btn btn-accent w-100" type="submit" data-i18n="login.submit">Login</button>
             </form>

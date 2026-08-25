@@ -15,12 +15,14 @@
         <div class="row g-5 align-items-start">
             <div class="col-lg-6 product-media-wrap">
                 <img class="hero-media" src="@Model.ImageUrl" alt="@Model.Name" />
+                @if (Model.Images.Any()) { <div class="d-flex gap-2 mt-3">@foreach(var image in Model.Images){<img src="@image.Url" alt="@image.AltText" style="width:84px;height:84px;object-fit:cover;border-radius:12px"/>}</div> }
             </div>
             <div class="col-lg-6 product-detail-copy">
                 <span class="category-pill mb-3">@Model.Category?.Name</span>
                 <h1 class="display-title mb-3">@Model.Name</h1>
                 <div class="mb-3"><span class="rating">*****</span> <span class="muted">@averageRating.ToString("0.0") from @(Model.Reviews?.Count ?? 0) reviews</span></div>
                 <p class="lead muted">@Model.Description</p>
+                @if(!string.IsNullOrWhiteSpace(Model.Brand) || !string.IsNullOrWhiteSpace(Model.Sku)){<p class="muted small">@Model.Brand @if(!string.IsNullOrWhiteSpace(Model.Sku)){<span>· SKU @Model.Sku</span>}</p>}
                 <div class="d-flex align-items-center gap-3 my-4">
                     <span class="price">$@Model.Price.ToString("0.00")</span>
                     <span class="muted">@Model.Stock in stock</span>
@@ -34,6 +36,7 @@
                         <input id="quantity" class="form-control" style="max-width: 100px" type="number" name="quantity" value="1" min="1" max="@Model.Stock" />
                         <button class="btn btn-accent" type="submit">Add to Cart</button>
                     </form>
+                    <form asp-controller="Wishlist" asp-action="Toggle" method="post" class="mb-4"><input type="hidden" name="productId" value="@Model.Id"/><input type="hidden" name="returnUrl" value="@Context.Request.Path"/><button class="btn btn-outline-dark" type="submit"><span class="material-symbols-outlined">favorite_border</span> Save to wishlist</button></form>
                 }
                 else
                 {
@@ -43,7 +46,7 @@
                     <h2 class="h5 fw-bold">Add Review</h2>
                     @if (canReview)
                     {
-                    <form asp-action="AddReview" method="post" class="row g-3">
+                    <form asp-action="AddReview" method="post" class="row g-3" novalidate>
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="productId" value="@Model.Id" />
                         <div class="col-sm-4">

@@ -24,12 +24,14 @@ namespace OnlineStore.Controllers
                 .AsNoTracking()
                 .Where(product => product.IsActive)
                 .Include(product => product.Category)
-                .Include(product => product.Reviews)
-                .OrderBy(product => product.Id)
+                .Include(product => product.Reviews.Where(review => review.IsVisible))
+                .OrderByDescending(product => product.IsFeatured)
+                .ThenByDescending(product => product.CreatedAt)
                 .Take(8)
                 .ToListAsync(cancellationToken);
             var categories = await _context.Categories
                 .AsNoTracking()
+                .Where(category => category.IsActive)
                 .Include(category => category.Products.Where(product => product.IsActive))
                 .OrderBy(category => category.Name)
                 .ToListAsync(cancellationToken);

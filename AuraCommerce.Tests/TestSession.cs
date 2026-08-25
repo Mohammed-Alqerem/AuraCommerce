@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace AuraCommerce.Tests;
 
@@ -31,5 +33,23 @@ internal static class TestHttpContext
         var context = new DefaultHttpContext();
         context.Features.Set<ISessionFeature>(new TestSessionFeature { Session = session });
         return context;
+    }
+
+    public static DefaultHttpContext AttachTo(Controller controller, TestSession? session = null)
+    {
+        var context = WithSession(session ?? new TestSession());
+        controller.ControllerContext = new ControllerContext { HttpContext = context };
+        controller.TempData = new TempDataDictionary(context, new TestTempDataProvider());
+        return context;
+    }
+}
+
+internal sealed class TestTempDataProvider : ITempDataProvider
+{
+    public IDictionary<string, object> LoadTempData(HttpContext context) =>
+        new Dictionary<string, object>();
+
+    public void SaveTempData(HttpContext context, IDictionary<string, object> values)
+    {
     }
 }
