@@ -4,11 +4,19 @@
     ViewData["Title"] = Model.Id == 0 ? "Add Product" : "Edit Product";
 }
 
+<section class="page-header">
+    <div class="container admin-page-header">
+        <div class="admin-heading">
+            <div><span class="eyebrow">Catalog management</span><h1 class="display-title mt-2 mb-2">@ViewData["Title"]</h1><p class="muted mb-0">Keep product information clear and ready for customers.</p></div>
+            <a class="icon-button" asp-action="Products" aria-label="Back to products"><span class="material-symbols-outlined">arrow_back</span></a>
+        </div>
+        <partial name="_AdminNavigation" />
+    </div>
+</section>
+
 <section class="page-section admin-form-page">
     <div class="container">
-        <partial name="_AdminNavigation" />
         <div class="panel mx-auto" style="max-width: 840px;">
-            <div class="admin-form-heading"><div><span class="eyebrow">Catalog management</span><h1 class="section-title mt-2 mb-1">@ViewData["Title"]</h1><p class="muted mb-0">Keep product information clear and ready for customers.</p></div><a class="icon-button" asp-action="Products" aria-label="Back to products"><span class="material-symbols-outlined">arrow_back</span></a></div>
             <form asp-action="ProductForm" method="post" class="row g-3" novalidate>
                 @Html.AntiForgeryToken()
                 <input asp-for="Id" type="hidden" />

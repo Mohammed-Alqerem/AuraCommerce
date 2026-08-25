@@ -13,6 +13,7 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | Scrollbar | `wwwroot/css/site.css` | DESIGN.md | standard / stable-gutter exception | Computed style |
 | CRUD | MVC controllers + owning list | Domain constraints + this contract | return to list / stay for inline edit | Integration tests |
 | Tables | Native semantic table | This contract | paged / bounded | Controller tests |
+| Admin navigation | `_AdminNavigation.cshtml` inside `.admin-page-header` | DESIGN.md + this contract | horizontally scrollable on narrow screens | Keyboard + narrow viewport |
 
 ## Workflow ledger
 
@@ -28,6 +29,8 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 ## Dataset state
 
 Catalog and admin filters, sort, and paging belong in query parameters. Filtering resets paging; out-of-range pages clamp. Empty and no-results states offer a clear next action. Tables use native semantics and visible horizontal overflow on narrow screens.
+
+Admin routes that expose the shared navigation place the page title and actions first, then the navigation directly beneath them in the same header. The current route remains marked with `aria-current="page"`; narrow screens preserve every destination through horizontal overflow.
 
 ## Feedback and safety
 

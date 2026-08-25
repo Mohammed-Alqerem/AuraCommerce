@@ -901,7 +901,7 @@ hr {
     padding: 28px 0 30px;
 }
 
-.reports-page-header .admin-subnav { margin-bottom: 1.75rem; }
+.reports-page-header .admin-subnav { margin: 1.5rem 0 0; }
 
 .reports-heading {
     align-items: end;
@@ -1076,6 +1076,15 @@ hr {
     flex-wrap: wrap;
     gap: 1rem;
     justify-content: space-between;
+}
+
+.admin-page-header {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.admin-page-header .admin-subnav {
+    margin-bottom: 0;
 }
 
 .admin-heading .btn {

@@ -5,15 +5,17 @@
 }
 
 <section class="page-header">
-    <div class="container admin-heading">
-        <div><span class="eyebrow">Fulfilment queue</span><h1 class="display-title mt-2 mb-2">Orders</h1><p class="muted mb-0">Update each order as it moves through fulfilment.</p></div>
-        <span class="admin-summary-pill">@Model.Count orders</span>
+    <div class="container admin-page-header">
+        <div class="admin-heading">
+            <div><span class="eyebrow">Fulfilment queue</span><h1 class="display-title mt-2 mb-2">Orders</h1><p class="muted mb-0">Update each order as it moves through fulfilment.</p></div>
+            <span class="admin-summary-pill">@Model.Count orders</span>
+        </div>
+        <partial name="_AdminNavigation" />
     </div>
 </section>
 
 <section class="page-section">
     <div class="container">
-        <partial name="_AdminNavigation" />
         <div class="panel admin-panel"><div class="table-responsive"><table class="table table-store align-middle admin-table">
                 <thead>
                     <tr>

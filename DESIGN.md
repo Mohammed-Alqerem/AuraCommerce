@@ -65,7 +65,7 @@ Inter is the Latin display/body face and Noto Kufi Arabic is the Arabic fallback
 
 ## Layout
 
-Use the existing Bootstrap grid, 1280px content container, 24px desktop gutters, 16px mobile margins, and an 8px spacing rhythm. Public product grids favor imagery. Admin lists favor bounded responsive tables with URL-restorable filtering and pagination.
+Use the existing Bootstrap grid, 1280px content container, 24px desktop gutters, 16px mobile margins, and an 8px spacing rhythm. Public product grids favor imagery. Admin page headers lead with the page title and actions, followed immediately by the shared admin navigation; list content starts below the header. Admin lists favor bounded responsive tables with URL-restorable filtering and pagination.
 
 ## Elevation & Depth
 
