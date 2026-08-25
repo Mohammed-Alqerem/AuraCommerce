@@ -19,7 +19,8 @@
 
     var toastMessage = TempData["CartMessage"] as string
         ?? TempData["AdminMessage"] as string
-        ?? TempData["ReviewMessage"] as string;
+        ?? TempData["ReviewMessage"] as string
+        ?? TempData["StoreMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -76,6 +77,8 @@
                                     <span class="cart-count" aria-hidden="true">@cartItemCount</span>
                                 }
                             </a>
+                            <a class="icon-button" asp-controller="Wishlist" asp-action="Index" aria-label="Wishlist" title="Wishlist"><span class="material-symbols-outlined">favorite</span></a>
+                            <a class="icon-button" asp-controller="Notifications" asp-action="Index" aria-label="Notifications" title="Notifications"><span class="material-symbols-outlined">notifications</span></a>
                             <a class="account-chip" asp-controller="Account" asp-action="Profile" aria-label="Profile" data-i18n-aria-label="nav.profile">
                                 <span class="material-symbols-outlined">account_circle</span>
                                 <span>@currentUserName</span>
@@ -128,6 +131,8 @@
             <div>
                 <h2 data-i18n="footer.shop">Shop</h2>
                 <a asp-controller="Products" asp-action="Index" data-i18n="footer.allProducts">All products</a>
+                <a asp-controller="Support" asp-action="Shipping">Shipping</a>
+                <a asp-controller="Support" asp-action="Returns">Returns</a>
                 @if (isCustomer)
                 {
                     <a asp-controller="Cart" asp-action="Index" data-i18n="footer.cart">Cart</a>
@@ -149,6 +154,7 @@
                     <a asp-controller="Account" asp-action="Login" data-i18n="nav.login">Login</a>
                     <a asp-controller="Account" asp-action="Register" data-i18n="footer.register">Register</a>
                 }
+                <a asp-controller="Support" asp-action="Index">Contact support</a>
             </div>
             <div>
                 <h2 data-i18n="footer.operations">Operations</h2>
@@ -162,6 +168,9 @@
                 {
                     <a asp-controller="Products" asp-action="Index" data-i18n="footer.allProducts">All products</a>
                 }
+                <a asp-controller="Support" asp-action="Faq">FAQ</a>
+                <a asp-controller="Support" asp-action="About">About</a>
+                <a asp-controller="Support" asp-action="Terms">Terms</a>
             </div>
         </div>
     </footer>

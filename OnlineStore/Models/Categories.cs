@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineStore.Models
 {
@@ -12,6 +12,8 @@ namespace OnlineStore.Models
 
         [StringLength(200)]
         public string Description { get; set; } = string.Empty;
+
+        public bool IsActive { get; set; } = true;
 
         public ICollection<Products> Products { get; set; } = new List<Products>();
     }

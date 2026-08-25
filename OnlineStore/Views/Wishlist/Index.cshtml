@@ -1,0 +1,7 @@
+@model List<WishlistItem>
+@{ ViewData["Title"] = "Wishlist"; }
+<section class="page-header"><div class="container"><span class="eyebrow">Saved for later</span><h1 class="display-title mt-2 mb-0">Your Wishlist</h1></div></section>
+<section class="page-section"><div class="container">
+@if (!Model.Any()) { <div class="empty-state"><h2 class="section-title">Nothing saved yet</h2><p class="muted">Use the heart on any product to keep it here.</p><a class="btn btn-accent" asp-controller="Products" asp-action="Index">Browse products</a></div> }
+else { <div class="product-grid">@foreach (var item in Model) { if (item.Product is null) { continue; } <article class="product-card"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId"><img src="@item.Product.ImageUrl" alt="@item.Product.Name" /></a><div class="product-card-body"><span class="category-pill">@item.Product.Category?.Name</span><h2 class="product-title"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">@item.Product.Name</a></h2><span class="price">$@item.Product.Price.ToString("0.00")</span><div class="d-flex gap-2 mt-auto"><form asp-controller="Cart" asp-action="Add" method="post"><input type="hidden" name="productId" value="@item.ProductId" /><button class="btn btn-accent" type="submit">Add to cart</button></form><form asp-action="Toggle" method="post"><input type="hidden" name="productId" value="@item.ProductId" /><button class="btn btn-outline-dark" type="submit">Remove</button></form></div></div></article> }</div> }
+</div></section>

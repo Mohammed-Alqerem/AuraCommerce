@@ -62,7 +62,7 @@ public class CheckoutController : Controller
             return View(viewModel);
         }
 
-        var result = await _checkoutService.CheckoutAsync(userId, cancellationToken);
+        var result = await _checkoutService.CheckoutAsync(userId, viewModel, cancellationToken);
         if (!result.Succeeded)
         {
             viewModel.Cart = await _checkoutService.GetCartAsync(userId, cancellationToken);
@@ -82,6 +82,7 @@ public class CheckoutController : Controller
             .Include(item => item.User)
             .Include(item => item.OrderItems)
                 .ThenInclude(item => item.Product)
+            .Include(item => item.StatusHistory.OrderBy(history => history.CreatedAt))
             .FirstOrDefaultAsync(item => item.Id == id && item.UserId == userId, cancellationToken);
 
         return order is null ? NotFound() : View(order);

@@ -9,7 +9,7 @@
         <partial name="_AdminNavigation" />
         <div class="panel mx-auto" style="max-width: 840px;">
             <div class="admin-form-heading"><div><span class="eyebrow">Catalog management</span><h1 class="section-title mt-2 mb-1">@ViewData["Title"]</h1><p class="muted mb-0">Keep product information clear and ready for customers.</p></div><a class="icon-button" asp-action="Products" aria-label="Back to products"><span class="material-symbols-outlined">arrow_back</span></a></div>
-            <form asp-action="ProductForm" method="post" class="row g-3">
+            <form asp-action="ProductForm" method="post" class="row g-3" novalidate>
                 @Html.AntiForgeryToken()
                 <input asp-for="Id" type="hidden" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -29,6 +29,21 @@
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Sku" class="form-label fw-bold">SKU</label>
+                    <input asp-for="Sku" class="form-control" />
+                    <span asp-validation-for="Sku" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Brand" class="form-label fw-bold"></label>
+                    <input asp-for="Brand" class="form-control" />
+                    <span asp-validation-for="Brand" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="LowStockThreshold" class="form-label fw-bold">Low-stock threshold</label>
+                    <input asp-for="LowStockThreshold" class="form-control" />
+                    <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="Stock" class="form-label fw-bold"></label>
                     <input asp-for="Stock" class="form-control" />
                     <span asp-validation-for="Stock" class="text-danger"></span>
@@ -40,12 +55,17 @@
                 </div>
                 <div class="col-12">
                     <label asp-for="Description" class="form-label fw-bold"></label>
-                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <textarea asp-for="Description" class="form-control" rows="4" style="resize:none"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="col-12 form-check ms-2">
                     <input asp-for="IsActive" class="form-check-input" />
                     <label asp-for="IsActive" class="form-check-label">Visible in the storefront</label>
+                </div>
+                <div class="col-12"><label asp-for="AdditionalImageUrls" class="form-label fw-bold">Additional image URLs</label><textarea asp-for="AdditionalImageUrls" class="form-control" rows="4" style="resize:none" placeholder="One absolute URL per line"></textarea><span asp-validation-for="AdditionalImageUrls" class="text-danger"></span></div>
+                <div class="col-12 form-check ms-2">
+                    <input asp-for="IsFeatured" class="form-check-input" />
+                    <label asp-for="IsFeatured" class="form-check-label">Feature on the storefront</label>
                 </div>
                 <div class="col-12">
                     <button class="btn btn-accent" type="submit">Save Product</button>

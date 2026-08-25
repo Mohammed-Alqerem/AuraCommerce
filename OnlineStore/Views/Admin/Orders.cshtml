@@ -22,6 +22,7 @@
                         <th>Date</th>
                         <th>Status</th>
                         <th>Total</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,7 @@
                                 </form>
                             </td>
                             <td><strong>$@order.TotalPrice.ToString("0.00")</strong></td>
+                            <td><a asp-action="OrderDetails" asp-route-id="@order.Id">Details</a></td>
                         </tr>
                     }
                 </tbody>

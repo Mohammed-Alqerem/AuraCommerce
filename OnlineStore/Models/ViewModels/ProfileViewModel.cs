@@ -34,5 +34,6 @@ namespace OnlineStore.Models.ViewModels
         public int OrderCount { get; set; }
         public int ReviewCount { get; set; }
         public List<Orders> RecentOrders { get; set; } = [];
+        public bool EmailConfirmed { get; set; }
     }
 }

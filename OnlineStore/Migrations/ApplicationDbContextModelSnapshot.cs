@@ -150,12 +150,20 @@ namespace OnlineStore.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
 
@@ -164,26 +172,62 @@ namespace OnlineStore.Migrations
                         {
                             Id = 1,
                             Description = "Electronic devices and accessories",
+                            IsActive = true,
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = 2,
                             Description = "Men and women clothing",
+                            IsActive = true,
                             Name = "Clothing"
                         },
                         new
                         {
                             Id = 3,
                             Description = "Sports and casual shoes",
+                            IsActive = true,
                             Name = "Shoes"
                         },
                         new
                         {
                             Id = 4,
                             Description = "Useful accessories and gadgets",
+                            IsActive = true,
                             Name = "Accessories"
                         });
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.InventoryAdjustment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityChange")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("StockAfter")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "CreatedAt");
+
+                    b.ToTable("InventoryAdjustments");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.OrderItems", b =>
@@ -282,6 +326,37 @@ namespace OnlineStore.Migrations
                         });
                 });
 
+            modelBuilder.Entity("OnlineStore.Models.OrderStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId", "CreatedAt");
+
+                    b.ToTable("OrderStatusHistory");
+                });
+
             modelBuilder.Entity("OnlineStore.Models.Orders", b =>
                 {
                     b.Property<int>("Id")
@@ -290,13 +365,53 @@ namespace OnlineStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("DeliveryMethod")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime?>("EstimatedDeliveryDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<decimal>("ShippingAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ShippingEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ShippingName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("ShippingPhone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasPrecision(18, 2)
@@ -320,35 +435,98 @@ namespace OnlineStore.Migrations
                         new
                         {
                             Id = 1,
+                            DeliveryMethod = "Standard",
                             OrderDate = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ShippingAddress = "Historical demo order",
+                            ShippingAmount = 0m,
+                            ShippingEmail = "customer@example.invalid",
+                            ShippingName = "Demo customer",
+                            ShippingPhone = "",
                             Status = "Delivered",
+                            Subtotal = 95m,
+                            TaxAmount = 0m,
                             TotalPrice = 95m,
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
+                            DeliveryMethod = "Standard",
                             OrderDate = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ShippingAddress = "Historical demo order",
+                            ShippingAmount = 0m,
+                            ShippingEmail = "customer@example.invalid",
+                            ShippingName = "Demo customer",
+                            ShippingPhone = "",
                             Status = "Shipped",
+                            Subtotal = 120m,
+                            TaxAmount = 0m,
                             TotalPrice = 120m,
                             UserId = 2
                         },
                         new
                         {
                             Id = 3,
+                            DeliveryMethod = "Standard",
                             OrderDate = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ShippingAddress = "Historical demo order",
+                            ShippingAmount = 0m,
+                            ShippingEmail = "customer@example.invalid",
+                            ShippingName = "Demo customer",
+                            ShippingPhone = "",
                             Status = "Processing",
+                            Subtotal = 65m,
+                            TaxAmount = 0m,
                             TotalPrice = 65m,
                             UserId = 3
                         },
                         new
                         {
                             Id = 4,
+                            DeliveryMethod = "Standard",
                             OrderDate = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ShippingAddress = "Historical demo order",
+                            ShippingAmount = 0m,
+                            ShippingEmail = "customer@example.invalid",
+                            ShippingName = "Demo customer",
+                            ShippingPhone = "",
                             Status = "Pending",
+                            Subtotal = 150m,
+                            TaxAmount = 0m,
                             TotalPrice = 150m,
                             UserId = 4
                         });
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AltText")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "SortOrder");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Products", b =>
@@ -359,8 +537,16 @@ namespace OnlineStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -377,6 +563,14 @@ namespace OnlineStore.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsFeatured")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("LowStockThreshold")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -386,6 +580,11 @@ namespace OnlineStore.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -393,8 +592,14 @@ namespace OnlineStore.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Sku")
+                        .IsUnique()
+                        .HasFilter("[Sku] <> ''");
+
                     b.ToTable("Products", t =>
                         {
+                            t.HasCheckConstraint("CK_Products_LowStockThreshold", "[LowStockThreshold] >= 0");
+
                             t.HasCheckConstraint("CK_Products_Price", "[Price] > 0");
 
                             t.HasCheckConstraint("CK_Products_Stock", "[Stock] >= 0");
@@ -404,111 +609,161 @@ namespace OnlineStore.Migrations
                         new
                         {
                             Id = 1,
+                            Brand = "Aura Select",
                             CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Comfortable wireless mouse for everyday use",
                             ImageUrl = "https://images.unsplash.com/photo-1527814050087-3793815479db",
                             IsActive = true,
+                            IsFeatured = true,
+                            LowStockThreshold = 10,
                             Name = "Wireless Mouse",
                             Price = 25m,
+                            Sku = "AURA-001",
                             Stock = 50
                         },
                         new
                         {
                             Id = 2,
+                            Brand = "Aura Select",
                             CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "RGB mechanical keyboard for gaming and work",
                             ImageUrl = "https://images.unsplash.com/photo-1587829741301-dc798b83add3",
                             IsActive = true,
+                            IsFeatured = true,
+                            LowStockThreshold = 10,
                             Name = "Mechanical Keyboard",
                             Price = 70m,
+                            Sku = "AURA-002",
                             Stock = 30
                         },
                         new
                         {
                             Id = 3,
+                            Brand = "Aura Select",
                             CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Fast charging USB-C wall charger",
                             ImageUrl = "https://images.unsplash.com/photo-1583863788434-e58a36330cf0",
                             IsActive = true,
+                            IsFeatured = true,
+                            LowStockThreshold = 10,
                             Name = "USB-C Charger",
                             Price = 35m,
+                            Sku = "AURA-003",
                             Stock = 40
                         },
                         new
                         {
                             Id = 4,
+                            Brand = "Aura Select",
                             CategoryId = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Comfortable cotton T-Shirt",
                             ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
                             IsActive = true,
+                            IsFeatured = true,
+                            LowStockThreshold = 10,
                             Name = "Classic T-Shirt",
                             Price = 20m,
+                            Sku = "AURA-004",
                             Stock = 100
                         },
                         new
                         {
                             Id = 5,
+                            Brand = "Aura Select",
                             CategoryId = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Warm casual hoodie for everyday wear",
                             ImageUrl = "https://images.unsplash.com/photo-1556821840-3a63f95609a7",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Hoodie",
                             Price = 45m,
+                            Sku = "AURA-005",
                             Stock = 60
                         },
                         new
                         {
                             Id = 6,
+                            Brand = "Aura Select",
                             CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Lightweight running shoes for sports",
                             ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Running Shoes",
                             Price = 80m,
+                            Sku = "AURA-006",
                             Stock = 25
                         },
                         new
                         {
                             Id = 7,
+                            Brand = "Aura Select",
                             CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Modern casual sneakers",
                             ImageUrl = "https://images.unsplash.com/photo-1549298916-b41d501d3772",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Casual Sneakers",
                             Price = 65m,
+                            Sku = "AURA-007",
                             Stock = 35
                         },
                         new
                         {
                             Id = 8,
+                            Brand = "Aura Select",
                             CategoryId = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Smart watch with fitness tracking",
                             ImageUrl = "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Smart Watch",
                             Price = 120m,
+                            Sku = "AURA-008",
                             Stock = 20
                         },
                         new
                         {
                             Id = 9,
+                            Brand = "Aura Select",
                             CategoryId = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Water resistant backpack for daily use",
                             ImageUrl = "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Backpack",
                             Price = 40m,
+                            Sku = "AURA-009",
                             Stock = 45
                         },
                         new
                         {
                             Id = 10,
+                            Brand = "Aura Select",
                             CategoryId = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Adjustable desk phone stand",
                             ImageUrl = "https://images.unsplash.com/photo-1586953208448-b95a79798f07",
                             IsActive = true,
+                            IsFeatured = false,
+                            LowStockThreshold = 10,
                             Name = "Phone Stand",
                             Price = 15m,
+                            Sku = "AURA-010",
                             Stock = 80
                         });
                 });
@@ -528,6 +783,11 @@ namespace OnlineStore.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsVisible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -556,6 +816,7 @@ namespace OnlineStore.Migrations
                             Id = 1,
                             Comment = "Very good mouse and comfortable to use",
                             CreatedAt = new DateTime(2026, 3, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsVisible = true,
                             ProductId = 1,
                             Rating = 5,
                             UserId = 1
@@ -565,6 +826,7 @@ namespace OnlineStore.Migrations
                             Id = 2,
                             Comment = "Good smart watch with useful features",
                             CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsVisible = true,
                             ProductId = 8,
                             Rating = 4,
                             UserId = 2
@@ -574,6 +836,7 @@ namespace OnlineStore.Migrations
                             Id = 3,
                             Comment = "Very comfortable shoes",
                             CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsVisible = true,
                             ProductId = 7,
                             Rating = 5,
                             UserId = 3
@@ -583,6 +846,7 @@ namespace OnlineStore.Migrations
                             Id = 4,
                             Comment = "Good quality and comfortable",
                             CreatedAt = new DateTime(2026, 3, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsVisible = true,
                             ProductId = 4,
                             Rating = 4,
                             UserId = 4
@@ -592,10 +856,98 @@ namespace OnlineStore.Migrations
                             Id = 5,
                             Comment = "Excellent keyboard for gaming",
                             CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsVisible = true,
                             ProductId = 2,
                             Rating = 5,
                             UserId = 1
                         });
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.StoreNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "IsRead", "CreatedAt");
+
+                    b.ToTable("StoreNotifications");
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.SupportTicket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Status", "CreatedAt");
+
+                    b.ToTable("SupportTickets");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Users", b =>
@@ -618,6 +970,11 @@ namespace OnlineStore.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -646,6 +1003,9 @@ namespace OnlineStore.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasDefaultValue("Customer");
 
+                    b.Property<int>("SecurityVersion")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -663,11 +1023,13 @@ namespace OnlineStore.Migrations
                             Address = "Jenin",
                             CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mohammed@gmail.com",
+                            EmailConfirmed = false,
                             Name = "Mohammed Alqerem",
                             NormalizedEmail = "MOHAMMED@GMAIL.COM",
                             Password = "AQAAAAIAAYagAAAAEJ2wyfnuNORBZAX4OEmJZkWIHaa1yGwVQ+NWaLrSxeM9AZhXq2N10Si1w5TV2sjqkA==",
                             Phone = "0599000001",
-                            Role = "Admin"
+                            Role = "Admin",
+                            SecurityVersion = 0
                         },
                         new
                         {
@@ -675,11 +1037,13 @@ namespace OnlineStore.Migrations
                             Address = "Nablus",
                             CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ahmad@gmail.com",
+                            EmailConfirmed = false,
                             Name = "Ahmad Ali",
                             NormalizedEmail = "AHMAD@GMAIL.COM",
                             Password = "AQAAAAIAAYagAAAAEKhKgPLuSh6I8xZe/x+WyHyXiphNVT2/1mppogy0X2lv510pcGtFpr22bGERXnCZvA==",
                             Phone = "0599000002",
-                            Role = "Customer"
+                            Role = "Customer",
+                            SecurityVersion = 0
                         },
                         new
                         {
@@ -687,11 +1051,13 @@ namespace OnlineStore.Migrations
                             Address = "Ramallah",
                             CreatedAt = new DateTime(2026, 2, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "sara@gmail.com",
+                            EmailConfirmed = false,
                             Name = "Sara Khaled",
                             NormalizedEmail = "SARA@GMAIL.COM",
                             Password = "AQAAAAIAAYagAAAAEI9pAV+19TzA1Blbt0DPTjNoPHjZ9Og8CSHeZqEX4iNYSyNu3Qsb/iNN63xmyhvaUw==",
                             Phone = "0599000003",
-                            Role = "Customer"
+                            Role = "Customer",
+                            SecurityVersion = 0
                         },
                         new
                         {
@@ -699,12 +1065,41 @@ namespace OnlineStore.Migrations
                             Address = "Hebron",
                             CreatedAt = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "omar@gmail.com",
+                            EmailConfirmed = false,
                             Name = "Omar Hassan",
                             NormalizedEmail = "OMAR@GMAIL.COM",
                             Password = "AQAAAAIAAYagAAAAENeCscWzBfbMGK0nvla29rD7/nc+az5LPNRZw9hEYdh38r5imVSV9A6Fjay4LIEFvw==",
                             Phone = "0599000004",
-                            Role = "Customer"
+                            Role = "Customer",
+                            SecurityVersion = 0
                         });
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.WishlistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Cart", b =>
@@ -737,6 +1132,17 @@ namespace OnlineStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("OnlineStore.Models.InventoryAdjustment", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Products", "Product")
+                        .WithMany("InventoryAdjustments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("OnlineStore.Models.OrderItems", b =>
                 {
                     b.HasOne("OnlineStore.Models.Orders", "Order")
@@ -756,6 +1162,17 @@ namespace OnlineStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("OnlineStore.Models.OrderStatusHistory", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Orders", "Order")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("OnlineStore.Models.Orders", b =>
                 {
                     b.HasOne("OnlineStore.Models.Users", "User")
@@ -765,6 +1182,17 @@ namespace OnlineStore.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.ProductImage", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Products", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Products", b =>
@@ -797,6 +1225,46 @@ namespace OnlineStore.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("OnlineStore.Models.StoreNotification", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Users", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.SupportTicket", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Users", "User")
+                        .WithMany("SupportTickets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnlineStore.Models.WishlistItem", b =>
+                {
+                    b.HasOne("OnlineStore.Models.Products", "Product")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineStore.Models.Users", "User")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OnlineStore.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -810,24 +1278,38 @@ namespace OnlineStore.Migrations
             modelBuilder.Entity("OnlineStore.Models.Orders", b =>
                 {
                     b.Navigation("OrderItems");
+
+                    b.Navigation("StatusHistory");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Products", b =>
                 {
                     b.Navigation("CartItems");
 
+                    b.Navigation("Images");
+
+                    b.Navigation("InventoryAdjustments");
+
                     b.Navigation("OrderItems");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("WishlistItems");
                 });
 
             modelBuilder.Entity("OnlineStore.Models.Users", b =>
                 {
                     b.Navigation("Cart");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("SupportTickets");
+
+                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

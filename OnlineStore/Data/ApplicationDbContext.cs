@@ -14,6 +14,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartItems> CartItems => Set<CartItems>();
     public DbSet<Reviews> Reviews => Set<Reviews>();
+    public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
+    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+    public DbSet<OrderStatusHistory> OrderStatusHistory => Set<OrderStatusHistory>();
+    public DbSet<InventoryAdjustment> InventoryAdjustments => Set<InventoryAdjustment>();
+    public DbSet<SupportTicket> SupportTickets => Set<SupportTicket>();
+    public DbSet<StoreNotification> StoreNotifications => Set<StoreNotification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

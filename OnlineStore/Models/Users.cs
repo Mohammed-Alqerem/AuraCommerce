@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 using OnlineStore.Constants;
 
@@ -38,9 +38,16 @@ namespace OnlineStore.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public bool EmailConfirmed { get; set; }
+
+        public int SecurityVersion { get; set; }
+
         public ICollection<Orders> Orders { get; set; } = new List<Orders>();
         public Cart? Cart { get; set; }
         public ICollection<Reviews> Reviews { get; set; } = new List<Reviews>();
+        public ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
+        public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+        public ICollection<StoreNotification> Notifications { get; set; } = new List<StoreNotification>();
     }
 
 }

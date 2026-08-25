@@ -1,22 +1,39 @@
 @{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var isAdminController = string.Equals(currentController, "Admin", StringComparison.OrdinalIgnoreCase);
+    var isOverview = isAdminController && string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+    var isProducts = isAdminController && currentAction is "Products" or "ProductForm";
+    var isOrders = isAdminController && currentAction is "Orders" or "OrderDetails";
+    var isCustomers = isAdminController && string.Equals(currentAction, "Users", StringComparison.OrdinalIgnoreCase);
+    var isCategories = string.Equals(currentController, "AdminCategories", StringComparison.OrdinalIgnoreCase);
+    var isInventory = string.Equals(currentController, "AdminInventory", StringComparison.OrdinalIgnoreCase);
+    var isReviews = string.Equals(currentController, "AdminReviews", StringComparison.OrdinalIgnoreCase);
+    var isReports = string.Equals(currentController, "AdminReports", StringComparison.OrdinalIgnoreCase);
+    var isSupport = string.Equals(currentController, "AdminSupport", StringComparison.OrdinalIgnoreCase);
 }
 
 <nav class="admin-subnav" aria-label="Admin navigation">
-    <a class="admin-subnav-link @(currentAction == "Index" ? "active" : "")" asp-controller="Admin" asp-action="Index">
+    <a class="admin-subnav-link @(isOverview ? "active" : "")" aria-current="@(isOverview ? "page" : null)" asp-controller="Admin" asp-action="Index">
         <span class="material-symbols-outlined">space_dashboard</span>
         <span>Overview</span>
     </a>
-    <a class="admin-subnav-link @(currentAction is "Products" or "ProductForm" ? "active" : "")" asp-controller="Admin" asp-action="Products">
+    <a class="admin-subnav-link @(isProducts ? "active" : "")" aria-current="@(isProducts ? "page" : null)" asp-controller="Admin" asp-action="Products">
         <span class="material-symbols-outlined">inventory_2</span>
         <span>Products</span>
     </a>
-    <a class="admin-subnav-link @(currentAction == "Orders" ? "active" : "")" asp-controller="Admin" asp-action="Orders">
+    <a class="admin-subnav-link @(isOrders ? "active" : "")" aria-current="@(isOrders ? "page" : null)" asp-controller="Admin" asp-action="Orders">
         <span class="material-symbols-outlined">receipt_long</span>
         <span>Orders</span>
     </a>
-    <a class="admin-subnav-link @(currentAction == "Users" ? "active" : "")" asp-controller="Admin" asp-action="Users">
+    <a class="admin-subnav-link @(isCustomers ? "active" : "")" aria-current="@(isCustomers ? "page" : null)" asp-controller="Admin" asp-action="Users">
         <span class="material-symbols-outlined">group</span>
         <span>Customers</span>
     </a>
+    <a class="admin-subnav-link @(isCategories ? "active" : "")" aria-current="@(isCategories ? "page" : null)" asp-controller="AdminCategories" asp-action="Index"><span class="material-symbols-outlined">category</span><span>Categories</span></a>
+    <a class="admin-subnav-link @(isInventory ? "active" : "")" aria-current="@(isInventory ? "page" : null)" asp-controller="AdminInventory" asp-action="Index"><span class="material-symbols-outlined">inventory</span><span>Inventory</span></a>
+    <a class="admin-subnav-link @(isReviews ? "active" : "")" aria-current="@(isReviews ? "page" : null)" asp-controller="AdminReviews" asp-action="Index"><span class="material-symbols-outlined">reviews</span><span>Reviews</span></a>
+    <a class="admin-subnav-link @(isReports ? "active" : "")" aria-current="@(isReports ? "page" : null)" asp-controller="AdminReports" asp-action="Index"><span class="material-symbols-outlined">monitoring</span><span>Reports</span></a>
+    <a class="admin-subnav-link @(isSupport ? "active" : "")" aria-current="@(isSupport ? "page" : null)" asp-controller="AdminSupport" asp-action="Index"><span class="material-symbols-outlined">support_agent</span><span>Support</span></a>
 </nav>

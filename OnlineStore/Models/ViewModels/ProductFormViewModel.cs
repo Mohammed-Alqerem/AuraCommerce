@@ -22,10 +22,24 @@ public class ProductFormViewModel
 
     [Url]
     [StringLength(2048)]
-    public string ImageUrl { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
 
     [Range(1, int.MaxValue, ErrorMessage = "Select a valid category.")]
     public int CategoryId { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    [StringLength(50)]
+    public string? Sku { get; set; }
+
+    [StringLength(80)]
+    public string? Brand { get; set; }
+
+    public bool IsFeatured { get; set; }
+
+    [Range(0, 100000)]
+    public int LowStockThreshold { get; set; } = 10;
+
+    [StringLength(12000)]
+    public string? AdditionalImageUrls { get; set; }
 }

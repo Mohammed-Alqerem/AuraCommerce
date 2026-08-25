@@ -13,6 +13,9 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddScoped<IPasswordHasher<Users>, PasswordHasher<Users>>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton<IAccountTokenService, AccountTokenService>();
+builder.Services.AddSingleton<IStoreEmailSender, UnconfiguredStoreEmailSender>();
 
 builder.Services.AddSession(options =>
 {

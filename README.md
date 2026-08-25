@@ -10,48 +10,41 @@
 
 **Aura Commerce** is a modern full-stack e-commerce application built with **ASP.NET Core MVC, Entity Framework Core, and SQL Server**.
 
-It provides a complete shopping experience—from product discovery and reviews to a stock-safe transactional checkout and order history—along with a protected administration dashboard for managing products, customers, inventory, and orders.
+Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while the canonical capability list and feature status live in [FEATURES.md](FEATURES.md).
+
+## Live demo
 
 🌐 **Live Demo:**  
 [http://auracomerce.runasp.net/](http://auracomerce.runasp.net/)
 
----
+## Highlights
 
-## ✨ Features
+### Customer experience
 
-### 🛒 Customer Experience
+- Paginated product catalog with server-side search and category filtering
+- Price/rating/stock filters, sorting, wishlist, brands, SKUs, featured products, and image galleries
+- Product details, ratings, and one review per customer/product
+- Stock-aware shopping cart with ownership protection
+- Server-priced, serializable checkout with product snapshots in order history
+- Customer-only order history and order details
+- Persisted delivery snapshots, itemized totals, order-status timelines, and in-app notifications
+- Registration, login, logout, and profile/password management
+- Time-limited password reset and optional email-verification flows with a provider-ready email boundary
+- Customer support requests plus FAQ, shipping, returns, terms, and about pages
 
-- Browse a paginated product catalog
-- Search products by keyword
-- Filter products by category
-- View detailed product information
-- View product ratings and customer reviews
-- Submit one review per customer/product
-- Add, update, and remove cart items
-- Prevent purchases beyond available stock
-- Complete a transaction-safe checkout
-- View personal order history and order details
-- Register, log in, and log out
-- Manage profile information and password
+### Administration
 
-### 🛠️ Administration
+- Role-protected dashboard with revenue, pending-order, and low-stock metrics
+- Overposting-safe product creation and editing
+- Product archiving/restoration without deleting historical order data
+- Order status management using centralized valid statuses
+- Customer directory and order overview
+- Category management, inventory adjustments with history, review moderation, support queue, and sales/CSV reports
 
-- Role-protected administration dashboard
-- Revenue and order statistics
-- Pending-order monitoring
-- Low-stock product tracking
-- Create and edit products safely
-- Archive and restore products
-- Preserve historical order information
-- Manage customer orders and statuses
-- View registered customers
-- View store-wide order information
+### User experience
 
-### 🎨 User Experience
-
-- Responsive Bootstrap 5 interface
-- Arabic and English language support
-- RTL layout support
+- Responsive Bootstrap UI
+- English/Arabic support and RTL layout
 - Light and dark themes
 - Mobile-friendly navigation
 - Accessible form labels and controls
@@ -164,10 +157,9 @@ Make sure you have:
 
 ### 1. Clone the repository
 
-```powershell
-git clone https://github.com/Mohammed-Alqerem/AuraCommerce.git
-cd AuraCommerce
-```
+Password reset and email confirmation use ASP.NET Core Data Protection with purpose-isolated, time-limited tokens. Live delivery is intentionally disabled until an email provider is configured; development shows a local-only recovery link.
+
+## Demo accounts
 
 ### 2. Restore tools and dependencies
 
@@ -260,8 +252,13 @@ dotnet ef database update `
   --startup-project OnlineStore/OnlineStore.csproj
 ```
 
-> [!IMPORTANT]
-> Before applying this migration to a database containing existing user-generated data, create a backup and verify there are no duplicate normalized emails, cart products, or user/product reviews. The new unique indexes intentionally reject these invalid states.
+`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. Review the generated SQL and back up production data before applying it.
+
+## Provider and policy gates
+
+The repository includes a safe unconfigured email adapter. Connect an approved transactional-email provider through `IStoreEmailSender` before production account recovery. Live payments, coupons, automatic cancellations, returns, and refunds are not activated until the owner selects providers and approves pricing, eligibility, idempotency, and refund policies; the existing checkout remains the store's current manual-payment flow.
+
+Before applying to a database with user-generated legacy data, take a backup and verify that it has no duplicate normalized emails, cart products, or user/product reviews; the new unique indexes intentionally reject those invalid states.
 
 ---
 
