@@ -22,6 +22,21 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<Users>
     }
 }
 
+internal sealed class UserExternalLoginConfiguration : IEntityTypeConfiguration<UserExternalLogin>
+{
+    public void Configure(EntityTypeBuilder<UserExternalLogin> builder)
+    {
+        builder.Property(login => login.Provider).HasMaxLength(32);
+        builder.Property(login => login.ProviderKey).HasMaxLength(256);
+        builder.HasIndex(login => new { login.Provider, login.ProviderKey }).IsUnique();
+        builder.HasIndex(login => new { login.UserId, login.Provider }).IsUnique();
+        builder.HasOne(login => login.User)
+            .WithMany(user => user.ExternalLogins)
+            .HasForeignKey(login => login.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
 internal sealed class CategoryConfiguration : IEntityTypeConfiguration<Categories>
 {
     public void Configure(EntityTypeBuilder<Categories> builder)

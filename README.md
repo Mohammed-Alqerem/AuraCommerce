@@ -25,6 +25,7 @@ Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while t
 - Customer-only order history and order details
 - Persisted delivery snapshots, itemized totals, order-status timelines, and in-app notifications
 - Registration, login, logout, and profile/password management
+- Google and Apple sign-in with verified-email onboarding and password-confirmed linking for existing customers
 - Time-limited password reset and optional email-verification flows with a provider-ready email boundary
 - Customer support requests plus FAQ, shipping, returns, terms, and about pages
 
@@ -67,6 +68,7 @@ Screenshots are intentionally omitted from this repository. Run the application 
 - Unsafe MVC requests use anti-forgery validation
 - Session cookies are HTTP-only, `SameSite=Lax`, essential, and project-specific
 - Return URLs are accepted only when local, preventing open redirects
+- External provider identities are stored without access/refresh tokens; existing emails require a successful local password sign-in before linking
 - Product, cart, review, profile, checkout, and order inputs use server-side validation
 - Cart items and customer orders are always scoped to the signed-in customer
 - Checkout uses database prices, serializable transactions, stock checks, and database constraints
@@ -114,8 +116,35 @@ Important configuration keys:
 | `ConnectionStrings:DefaultConnection` | LocalDB | SQL Server connection supplied through environment/deployment secrets in production |
 | `Database:ApplyMigrationsOnStartup` | `false` | Set `true` only when the host explicitly supports startup migrations |
 | `Security:RequireHttps` | `false` | Set `true` on an HTTPS deployment to require secure session cookies |
+| `Authentication:Google:ClientId` | Empty | Google OAuth client ID; enables the Google button only when its secret is also present |
+| `Authentication:Google:ClientSecret` | Empty | Google OAuth client secret; store outside committed configuration |
+| `Authentication:Apple:ClientId` | Empty | Apple Services ID used for Sign in with Apple |
+| `Authentication:Apple:TeamId` | Empty | Apple Developer team identifier |
+| `Authentication:Apple:KeyId` | Empty | Identifier for the Apple `.p8` signing key |
+| `Authentication:Apple:PrivateKey` | Empty | Complete PKCS #8 `.p8` key contents; store only in a secret manager |
 
 For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; never place its password in the repository. Apply migrations with the deployment process or enable `Database__ApplyMigrationsOnStartup=true` only when the host permits startup schema changes. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
+
+### Google and Apple sign-in setup
+
+Provider buttons are present but unavailable until all required credentials for that provider are configured. For local Google testing, keep credentials outside the repository with .NET user secrets:
+
+```powershell
+dotnet user-secrets set "Authentication:Google:ClientId" "your-client-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Google:ClientSecret" "your-client-secret" --project OnlineStore/OnlineStore.csproj
+```
+
+Register `https://localhost:<port>/signin-google` as the Google authorized redirect URI, using the HTTPS port shown by the application. For Apple, create a Services ID and register the production HTTPS return URL `https://your-domain/signin-apple`, then store the identifiers and private key:
+
+```powershell
+dotnet user-secrets set "Authentication:Apple:ClientId" "your-services-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Apple:TeamId" "your-team-id" --project OnlineStore/OnlineStore.csproj
+dotnet user-secrets set "Authentication:Apple:KeyId" "your-key-id" --project OnlineStore/OnlineStore.csproj
+$applePrivateKey = Get-Content "C:\secure\AuthKey_your-key-id.p8" -Raw
+dotnet user-secrets set "Authentication:Apple:PrivateKey" $applePrivateKey --project OnlineStore/OnlineStore.csproj
+```
+
+Production can use the equivalent double-underscore environment keys, such as `Authentication__Google__ClientId`. Apple requires an Apple Developer configuration and a public HTTPS callback; never commit or log the `.p8` key.
 
 ## Database migrations
 
@@ -126,7 +155,7 @@ dotnet tool restore
 dotnet ef database update --project OnlineStore/OnlineStore.csproj --startup-project OnlineStore/OnlineStore.csproj
 ```
 
-`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. Review the generated SQL and back up production data before applying it.
+`StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. `AddExternalAuthentication` adds provider-subject links with uniqueness constraints. Review the generated SQL and back up production data before applying it.
 
 ## Provider and policy gates
 
@@ -142,7 +171,7 @@ dotnet build OnlineStore.slnx --no-restore
 dotnet test OnlineStore.slnx --no-build --no-restore
 ```
 
-The tests cover authentication hashing and role filters, cart stock/ownership, review validation/uniqueness, and checkout totals, stock, ownership, and cart cleanup.
+The tests cover authentication hashing, roles, external-account onboarding/linking, cart stock/ownership, review validation/uniqueness, and checkout totals, stock, ownership, and cart cleanup.
 
 ## Project structure
 

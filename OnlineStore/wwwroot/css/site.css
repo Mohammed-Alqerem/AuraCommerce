@@ -1510,6 +1510,114 @@ hr {
     margin-top: 24px;
 }
 
+.auth-status {
+    align-items: flex-start;
+    background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+    border-radius: 12px;
+    color: var(--text);
+    display: flex;
+    gap: .65rem;
+    margin-bottom: 18px;
+    padding: .8rem .9rem;
+}
+
+.auth-status .material-symbols-outlined {
+    color: var(--accent);
+    flex: 0 0 auto;
+    font-size: 1.25rem;
+    margin-top: .08rem;
+}
+
+.external-auth {
+    display: grid;
+    gap: .75rem;
+}
+
+.external-auth form {
+    margin: 0;
+}
+
+.external-auth-button {
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-weight: 750;
+    gap: .75rem;
+    justify-content: center;
+    min-height: 50px;
+    padding: .75rem 1rem;
+    transition: background-color .18s var(--ease-out), border-color .18s var(--ease-out), box-shadow .18s var(--ease-out), transform .18s var(--ease-out);
+    width: 100%;
+}
+
+.external-auth-button:hover:not(:disabled) {
+    background: var(--surface-soft);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+
+.external-auth-button:active:not(:disabled) {
+    box-shadow: none;
+    transform: translateY(0);
+}
+
+.external-auth-button:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    outline-offset: 2px;
+}
+
+.external-auth-button:disabled {
+    cursor: not-allowed;
+    opacity: .52;
+}
+
+.external-auth-logo {
+    flex: 0 0 22px;
+    height: 22px;
+    width: 22px;
+}
+
+.external-auth-button-apple .external-auth-logo {
+    height: 21px;
+}
+
+.external-auth-note {
+    color: var(--muted);
+    font-size: .82rem;
+    line-height: 1.45;
+    margin: .65rem 0 0;
+    text-align: center;
+}
+
+.auth-divider {
+    align-items: center;
+    color: var(--muted);
+    display: flex;
+    font-size: .8rem;
+    gap: .8rem;
+    margin: 22px 0 0;
+    text-transform: uppercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    background: var(--line);
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+}
+
+.auth-divider span {
+    text-align: center;
+}
+
 .demo-accounts {
     background: var(--surface-soft);
     border: 1px solid var(--line);

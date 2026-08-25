@@ -13,6 +13,7 @@ using OnlineStore.Extensions;
 using OnlineStore.Filters;
 using OnlineStore.Models;
 using OnlineStore.Models.ViewModels;
+using OnlineStore.Services;
 
 namespace AuraCommerce.Tests;
 
@@ -80,7 +81,9 @@ public class AuthenticationTests
             NullLogger<AccountController>.Instance,
             null!,
             null!,
-            null!);
+            null!,
+            null!,
+            new ExternalProviderAvailability(false, false));
         var session = new TestSession();
         session.SetInt32(SessionKeys.UserId, user.Id);
         session.SetString(SessionKeys.UserRole, UserRoles.Customer);

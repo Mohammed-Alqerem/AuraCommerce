@@ -48,6 +48,7 @@ namespace OnlineStore.Models
         public ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
         public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
         public ICollection<StoreNotification> Notifications { get; set; } = new List<StoreNotification>();
+        public ICollection<UserExternalLogin> ExternalLogins { get; set; } = new List<UserExternalLogin>();
     }
 
 }

@@ -77,7 +77,7 @@ Cards use 16px corners, controls 8px, and status badges pill geometry. Rounded s
 
 ## Components
 
-The shared Razor layout, `site.css`, and `site.js` own navigation, theme, language, focus, notification, and motion behavior. Native selects and dates are intentional because platform-owned popup behavior is accepted. All application forms own validation with `novalidate` and visible inline errors.
+The shared Razor layout, `site.css`, and `site.js` own navigation, theme, language, focus, notification, and motion behavior. Native selects and dates are intentional because platform-owned popup behavior is accepted. All application forms own validation with `novalidate` and visible inline errors. External sign-in uses full-width, provider-named controls above a restrained email divider; unavailable providers stay visible but clearly disabled with a short setup-status explanation.
 
 ## Do's and Don'ts
 

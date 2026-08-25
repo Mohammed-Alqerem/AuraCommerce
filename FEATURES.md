@@ -25,7 +25,7 @@ This is the canonical catalog of product capabilities. Update it in the same com
 
 ## Store expansion
 
-Current branch: `feature/customer-support-profile-layout` (stacked on `feature/admin-header-navigation`)
+Current branch: `feature/google-apple-sign-in` (stacked on `feature/customer-support-profile-layout`)
 
 | Area | Capabilities | Status |
 | --- | --- | --- |
@@ -44,6 +44,7 @@ Current branch: `feature/customer-support-profile-layout` (stacked on `feature/a
 | Reports | Responsive date-filtered sales workspace with revenue KPIs, product/category breakdowns, and a styled Excel-only workbook export | Ready for review |
 | Admin navigation | Consistent title-first admin headers with the shared navigation directly beneath the page context and responsive horizontal access | Ready for review |
 | Project continuity | Durable technical memory and feature catalog updated with every feature | Ready for review |
+| External sign-in | Provider-ready Google and Apple authentication, verified customer onboarding, secure password-confirmed linking, and polished available/unavailable login states | Ready for review |
 
 ## Policy/provider gates
 
@@ -54,6 +55,8 @@ Current branch: `feature/customer-support-profile-layout` (stacked on `feature/a
 | Coupons and promotions | Approve stacking, eligibility, expiry, and monetary calculation rules |
 | Customer cancellation | Approve status eligibility, inventory restoration, and payment reversal rules |
 | Returns and refunds | Approve return windows, item condition, shipping responsibility, and refund workflow |
+| Live Google sign-in | Create OAuth credentials and register each deployment's `/signin-google` HTTPS callback |
+| Live Apple sign-in | Configure an Apple Services ID, Developer team/key, `.p8` secret, verified domain, and `/signin-apple` HTTPS return URL |
 
 ## Adding the next feature
 
