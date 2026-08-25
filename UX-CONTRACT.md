@@ -37,7 +37,7 @@ Admin routes that expose the shared navigation place the page title and actions 
 
 Guests and customers reach the public support form from a labeled `Support` destination in the shared store navigation. Controller and action names are implementation details and are never required user input. Admin support remains in the separate admin navigation. The full customer header stays collapsed below the `xxl` breakpoint so account controls cannot force horizontal page overflow.
 
-The customer profile keeps every form and account-summary value within the content container. At medium and large widths the summary cards form a balanced two-card band below the form; at extra-large widths they return to the right sidebar. Long names and order metadata wrap without widening the document.
+The customer profile keeps every form and account-summary value within the content container. From medium through extra-large widths the summary cards form a balanced two-card band below the form; only at extra-extra-large widths do they return to the right sidebar. Long names and order metadata wrap without widening the document, and the content begins on the next 8px rhythm step below the hero.
 
 ## Feedback and safety
 

@@ -456,6 +456,7 @@ img {
 
 .profile-orders-link { margin-inline-start: auto; }
 .profile-orders-link .material-symbols-outlined, .btn .material-symbols-outlined { font-size: 1.1rem; vertical-align: -3px; }
+.profile-page-section { padding-top: 48px; }
 .profile-form-panel { padding: clamp(1.3rem, 3vw, 2rem); }
 
 .profile-panel-heading, .profile-panel-heading > div, .profile-security-note, .profile-order, .profile-no-orders {
@@ -1762,7 +1763,7 @@ hr {
     }
 }
 
-@media (min-width: 768px) and (max-width: 1199px) {
+@media (min-width: 768px) and (max-width: 1399px) {
     .profile-sidebar {
         align-items: start;
         grid-template-columns: repeat(2, minmax(0, 1fr));
