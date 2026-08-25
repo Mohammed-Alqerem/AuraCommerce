@@ -23,6 +23,7 @@ This contract complements [DESIGN.md](DESIGN.md). Domain rules remain in models,
 | Wishlist toggle | Server-confirmed | Return to originating local URL | Keep current page usable |
 | Checkout | Server-confirmed transaction | Order confirmation and owned details | Preserve delivery form and refreshed cart |
 | Password reset | Generic response | Login with confirmation | Invalid/expired link offers retry |
+| Export sales report | Preserve the selected query period | Download one styled `.xlsx` workbook | Keep the filtered report visible so export can be retried |
 
 ## Dataset state
 

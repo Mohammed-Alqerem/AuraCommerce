@@ -39,7 +39,7 @@ Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while t
 - Product archiving/restoration without deleting historical order data
 - Order status management using centralized valid statuses
 - Customer directory and order overview
-- Category management, inventory adjustments with history, review moderation, support queue, and sales/CSV reports
+- Category management, inventory adjustments with history, review moderation, support queue, and polished Excel sales reports
 
 ### User experience
 
@@ -147,7 +147,13 @@ dotnet test OnlineStore.slnx --no-build --no-restore
 
 ## 🚀 Getting Started
 
-### Prerequisites
+- ASP.NET Core MVC on .NET 9
+- Entity Framework Core 9
+- SQL Server / LocalDB
+- Razor Views and Bootstrap
+- ClosedXML for typed, styled Excel report workbooks
+- xUnit with SQLite in-memory integration tests
+- GitHub Actions CI
 
 Make sure you have:
 

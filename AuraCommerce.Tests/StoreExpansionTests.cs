@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -226,7 +226,7 @@ public class StoreExpansionTests
     }
 
     [Fact]
-    public async Task SalesExport_NeutralizesSpreadsheetFormulasAndUsesInvariantMoney()
+    public async Task SalesExport_CreatesStyledExcelWorkbookWithTypedValuesAndSafeText()
     {
         await using var database = await TestDatabase.CreateAsync();
         var order = new Orders
@@ -250,14 +250,29 @@ public class StoreExpansionTests
         });
         database.Context.Orders.Add(order);
         await database.Context.SaveChangesAsync();
-        var controller = new AdminReportsController(database.Context);
+        var controller = new AdminReportsController(database.Context, new SalesReportWorkbookExporter());
         TestHttpContext.AttachTo(controller);
 
         var result = await controller.Export(null, null, CancellationToken.None);
 
         var file = Assert.IsType<FileContentResult>(result);
-        var csv = Encoding.UTF8.GetString(file.FileContents);
-        Assert.Contains("\"'=SUM(1,1)\",2,21.00", csv);
+        Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
+        Assert.EndsWith(".xlsx", file.FileDownloadName, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal((byte)'P', file.FileContents[0]);
+        Assert.Equal((byte)'K', file.FileContents[1]);
+
+        using var stream = new MemoryStream(file.FileContents);
+        using var workbook = new XLWorkbook(stream);
+        var worksheet = workbook.Worksheet("Sales report");
+        var productNameCell = worksheet.CellsUsed()
+            .Single(cell => cell.GetString() == "=SUM(1,1)");
+
+        Assert.False(productNameCell.HasFormula);
+        Assert.Equal(XLDataType.DateTime, worksheet.Cell("C4").DataType);
+        Assert.Equal("$#,##0.00", worksheet.Cell("A7").Style.NumberFormat.Format);
+        Assert.True(worksheet.Cell("H7").HasFormula);
+        Assert.Contains(worksheet.Tables, table => table.Name == "BestSellers");
+        Assert.Contains(worksheet.Tables, table => table.Name == "CategorySales");
     }
 
     [Fact]

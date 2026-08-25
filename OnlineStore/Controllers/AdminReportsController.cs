@@ -1,17 +1,18 @@
-using System.Text;
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineStore.Constants;
 using OnlineStore.Data;
 using OnlineStore.Filters;
 using OnlineStore.Models.ViewModels;
+using OnlineStore.Services;
 
 namespace OnlineStore.Controllers;
 
 [RequireAdmin]
 [Route("Admin/Reports")]
-public class AdminReportsController(ApplicationDbContext context) : Controller
+public class AdminReportsController(
+    ApplicationDbContext context,
+    ISalesReportWorkbookExporter workbookExporter) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(DateTime? from, DateTime? to, CancellationToken cancellationToken)
@@ -21,24 +22,10 @@ public class AdminReportsController(ApplicationDbContext context) : Controller
     public async Task<IActionResult> Export(DateTime? from, DateTime? to, CancellationToken cancellationToken)
     {
         var report = await BuildAsync(from, to, cancellationToken);
-        var csv = new StringBuilder("Product,Units,Revenue\r\n");
-        foreach (var row in report.BestSellers)
-        {
-            csv.Append(EscapeCsvText(row.Name)).Append(',')
-                .Append(row.Units.ToString(CultureInfo.InvariantCulture)).Append(',')
-                .Append(row.Revenue.ToString("0.00", CultureInfo.InvariantCulture)).Append("\r\n");
-        }
-        return File(Encoding.UTF8.GetBytes(csv.ToString()), "text/csv", $"sales-{report.From:yyyyMMdd}-{report.To:yyyyMMdd}.csv");
-    }
-
-    private static string EscapeCsvText(string value)
-    {
-        if (value.Length > 0 && value[0] is '=' or '+' or '-' or '@' or '\t' or '\r')
-        {
-            value = $"'{value}";
-        }
-
-        return $"\"{value.Replace("\"", "\"\"")}\"";
+        return File(
+            workbookExporter.Export(report),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            $"aura-sales-{report.From:yyyyMMdd}-{report.To:yyyyMMdd}.xlsx");
     }
 
     private async Task<ReportsViewModel> BuildAsync(DateTime? from, DateTime? to, CancellationToken cancellationToken)

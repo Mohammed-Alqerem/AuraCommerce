@@ -1,4 +1,153 @@
 @model ReportsViewModel
-@{ ViewData["Title"] = "Sales Reports"; }
-<section class="page-header"><div class="container">@await Html.PartialAsync("_AdminNavigation")<span class="eyebrow">Store intelligence</span><h1 class="display-title mt-2 mb-0">Sales reports</h1></div></section>
-<section class="page-section"><div class="container"><form method="get" class="filter-bar mb-4"><label>From <input class="form-control" type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")"/></label><label>To <input class="form-control" type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")"/></label><button class="btn btn-accent">Apply</button><a class="btn btn-outline-dark" asp-action="Export" asp-route-from="@Model.From.ToString("yyyy-MM-dd")" asp-route-to="@Model.To.ToString("yyyy-MM-dd")">Export CSV</a></form><div class="stats-grid mb-4"><article class="stat-card"><span>Revenue</span><strong>$@Model.Revenue.ToString("0.00")</strong></article><article class="stat-card"><span>Orders</span><strong>@Model.OrderCount</strong></article><article class="stat-card"><span>Average order</span><strong>$@Model.AverageOrderValue.ToString("0.00")</strong></article></div><div class="row g-4"><div class="col-lg-7"><div class="panel"><h2 class="h4 mb-3">Best sellers</h2><div class="table-responsive"><table class="table table-store"><thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead><tbody>@foreach(var row in Model.BestSellers){<tr><td>@row.Name</td><td>@row.Units</td><td>$@row.Revenue.ToString("0.00")</td></tr>}</tbody></table></div></div></div><div class="col-lg-5"><div class="panel"><h2 class="h4 mb-3">By category</h2>@foreach(var row in Model.CategorySales){<div class="inventory-row"><div><strong>@row.Name</strong><span>@row.Units units</span></div><strong>$@row.Revenue.ToString("0.00")</strong></div>}</div></div></div></div></section>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Sales Reports";
+    var periodLength = (Model.To - Model.From).Days + 1;
+    var maximumCategoryRevenue = Model.CategorySales.Count == 0
+        ? 0m
+        : Model.CategorySales.Max(row => row.Revenue);
+}
+
+<section class="reports-page-header">
+    <div class="container">
+        <partial name="_AdminNavigation" />
+        <div class="reports-heading">
+            <div>
+                <span class="eyebrow">Store intelligence</span>
+                <h1 class="display-title">Sales reports</h1>
+                <p>Review revenue, order volume, and product performance for a selected period.</p>
+            </div>
+            <div class="reports-period" aria-label="Current reporting period">
+                <span class="material-symbols-outlined" aria-hidden="true">date_range</span>
+                <div>
+                    <span>Current period</span>
+                    <strong>@Model.From.ToString("MMM d") – @Model.To.ToString("MMM d, yyyy")</strong>
+                    <small>@periodLength day@(periodLength == 1 ? string.Empty : "s")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="reports-page-section">
+    <div class="container">
+        <form method="get" class="reports-toolbar" novalidate>
+            <div class="reports-toolbar-copy">
+                <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+                <div>
+                    <strong>Reporting period</strong>
+                    <span>Cancelled orders are excluded from every total.</span>
+                </div>
+            </div>
+            <div class="reports-toolbar-fields">
+                <div class="reports-date-field">
+                    <label for="report-from">From</label>
+                    <input id="report-from" class="form-control" type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="reports-date-field">
+                    <label for="report-to">To</label>
+                    <input id="report-to" class="form-control" type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")" />
+                </div>
+                <button class="btn btn-outline-dark reports-apply" type="submit">
+                    <span class="material-symbols-outlined" aria-hidden="true">filter_alt</span>
+                    Apply filters
+                </button>
+                <a class="btn btn-accent reports-export"
+                   asp-action="Export"
+                   asp-route-from="@Model.From.ToString("yyyy-MM-dd")"
+                   asp-route-to="@Model.To.ToString("yyyy-MM-dd")">
+                    <span class="material-symbols-outlined" aria-hidden="true">grid_on</span>
+                    Export Excel
+                </a>
+            </div>
+        </form>
+
+        <div class="report-metrics" aria-label="Sales summary">
+            <article class="report-metric-card report-metric-primary">
+                <div class="report-metric-icon" aria-hidden="true"><span class="material-symbols-outlined">payments</span></div>
+                <div>
+                    <span>Revenue</span>
+                    <strong>$@Model.Revenue.ToString("N2")</strong>
+                    <small>Across non-cancelled orders</small>
+                </div>
+            </article>
+            <article class="report-metric-card">
+                <div class="report-metric-icon" aria-hidden="true"><span class="material-symbols-outlined">receipt_long</span></div>
+                <div>
+                    <span>Orders</span>
+                    <strong>@Model.OrderCount.ToString("N0")</strong>
+                    <small>Placed during this period</small>
+                </div>
+            </article>
+            <article class="report-metric-card">
+                <div class="report-metric-icon" aria-hidden="true"><span class="material-symbols-outlined">monitoring</span></div>
+                <div>
+                    <span>Average order</span>
+                    <strong>$@Model.AverageOrderValue.ToString("N2")</strong>
+                    <small>Revenue per order</small>
+                </div>
+            </article>
+        </div>
+
+        <div class="reports-data-grid">
+            <section class="reports-panel reports-products-panel" aria-labelledby="best-sellers-title">
+                <header class="reports-panel-header">
+                    <div><span class="reports-panel-kicker">Product performance</span><h2 id="best-sellers-title">Best sellers</h2></div>
+                    <span class="reports-panel-count">Top @Model.BestSellers.Count</span>
+                </header>
+                @if (Model.BestSellers.Count == 0)
+                {
+                    <div class="reports-empty-state">
+                        <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
+                        <strong>No sales in this period</strong>
+                        <span>Choose a wider date range to review product performance.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive reports-table-wrap">
+                        <table class="table table-store reports-table">
+                            <thead><tr><th scope="col">#</th><th scope="col">Product</th><th scope="col" class="text-end">Units</th><th scope="col" class="text-end">Revenue</th></tr></thead>
+                            <tbody>
+                                @for (var index = 0; index < Model.BestSellers.Count; index++)
+                                {
+                                    var row = Model.BestSellers[index];
+                                    <tr><td><span class="reports-rank">@(index + 1)</span></td><td><strong>@row.Name</strong></td><td class="text-end">@row.Units.ToString("N0")</td><td class="text-end"><strong>$@row.Revenue.ToString("N2")</strong></td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+
+            <section class="reports-panel reports-category-panel" aria-labelledby="category-sales-title">
+                <header class="reports-panel-header">
+                    <div><span class="reports-panel-kicker">Revenue mix</span><h2 id="category-sales-title">By category</h2></div>
+                    <span class="reports-panel-count">@Model.CategorySales.Count categories</span>
+                </header>
+                @if (Model.CategorySales.Count == 0)
+                {
+                    <div class="reports-empty-state">
+                        <span class="material-symbols-outlined" aria-hidden="true">category</span>
+                        <strong>No category activity</strong>
+                        <span>Category revenue will appear after orders are placed.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="reports-category-list">
+                        @foreach (var row in Model.CategorySales)
+                        {
+                            var share = maximumCategoryRevenue == 0m ? 0m : row.Revenue / maximumCategoryRevenue * 100m;
+                            <article class="reports-category-row">
+                                <div class="reports-category-meta"><div><strong>@row.Name</strong><span>@row.Units.ToString("N0") unit@(row.Units == 1 ? string.Empty : "s")</span></div><strong>$@row.Revenue.ToString("N2")</strong></div>
+                                <div class="reports-category-track" aria-hidden="true"><span style="width: @share.ToString("0.##", CultureInfo.InvariantCulture)%"></span></div>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+    </div>
+</section>
