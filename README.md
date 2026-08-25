@@ -1,16 +1,20 @@
-# Aura Commerce
+# 🛍️ Aura Commerce
 
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-512BD4?style=flat-square&logo=dotnet)
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=flat-square&logo=dotnet)
 ![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework-Core-68217A?style=flat-square)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-CC2927?style=flat-square&logo=microsoftsqlserver)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat-square&logo=bootstrap)
+![Tests](https://img.shields.io/badge/Tests-xUnit-25A162?style=flat-square)
+![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)
 
-Aura Commerce is a production-minded ASP.NET Core MVC storefront backed by Entity Framework Core and SQL Server. It covers the complete customer journey—from product discovery to transaction-safe checkout and order history—alongside a role-protected administration workspace.
+**Aura Commerce** is a modern full-stack e-commerce application built with **ASP.NET Core MVC, Entity Framework Core, and SQL Server**.
 
 Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while the canonical capability list and feature status live in [FEATURES.md](FEATURES.md).
 
 ## Live demo
 
+🌐 **Live Demo:**  
 [http://auracomerce.runasp.net/](http://auracomerce.runasp.net/)
 
 ## Highlights
@@ -43,13 +47,106 @@ Project continuity is tracked in [PROJECT_MEMORY.md](PROJECT_MEMORY.md), while t
 - Responsive Bootstrap UI
 - English/Arabic support and RTL layout
 - Light and dark themes
-- Accessible labels, semantic controls, and keyboard skip navigation
+- Mobile-friendly navigation
+- Accessible form labels and controls
+- Keyboard skip navigation
+- Consistent validation and feedback messages
 
-## Screenshots
+---
 
-Screenshots are intentionally omitted from this repository. Run the application locally or open the live demo to explore the interface.
+## 🔐 Security & Data Integrity
 
-## Tech stack
+Aura Commerce includes several server-side protections instead of relying only on client-side validation.
+
+- Password hashing with ASP.NET Core `PasswordHasher<TUser>`
+- Role-based authorization for customers and administrators
+- Centralized session keys and authorization filters
+- Server-side customer role assignment during registration
+- Normalized email addresses with a unique database index
+- Per-client rate limiting for login and registration
+- Anti-forgery validation for unsafe MVC requests
+- HTTP-only session cookies
+- `SameSite=Lax` cookie policy
+- Local-only return URL validation to prevent open redirects
+- Server-side validation for product, cart, review, profile, checkout, and order operations
+- Customer-scoped carts and orders
+- Database-controlled product pricing during checkout
+- Serializable checkout transactions
+- Stock validation during checkout
+- Database uniqueness and check constraints
+- Product archiving instead of destructive deletion
+
+> Aura Commerce intentionally uses a lightweight custom session-based authentication system rather than ASP.NET Core Identity while still relying on the framework password hasher and explicit role authorization.
+
+---
+
+## 💳 Transaction-Safe Checkout
+
+Checkout is designed to protect pricing, stock, and order consistency.
+
+When an order is placed, the server:
+
+1. Loads the authenticated customer's cart
+2. Retrieves current product information from the database
+3. Validates product availability and stock
+4. Uses database prices instead of browser-submitted prices
+5. Calculates the total on the server
+6. Creates product snapshots for order history
+7. Updates inventory
+8. Creates the order and order items
+9. Clears the customer's cart
+10. Commits everything inside a serializable database transaction
+
+If any part fails, the transaction is rolled back.
+
+---
+
+## 🧱 Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Backend | ASP.NET Core MVC |
+| Framework | .NET 9 |
+| ORM | Entity Framework Core 9 |
+| Database | SQL Server / LocalDB |
+| Frontend | Razor Views |
+| UI | Bootstrap 5 |
+| Authentication | Custom session-based authentication |
+| Password Security | ASP.NET Core `PasswordHasher<TUser>` |
+| Testing | xUnit + SQLite In-Memory |
+| CI | GitHub Actions |
+| Version Control | Git / GitHub |
+
+---
+
+## 🧪 Automated Testing
+
+The project includes integration-style tests using **xUnit** and **SQLite in-memory databases**.
+
+Current coverage includes:
+
+- Password hashing and authentication behavior
+- Role authorization filters
+- Cart ownership protection
+- Cart stock validation
+- Review validation
+- Review uniqueness
+- Checkout totals
+- Checkout stock validation
+- Checkout ownership rules
+- Cart cleanup after successful checkout
+
+Run the test suite with:
+
+```powershell
+dotnet restore OnlineStore.slnx
+dotnet build OnlineStore.slnx --no-restore
+dotnet test OnlineStore.slnx --no-build --no-restore
+```
+
+---
+
+## 🚀 Getting Started
 
 - ASP.NET Core MVC on .NET 9
 - Entity Framework Core 9
@@ -59,7 +156,7 @@ Screenshots are intentionally omitted from this repository. Run the application 
 - xUnit with SQLite in-memory integration tests
 - GitHub Actions CI
 
-## Security
+Make sure you have:
 
 - Passwords are stored as ASP.NET Core `PasswordHasher<TUser>` hashes
 - Admin/customer authorization uses persisted roles and centralized session keys
@@ -74,44 +171,54 @@ Screenshots are intentionally omitted from this repository. Run the application 
 - Checkout uses database prices, serializable transactions, stock checks, and database constraints
 - Products are archived instead of being deleted from historical orders
 
-The application intentionally does not use ASP.NET Core Identity; it keeps its small custom session-based authentication design while using the framework password hasher and explicit role checks.
+### 1. Clone the repository
 
 Password reset and email confirmation use ASP.NET Core Data Protection with purpose-isolated, time-limited tokens. Live delivery is intentionally disabled until an email provider is configured; development shows a local-only recovery link.
 
 ## Demo accounts
 
-The development seed creates one administrator and sample customer accounts. Credentials are intentionally not documented in this repository; obtain the current demo login details from the project maintainer or the deployment owner.
-
-Production deployments must replace seeded accounts, use unique strong passwords, and keep all secrets in environment variables or the host's secret store.
-
-## Local setup
-
-Prerequisites:
-
-- .NET SDK 9.0 or later capable of targeting .NET 9
-- SQL Server LocalDB, SQL Server Express, or another reachable SQL Server instance
+### 2. Restore tools and dependencies
 
 ```powershell
-git clone https://github.com/Mohammed-Alqerem/AuraCommerce.git
-cd AuraCommerce
 dotnet tool restore
 dotnet restore OnlineStore.slnx
-dotnet ef database update --project OnlineStore/OnlineStore.csproj --startup-project OnlineStore/OnlineStore.csproj
+```
+
+### 3. Apply database migrations
+
+```powershell
+dotnet ef database update `
+  --project OnlineStore/OnlineStore.csproj `
+  --startup-project OnlineStore/OnlineStore.csproj
+```
+
+### 4. Run the application
+
+```powershell
 dotnet run --project OnlineStore/OnlineStore.csproj
 ```
 
-The default development connection uses LocalDB and contains no credentials. Override it without changing committed files when using another SQL Server:
+---
+
+## ⚙️ Database Configuration
+
+The default development configuration uses SQL Server LocalDB and does not contain database credentials.
+
+For another SQL Server instance, override the connection string using an environment variable instead of modifying committed configuration files:
 
 ```powershell
 $env:ConnectionStrings__DefaultConnection = "your-development-connection-string"
+
 dotnet run --project OnlineStore/OnlineStore.csproj
 ```
 
-## Configuration and deployment
+---
 
-Important configuration keys:
+## 🌐 Deployment Configuration
 
-| Key | Default | Purpose |
+Important configuration values:
+
+| Configuration Key | Default | Description |
 | --- | --- | --- |
 | `ConnectionStrings:DefaultConnection` | LocalDB | SQL Server connection supplied through environment/deployment secrets in production |
 | `Database:ApplyMigrationsOnStartup` | `false` | Set `true` only when the host explicitly supports startup migrations |
@@ -123,7 +230,7 @@ Important configuration keys:
 | `Authentication:Apple:KeyId` | Empty | Identifier for the Apple `.p8` signing key |
 | `Authentication:Apple:PrivateKey` | Empty | Complete PKCS #8 `.p8` key contents; store only in a secret manager |
 
-For runasp.net, configure the production connection as `ConnectionStrings__DefaultConnection`; never place its password in the repository. Apply migrations with the deployment process or enable `Database__ApplyMigrationsOnStartup=true` only when the host permits startup schema changes. Set `Security__RequireHttps=true` only when the public site is consistently available over HTTPS.
+For deployment on **runasp.net**:
 
 ### Google and Apple sign-in setup
 
@@ -148,11 +255,30 @@ Production can use the equivalent double-underscore environment keys, such as `A
 
 ## Database migrations
 
-The `HardenAuthenticationAndDataIntegrity` migration adds roles, normalized email, product activity, order-item product snapshots, unique indexes, check constraints, and restrictive historical foreign keys. Apply it with:
+---
+
+## 🗄️ Database Migrations
+
+The `HardenAuthenticationAndDataIntegrity` migration strengthens authentication and database consistency.
+
+It introduces:
+
+- User roles
+- Normalized email addresses
+- Product activity/archive state
+- Order-item product snapshots
+- Unique indexes
+- Check constraints
+- Restrictive historical foreign keys
+
+Apply migrations with:
 
 ```powershell
 dotnet tool restore
-dotnet ef database update --project OnlineStore/OnlineStore.csproj --startup-project OnlineStore/OnlineStore.csproj
+
+dotnet ef database update `
+  --project OnlineStore/OnlineStore.csproj `
+  --startup-project OnlineStore/OnlineStore.csproj
 ```
 
 `StoreExpansion` and `AddStoreNotifications` add the wishlist, delivery snapshots, order timeline, product metadata/images, category state, inventory audit, support, moderation, recovery, and notification schema. `AddExternalAuthentication` adds provider-subject links with uniqueness constraints. Review the generated SQL and back up production data before applying it.
@@ -163,32 +289,144 @@ The repository includes a safe unconfigured email adapter. Connect an approved t
 
 Before applying to a database with user-generated legacy data, take a backup and verify that it has no duplicate normalized emails, cart products, or user/product reviews; the new unique indexes intentionally reject those invalid states.
 
-## Tests
+---
 
-```powershell
-dotnet restore OnlineStore.slnx
-dotnet build OnlineStore.slnx --no-restore
-dotnet test OnlineStore.slnx --no-build --no-restore
+## 👤 Demo Accounts
+
+Development seeding creates an administrator account and sample customer accounts.
+
+Credentials are intentionally not stored in this repository.
+
+For demo credentials, contact the project maintainer or deployment owner.
+
+> [!WARNING]
+> Production deployments should replace all seeded accounts, use unique strong passwords, and store secrets in environment variables or the hosting provider's secret manager.
+
+---
+
+## 📁 Project Structure
+
+```text
+AuraCommerce/
+│
+├── OnlineStore/
+│   ├── Constants/
+│   │   └── Roles, statuses, session keys, and store thresholds
+│   │
+│   ├── Controllers/
+│   │   └── MVC request and response handling
+│   │
+│   ├── Data/
+│   │   └── DbContext, EF Core configuration, and seed data
+│   │
+│   ├── Filters/
+│   │   └── Authentication and role authorization filters
+│   │
+│   ├── Models/
+│   │   └── Entities, form models, and page view models
+│   │
+│   ├── Services/
+│   │   └── Checkout and business workflows
+│   │
+│   ├── Views/
+│   │   └── Razor MVC user interface
+│   │
+│   └── Migrations/
+│       └── Entity Framework Core migrations
+│
+├── AuraCommerce.Tests/
+│   └── xUnit integration-style tests
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+└── OnlineStore.slnx
 ```
 
 The tests cover authentication hashing, roles, external-account onboarding/linking, cart stock/ownership, review validation/uniqueness, and checkout totals, stock, ownership, and cart cleanup.
 
-## Project structure
+GitHub Actions automatically validates the project by running:
 
 ```text
-OnlineStore/                 ASP.NET Core MVC application
-  Constants/                Roles, statuses, session keys, store thresholds
-  Controllers/              HTTP input and response handling
-  Data/                     DbContext, entity configurations, and seed data
-  Filters/                  Session login and role authorization filters
-  Models/                   EF entities and form/page view models
-  Services/                 Transactional checkout workflow
-  Views/                    Razor UI
-  Migrations/               EF Core schema history
-AuraCommerce.Tests/         xUnit and SQLite integration-style tests
-.github/workflows/ci.yml    Restore, build, and test workflow
+Restore
+   ↓
+Build
+   ↓
+Test
 ```
 
-## License
+This helps ensure new changes do not break the application before they are merged or deployed.
 
-This repository is currently presented for learning and portfolio use. No open-source license has been declared.
+---
+
+## 📸 Screenshots
+
+Screenshots are currently omitted from the repository.
+
+You can explore the interface through the live deployment:
+
+👉 [Aura Commerce Live Demo](http://auracomerce.runasp.net/)
+
+---
+
+## 🎯 Project Goals
+
+Aura Commerce was built to demonstrate practical ASP.NET Core development concepts, including:
+
+- MVC architecture
+- Entity Framework Core
+- Relational database design
+- Transaction management
+- Server-side validation
+- Authentication and authorization
+- Secure password storage
+- Database integrity constraints
+- Responsive UI development
+- Automated testing
+- CI workflows
+- Deployment configuration
+
+---
+
+## 🗺️ Future Improvements
+
+Potential improvements include:
+
+- ASP.NET Core Identity integration
+- Email verification
+- Password reset workflow
+- OAuth authentication
+- Payment gateway integration
+- Wishlist functionality
+- Product image management
+- Advanced product sorting
+- Inventory notifications
+- Admin analytics and charts
+- Structured application logging
+- Expanded automated test coverage
+- Containerized deployment
+
+---
+
+## 📄 License
+
+This project is currently provided for **learning, demonstration, and portfolio purposes**.
+
+No open-source license has been declared.
+
+---
+
+## 👨‍💻 Author
+
+**Mohammed Alqerem**
+
+Computer Science Student & Software Developer
+
+[GitHub](https://github.com/Mohammed-Alqerem) • [LinkedIn](https://www.linkedin.com/in/mohammed-alqerem-26b069303)
+
+---
+
+<p align="center">
+  Built with ASP.NET Core MVC, Entity Framework Core, SQL Server & Bootstrap.
+</p>
